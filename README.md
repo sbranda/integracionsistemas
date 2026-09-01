@@ -17,10 +17,11 @@ integracion-app/
 ├── index.html
 ├── style.css
 ├── app.js
-├── data.js          # apuntes, preguntas y glosario — editá acá el contenido
+├── data.js          # apuntes, preguntas, casos y glosario — editá acá el contenido
 ├── manifest.json
 ├── service-worker.js
-└── icons/
+├── icon-192.png
+└── icon-512.png
 ```
 
 ## Publicar en GitHub Pages
