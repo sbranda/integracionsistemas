@@ -1,144 +1,146 @@
 // ---------------------------------------------------------------------------
 // Contenido de la app — Integración de Sistemas
 // Todo vive en el cliente (sin backend). Editá estos arreglos para
-// actualizar el contenido.
+// actualizar el contenido. Escrito en lenguaje simple, para que se entienda
+// sin necesidad de conocimientos previos.
 // ---------------------------------------------------------------------------
 
 const NOTES = [
   {
     id: 'n1',
     title: '¿Qué es la integración de sistemas?',
-    body: 'Es el proceso de conectar aplicaciones, servicios o sistemas independientes para que trabajen juntos como si fueran uno solo, compartiendo datos y funcionalidad. El objetivo es evitar que cada sistema quede aislado ("isla de información") y que la organización tenga procesos consistentes de punta a punta.',
+    body: 'Es conectar programas o sistemas distintos para que trabajen juntos, como si fueran uno solo. Así comparten información entre ellos y ninguno queda funcionando solo, como una isla separada del resto.',
   },
   {
     id: 'n2',
     title: 'Acoplamiento fuerte vs. débil',
-    body: 'El acoplamiento describe cuánto depende un sistema de los detalles internos de otro. En un acoplamiento fuerte, un cambio en un sistema rompe fácilmente al otro. En un acoplamiento débil, los sistemas se comunican por interfaces bien definidas (APIs, mensajes) y pueden cambiar por dentro sin afectar al resto, siempre que respeten el contrato de esa interfaz.',
+    body: 'El acoplamiento mide cuánto depende un sistema de otro. Si es "fuerte", un cambio chico en un sistema puede romper al otro. Si es "débil", los sistemas se hablan a través de reglas claras (como una API), y pueden cambiar por dentro sin afectarse, mientras sigan respetando esas reglas.',
   },
   {
     id: 'n3',
-    title: 'Patrones de integración',
-    body: 'Algunos patrones comunes: Point-to-Point (conexión directa entre dos sistemas, simple pero difícil de escalar), Hub-and-Spoke (un nodo central conecta a todos, reduce conexiones directas), Bus de servicios / ESB (middleware que enruta y transforma mensajes entre sistemas) y Publicación/Suscripción (un emisor publica eventos y varios receptores se suscriben sin conocerse entre sí).',
+    title: 'Formas de conectar sistemas',
+    body: 'Hay varias maneras de integrar sistemas: conectarlos de a uno directamente (simple, pero difícil de manejar si son muchos), usar un punto central que los conecta a todos, usar un "bus" que reparte los mensajes entre todos (ESB), o hacer que un sistema avise algo y otros lo reciban sin conocerse entre sí (publicación y suscripción).',
   },
   {
     id: 'n4',
     title: 'Middleware y ESB',
-    body: 'El middleware es software intermedio que conecta sistemas distintos, ocupándose de tareas como enrutamiento, transformación de formatos y manejo de errores. Un Enterprise Service Bus (ESB) es un tipo de middleware pensado para integrar muchos sistemas empresariales: recibe mensajes, los transforma al formato que necesita el receptor y los entrega, actuando como intermediario central.',
+    body: 'El middleware es un programa intermedio que ayuda a que dos sistemas distintos se entiendan entre sí. Un ESB es un tipo de middleware pensado para conectar muchos sistemas de una empresa: recibe un mensaje, lo traduce al formato que el otro sistema necesita, y se lo entrega.',
   },
   {
     id: 'n5',
-    title: 'Mensajería asíncrona',
-    body: 'En vez de que un sistema llame directamente a otro y espere respuesta, se usa una cola de mensajes: el emisor deja el mensaje en la cola y sigue con lo suyo; el receptor lo procesa cuando puede. Esto desacopla a los sistemas en el tiempo (no necesitan estar disponibles al mismo momento) y ayuda a absorber picos de carga.',
+    title: 'Mensajes que no necesitan respuesta inmediata',
+    body: 'En vez de que un sistema llame a otro y se quede esperando la respuesta ahí mismo, puede dejar el mensaje en una fila (una "cola") y seguir con lo suyo. El otro sistema lee ese mensaje cuando puede. Así, los dos sistemas no necesitan estar disponibles exactamente al mismo tiempo.',
   },
   {
     id: 'n6',
-    title: 'REST vs. SOAP',
-    body: 'REST es un estilo de arquitectura que usa operaciones HTTP estándar (GET, POST, PUT, DELETE) sobre recursos identificados por URL, típicamente con JSON. Es liviano y muy usado en APIs web actuales. SOAP es un protocolo más formal basado en XML, con contratos estrictos (WSDL) y más overhead, común en sistemas empresariales o financieros donde se prioriza la validación estricta y la seguridad a nivel de mensaje.',
+    title: 'REST y SOAP: dos formas de comunicarse',
+    body: 'REST es una forma simple de conectar sistemas por internet, usando las mismas acciones básicas que usa un navegador (pedir, crear, cambiar, borrar), casi siempre con datos en un formato llamado JSON. SOAP es más formal y estricto, usa un formato llamado XML, y se usa mucho en sistemas donde el control y la seguridad son muy importantes, como en bancos.',
   },
   {
     id: 'n7',
-    title: 'Integración de datos: ETL, replicación y virtualización',
-    body: 'ETL (Extracción, Transformación y Carga) mueve datos de un origen a un destino, transformándolos en el camino, típicamente en procesos por lotes. La replicación mantiene copias sincronizadas de los mismos datos en distintos sistemas. La virtualización de datos, en cambio, no mueve ni copia nada: crea una capa que consulta los datos en su origen en tiempo real, dando una vista unificada sin duplicar información.',
+    title: 'Formas de compartir datos: ETL, replicación y virtualización',
+    body: 'ETL significa sacar datos de un lugar, transformarlos, y llevarlos a otro lugar, normalmente en bloques (por ejemplo, una vez por noche). La replicación mantiene copias de los mismos datos actualizadas en varios sistemas al mismo tiempo. La virtualización de datos no copia nada: crea una especie de "ventana" que muestra los datos originales en el momento, sin duplicarlos en ningún lado.',
   },
   {
     id: 'n8',
-    title: 'Orquestación vs. coreografía',
-    body: 'En la orquestación, un componente central (el "orquestador") dirige el flujo: decide qué servicio se llama, cuándo y con qué datos. En la coreografía no hay un director central: cada servicio sabe a qué eventos reaccionar y publica sus propios eventos cuando termina su parte, generando el flujo de forma descentralizada.',
+    title: 'Orquestación y coreografía',
+    body: 'En la orquestación hay un "jefe" (un sistema central) que decide qué pasa primero, qué sistema se usa y en qué momento. En la coreografía no hay jefe: cada sistema sabe qué hacer cuando ve cierto aviso, y así el proceso avanza solo, sin que nadie lo dirija desde el centro.',
   },
 ];
 
 const GLOSSARY = [
-  { term: 'Acoplamiento', def: 'Grado de dependencia entre dos sistemas. Cuanto más "fuerte", más frágil es la integración ante cambios.' },
-  { term: 'API', def: 'Interfaz de Programación de Aplicaciones: conjunto de reglas que permite que un sistema use funciones o datos de otro sin conocer su implementación interna.' },
-  { term: 'Broker de mensajes', def: 'Software intermediario (ej. RabbitMQ, Kafka) que recibe, guarda y entrega mensajes entre sistemas, habilitando la mensajería asíncrona.' },
-  { term: 'Coreografía', def: 'Forma de coordinar servicios donde cada uno reacciona a eventos por su cuenta, sin un controlador central.' },
-  { term: 'Endpoint', def: 'Dirección (URL) donde un sistema expone una funcionalidad o recurso para que otros lo consuman.' },
-  { term: 'ESB (Enterprise Service Bus)', def: 'Middleware que centraliza el enrutamiento, transformación y mediación de mensajes entre múltiples sistemas.' },
-  { term: 'ETL', def: 'Extracción, Transformación y Carga: proceso por lotes para mover datos entre sistemas, adaptando su formato en el camino.' },
-  { term: 'Idempotencia', def: 'Propiedad de una operación que produce el mismo resultado sin importar cuántas veces se ejecute (importante si un mensaje se reenvía por error).' },
-  { term: 'Latencia', def: 'Tiempo que tarda un mensaje o solicitud en llegar de un punto a otro dentro de una integración.' },
-  { term: 'Mensajería asíncrona', def: 'Comunicación donde el emisor no espera respuesta inmediata: deja el mensaje en una cola y el receptor lo procesa cuando puede.' },
-  { term: 'Middleware', def: 'Software intermedio que conecta y coordina sistemas distintos, ocultando su complejidad interna.' },
-  { term: 'Orquestación', def: 'Forma de coordinar servicios donde un componente central decide el orden y las condiciones de cada llamada.' },
-  { term: 'Payload', def: 'El contenido "útil" de un mensaje, sin contar cabeceras ni metadatos de control.' },
-  { term: 'Pub/Sub (Publicación/Suscripción)', def: 'Patrón donde un emisor publica eventos y varios receptores suscritos los reciben, sin que emisor y receptores se conozcan entre sí.' },
-  { term: 'REST', def: 'Estilo de arquitectura para APIs web basado en operaciones HTTP estándar sobre recursos identificados por URL.' },
-  { term: 'SOAP', def: 'Protocolo de mensajería basado en XML, con contratos formales (WSDL), usado en integraciones empresariales que requieren validación estricta.' },
-  { term: 'Webhook', def: 'Mecanismo donde un sistema notifica a otro automáticamente mediante una llamada HTTP cuando ocurre un evento, en vez de que el otro pregunte periódicamente.' },
+  { term: 'Acoplamiento', def: 'Cuánto depende un sistema de otro. Si dependen mucho entre sí, un cambio chico puede romper todo.' },
+  { term: 'API', def: 'Una forma en que un programa deja que otro use sus funciones o datos, sin tener que mostrarle cómo funciona por dentro.' },
+  { term: 'Broker de mensajes', def: 'Un programa que recibe mensajes de un sistema y se encarga de entregárselos a otro, guardándolos mientras tanto si hace falta.' },
+  { term: 'Coreografía', def: 'Forma de organizar sistemas donde cada uno reacciona solo ante ciertos avisos, sin que nadie los dirija desde un punto central.' },
+  { term: 'Endpoint', def: 'La dirección donde un sistema pone algo a disposición para que otros lo usen.' },
+  { term: 'ESB (Enterprise Service Bus)', def: 'Un programa central que ayuda a que muchos sistemas se comuniquen entre sí, ordenando y traduciendo los mensajes que se envían.' },
+  { term: 'ETL', def: 'Sacar datos de un lugar, cambiarlos de formato, y guardarlos en otro lugar.' },
+  { term: 'Idempotencia', def: 'Que una acción dé el mismo resultado aunque se repita varias veces por error.' },
+  { term: 'Latencia', def: 'El tiempo que tarda un mensaje en llegar de un lugar a otro.' },
+  { term: 'Mensajería asíncrona', def: 'Enviar un mensaje sin quedarse esperando la respuesta al instante: el otro sistema lo lee cuando puede.' },
+  { term: 'Middleware', def: 'Un programa que ayuda a que dos sistemas distintos se entiendan entre sí.' },
+  { term: 'Orquestación', def: 'Forma de organizar sistemas donde uno central decide el orden en que pasan las cosas.' },
+  { term: 'Payload', def: 'La parte importante de un mensaje, sin contar los datos extra que lo acompañan.' },
+  { term: 'Pub/Sub (Publicación/Suscripción)', def: 'Un sistema avisa que pasó algo, y todos los que están "anotados" para recibir ese aviso lo reciben, sin conocerse entre sí.' },
+  { term: 'REST', def: 'Una forma simple de comunicar sistemas por internet, usando acciones básicas como pedir, crear, cambiar o borrar datos.' },
+  { term: 'SOAP', def: 'Una forma más formal y estricta de comunicar sistemas, usando un formato de mensajes llamado XML.' },
+  { term: 'Webhook', def: 'Cuando un sistema le avisa automáticamente a otro apenas pasa algo, en vez de que el otro tenga que estar preguntando todo el tiempo.' },
 ];
 
 // Casos de estudio para debatir en clase (sin respuesta única correcta;
-// pensados para que el grupo discuta y proponga una solución fundamentada).
+// pensados para que el grupo discuta y proponga una solución).
 const CASES = [
   {
     id: 'c1',
     title: 'El sistema viejo que nadie quiere tocar',
-    scenario: 'Una empresa de logística tiene un sistema de facturación de hace 15 años que funciona bien, pero solo expone datos a través de archivos planos que genera cada noche. Quieren integrarlo con una nueva app móvil que necesita ver el estado de las facturas en tiempo real.',
+    scenario: 'Una empresa de logística usa desde hace 15 años un sistema de facturación que funciona bien, pero solo entrega los datos en archivos que genera una vez por noche. Ahora quieren mostrar el estado de las facturas en una app, al instante.',
     questions: [
-      '¿Convendría modificar el sistema viejo, envolverlo con una API intermedia, o reemplazarlo directamente? ¿Qué factores pesan en esa decisión?',
-      '¿Qué patrón de integración usarían para pasar de "archivo por lote" a "tiempo real" sin reescribir todo el sistema legado?',
-      '¿Qué riesgos tiene cada opción a corto y a largo plazo?',
+      '¿Convendría cambiar el sistema viejo, agregarle algo por afuera que lo conecte mejor, o reemplazarlo directamente por uno nuevo? ¿Qué tendrían en cuenta para decidir?',
+      '¿Cómo harían para pasar de "un archivo por noche" a "información al instante" sin reescribir todo el sistema viejo?',
+      '¿Qué riesgos tiene cada camino, a corto y a largo plazo?',
     ],
   },
   {
     id: 'c2',
     title: 'Pico de pedidos en el Hot Sale',
-    scenario: 'Un e-commerce integra su sistema de ventas con el de stock y el de envíos mediante llamadas directas (point-to-point) entre APIs. Durante el Hot Sale, el sistema de envíos se cae por la cantidad de pedidos y empieza a rechazar solicitudes, lo que también frena las ventas.',
+    scenario: 'Una tienda online conecta sus sistemas de ventas, stock y envíos llamándose directamente entre sí. En una fecha con muchas ventas, el sistema de envíos se satura y empieza a fallar, y esa falla también frena las ventas.',
     questions: [
-      '¿Cómo cambiaría la arquitectura para que una caída del sistema de envíos no afecte a las ventas?',
-      '¿En qué ayudaría (o no) introducir una cola de mensajes en este escenario?',
-      '¿Qué trade-offs implica pasar de comunicación síncrona a asíncrona para el cliente que espera la confirmación de su compra?',
+      '¿Cómo cambiarían la forma en que se conectan los sistemas para que, si uno falla, no se caigan los demás?',
+      '¿En qué ayudaría poner una "fila de espera" (una cola de mensajes) entre las ventas y los envíos?',
+      '¿Qué se pierde y qué se gana si el cliente ya no recibe la confirmación de su compra al instante?',
     ],
   },
   {
     id: 'c3',
     title: '¿ESB o microservicios?',
-    scenario: 'Una empresa mediana tiene 6 sistemas conectados mediante un ESB central. El equipo de desarrollo se quejó de que cada cambio chico requiere coordinar con el equipo que administra el ESB, lo que hace todo más lento. Alguien propone migrar a una arquitectura de microservicios con comunicación por eventos.',
+    scenario: 'Una empresa conecta 6 sistemas usando un programa central (ESB). Los programadores se quejan de que cualquier cambio chico tarda mucho, porque siempre depende de ese equipo central. Alguien propone dejar de usar el ESB y que los sistemas se avisen entre sí con eventos.',
     questions: [
-      '¿Qué ventajas y desventajas tiene centralizar la integración en un ESB frente a descentralizarla en eventos entre microservicios?',
-      '¿Es una decisión "todo o nada", o se puede convivir con ambos modelos durante una transición?',
-      '¿Qué pasaría con la trazabilidad de un proceso de negocio si ya no hay un componente central que lo orqueste?',
+      '¿Qué se gana y qué se pierde al dejar de tener un punto central que organice todo?',
+      '¿Conviene cambiar todo de golpe, o se puede ir migrando de a poco?',
+      'Si ya no hay nadie "mirando todo desde el centro", ¿cómo se darían cuenta de qué pasó si algo sale mal?',
     ],
   },
   {
     id: 'c4',
     title: 'Los datos no coinciden entre sistemas',
-    scenario: 'Una clínica tiene los datos de pacientes replicados entre el sistema de turnos y el de historias clínicas. Un día detectan que el teléfono de un paciente es distinto en cada sistema porque se actualizó solo en uno de los dos.',
+    scenario: 'Una clínica guarda los datos de sus pacientes en dos sistemas distintos: uno de turnos y otro de historias clínicas. Un día se dan cuenta de que el teléfono de un paciente es distinto en cada sistema, porque solo lo actualizaron en uno de los dos.',
     questions: [
-      '¿Qué estrategia de integración de datos evitaría este problema: ETL periódico, replicación en tiempo real, o virtualización de datos? ¿Por qué?',
-      '¿Cuál sistema debería ser la "fuente de verdad" para el dato del teléfono, y cómo se refleja esa decisión en la arquitectura?',
-      '¿Cómo detectarían este tipo de inconsistencias antes de que las note un paciente?',
+      '¿Qué forma de mantener los datos iguales entre sistemas hubiera evitado este problema?',
+      '¿Cuál de los dos sistemas debería ser el que tiene la información correcta, y por qué?',
+      '¿Cómo se darían cuenta de este tipo de error antes de que lo note un paciente?',
     ],
   },
   {
     id: 'c5',
     title: 'REST, SOAP y un banco',
-    scenario: 'Un banco necesita exponer una funcionalidad para que una fintech externa pueda iniciar transferencias desde su propia app. El equipo de seguridad pide validación estricta de cada mensaje y un contrato formal; el equipo de desarrollo de la fintech preferiría algo liviano y rápido de integrar.',
+    scenario: 'Un banco quiere que una empresa externa (una fintech) pueda hacer transferencias desde su propia app. El equipo de seguridad del banco pide reglas muy estrictas para cada mensaje. La fintech prefiere algo simple y rápido de conectar.',
     questions: [
-      '¿Qué estilo (REST o SOAP) recomendarían para este caso, considerando ambas prioridades?',
-      '¿Es posible cumplir los requisitos de seguridad del banco sin sacrificar toda la simplicidad que pide la fintech? ¿Cómo?',
-      '¿Qué otros mecanismos (además del protocolo elegido) ayudarían a dar seguridad a esta integración?',
+      '¿Qué forma de comunicación elegirían, pensando en las dos necesidades?',
+      '¿Se puede tener seguridad fuerte sin perder toda la simplicidad que pide la fintech? ¿Cómo?',
+      '¿Qué otras cosas, además de la forma de comunicarse, ayudarían a que esta conexión sea segura?',
     ],
   },
   {
     id: 'c6',
-    title: 'Un webhook que nunca llega',
-    scenario: 'Una plataforma de pagos le avisa a una tienda online mediante un webhook cuando un pago se aprueba. Un día, por un problema de red, el webhook nunca llega y la tienda nunca marca el pedido como pagado, aunque el cliente sí pagó.',
+    title: 'Un aviso automático que nunca llega',
+    scenario: 'Una plataforma de pagos le avisa a una tienda, con un mensaje automático (un webhook), cuando se aprueba un pago. Un día, por un problema de red, ese mensaje nunca llega, y la tienda nunca se entera de que el cliente ya pagó.',
     questions: [
-      '¿Qué mecanismos de resiliencia agregarían para que este tipo de fallas no dejen pedidos "colgados"?',
-      '¿Por qué es importante que la operación de marcar un pedido como pagado sea idempotente en este escenario?',
-      '¿Confiarían solo en el webhook, o combinarían ese mecanismo con alguna otra estrategia (por ejemplo, consultar el estado periódicamente)?',
+      '¿Qué harían para que este tipo de fallas no dejen pedidos sin resolver?',
+      '¿Por qué conviene que la acción de marcar "pedido pagado" dé el mismo resultado aunque se haga dos veces por error?',
+      '¿Confiarían solo en ese aviso automático, o sumarían otra forma de revisar si el pago llegó?',
     ],
   },
 ];
 
+// Cuestionario de opción única
 const QUESTIONS = [
   {
     id: 'q1',
-    text: '¿Qué se entiende por "integración de sistemas"?',
+    text: '¿Qué significa "integrar sistemas"?',
     options: [
       'Instalar el mismo sistema operativo en todos los equipos',
-      'Hacer que aplicaciones o sistemas independientes intercambien datos y funcionen como un todo coherente',
+      'Hacer que programas o sistemas distintos se conecten y compartan información entre sí',
       'Migrar toda la infraestructura a la nube',
       'Comprar todo el software a un único proveedor',
     ],
@@ -146,7 +148,7 @@ const QUESTIONS = [
   },
   {
     id: 'q2',
-    text: '¿Cuál de estos es un ejemplo típico de middleware de integración?',
+    text: '¿Cuál de estas opciones es un ejemplo de middleware para conectar sistemas?',
     options: [
       'Un Enterprise Service Bus (ESB)',
       'Un editor de texto',
@@ -157,21 +159,21 @@ const QUESTIONS = [
   },
   {
     id: 'q3',
-    text: 'En integración de sistemas, ¿qué significa "acoplamiento débil" (loose coupling)?',
+    text: '¿Qué quiere decir que dos sistemas tengan "acoplamiento débil"?',
     options: [
-      'Los sistemas comparten la misma base de datos directamente',
-      'Los sistemas dependen lo mínimo posible entre sí, comunicándose por interfaces bien definidas',
-      'Los sistemas se ejecutan en el mismo servidor físico',
-      'Los sistemas no pueden comunicarse entre sí',
+      'Que comparten la misma base de datos directamente',
+      'Que dependen lo menos posible entre sí, y se comunican mediante reglas claras',
+      'Que se ejecutan en el mismo servidor físico',
+      'Que no pueden comunicarse entre sí',
     ],
     correctIndex: 1,
   },
   {
     id: 'q4',
-    text: '¿Qué patrón de integración usa una cola de mensajes para desacoplar emisor y receptor en el tiempo?',
+    text: '¿Qué forma de conectar sistemas usa una fila de mensajes, para que el que envía y el que recibe no tengan que estar disponibles al mismo tiempo?',
     options: [
-      'Point-to-Point directo por sockets',
-      'Message Queue (mensajería asíncrona)',
+      'Conexión directa por sockets',
+      'Mensajería asíncrona (cola de mensajes)',
       'Acceso compartido a archivos planos',
       'Copia manual de datos',
     ],
@@ -179,18 +181,18 @@ const QUESTIONS = [
   },
   {
     id: 'q5',
-    text: '¿Cuál es la diferencia principal entre orquestación y coreografía en integración de procesos?',
+    text: '¿Cuál es la diferencia principal entre orquestación y coreografía?',
     options: [
-      'No hay ninguna diferencia, son sinónimos',
+      'No hay ninguna diferencia, son lo mismo',
       'La orquestación usa una base de datos y la coreografía no',
-      'En la orquestación un componente central dirige el flujo; en la coreografía cada servicio reacciona a eventos sin un director central',
-      'La coreografía solo aplica a integraciones por FTP',
+      'En la orquestación, un sistema central dirige todo; en la coreografía, cada sistema reacciona solo, sin un director central',
+      'La coreografía solo se usa con archivos por FTP',
     ],
     correctIndex: 2,
   },
   {
     id: 'q6',
-    text: '¿Qué protocolo/estilo se basa en operaciones HTTP (GET, POST, PUT, DELETE) sobre recursos identificados por URL?',
+    text: '¿Qué forma de comunicación usa las acciones básicas de internet (pedir, crear, cambiar, borrar) sobre una dirección web?',
     options: ['SOAP', 'REST', 'FTP', 'SNMP'],
     correctIndex: 1,
   },
@@ -198,18 +200,18 @@ const QUESTIONS = [
     id: 'q7',
     text: '¿Qué es un ESB (Enterprise Service Bus)?',
     options: [
-      'Un protocolo de cifrado de datos',
-      'Una infraestructura de middleware que enruta, transforma y media mensajes entre múltiples sistemas',
-      'Un tipo de base de datos relacional',
-      'Un lenguaje de programación para integraciones',
+      'Un método para cifrar datos',
+      'Un programa central que ordena, traduce y entrega mensajes entre varios sistemas',
+      'Un tipo de base de datos',
+      'Un lenguaje de programación',
     ],
     correctIndex: 1,
   },
   {
     id: 'q8',
-    text: '¿Cuál de las siguientes NO es una estrategia típica de integración de datos?',
+    text: '¿Cuál de las siguientes NO es una forma de compartir datos entre sistemas?',
     options: [
-      'ETL (Extracción, Transformación y Carga)',
+      'ETL (sacar, transformar y cargar datos)',
       'Replicación de bases de datos',
       'Virtualización de datos',
       'Reinstalar el sistema operativo del servidor',
@@ -218,18 +220,18 @@ const QUESTIONS = [
   },
   {
     id: 'q9',
-    text: '¿Qué ventaja principal ofrece usar una API como mecanismo de integración frente al acceso directo a la base de datos de otro sistema?',
+    text: '¿Qué ventaja tiene usar una API en vez de entrar directamente a la base de datos de otro sistema?',
     options: [
-      'Ninguna, son equivalentes en riesgo y mantenimiento',
-      'Expone una interfaz estable y controlada, sin acoplar los sistemas a la estructura interna de datos del otro',
-      'Es siempre más rápida en todos los casos',
-      'Elimina la necesidad de autenticación',
+      'Ninguna, son igual de riesgosas',
+      'La API ofrece una forma estable y controlada de acceder, sin depender de cómo el otro sistema guarda sus datos por dentro',
+      'Siempre es más rápida en todos los casos',
+      'Elimina la necesidad de pedir permiso para usarla',
     ],
     correctIndex: 1,
   },
   {
     id: 'q10',
-    text: '¿Qué formato de datos es el más común para el intercambio de mensajes en APIs REST modernas?',
+    text: '¿Qué formato de datos se usa más para enviar información en las APIs modernas?',
     options: ['JSON', 'COBOL copybook', 'EBCDIC', 'Postscript'],
     correctIndex: 0,
   },
