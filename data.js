@@ -51,11 +51,16 @@ const NOTES = [
 const GLOSSARY = [
   { term: 'Acoplamiento', def: 'Cuánto depende un sistema de otro. Si dependen mucho entre sí, un cambio chico puede romper todo.' },
   { term: 'API', def: 'Una forma en que un programa deja que otro use sus funciones o datos, sin tener que mostrarle cómo funciona por dentro.' },
+  { term: 'Back-end', def: 'La parte de un sistema que no se ve: se encarga de la lógica, los datos y las reglas de negocio, y responde a lo que le pide el front-end.' },
   { term: 'Broker de mensajes', def: 'Un programa que recibe mensajes de un sistema y se encarga de entregárselos a otro, guardándolos mientras tanto si hace falta.' },
   { term: 'Coreografía', def: 'Forma de organizar sistemas donde cada uno reacciona solo ante ciertos avisos, sin que nadie los dirija desde un punto central.' },
+  { term: 'Diseño UI', def: 'Diseño de Interfaz de Usuario: cómo se ven y se acomodan los elementos de una pantalla (colores, botones, textos), para que sea clara y agradable de usar.' },
+  { term: 'Diseño UX', def: 'Diseño de Experiencia de Usuario: cómo se siente usar una aplicación de principio a fin, pensando en que sea fácil de entender y resuelva lo que la persona necesita.' },
   { term: 'Endpoint', def: 'La dirección donde un sistema pone algo a disposición para que otros lo usen.' },
   { term: 'ESB (Enterprise Service Bus)', def: 'Un programa central que ayuda a que muchos sistemas se comuniquen entre sí, ordenando y traduciendo los mensajes que se envían.' },
   { term: 'ETL', def: 'Sacar datos de un lugar, cambiarlos de formato, y guardarlos en otro lugar.' },
+  { term: 'Front-end', def: 'La parte de una aplicación con la que interactúa directamente quien la usa: lo que ve y toca en la pantalla (botones, textos, imágenes).' },
+  { term: 'Full stack', def: 'Un desarrollo (o una persona) que abarca tanto el front-end como el back-end de una aplicación, es decir, todas las capas necesarias para que funcione de punta a punta.' },
   { term: 'Idempotencia', def: 'Que una acción dé el mismo resultado aunque se repita varias veces por error.' },
   { term: 'Latencia', def: 'El tiempo que tarda un mensaje en llegar de un lugar a otro.' },
   { term: 'Mensajería asíncrona', def: 'Enviar un mensaje sin quedarse esperando la respuesta al instante: el otro sistema lo lee cuando puede.' },
@@ -80,6 +85,7 @@ const CASES = [
       '¿Cómo harían para pasar de "un archivo por noche" a "información al instante" sin reescribir todo el sistema viejo?',
       '¿Qué riesgos tiene cada camino, a corto y a largo plazo?',
     ],
+    answer: 'Lo más común (y menos riesgoso) es no tocar el sistema viejo por dentro, sino envolverlo con una capa intermedia: un pequeño servicio que lea sus datos y los exponga como una API moderna hacia la app. Para acercarse a "tiempo real" sin cambiar el sistema legado, se puede reducir la frecuencia con la que se generan los archivos, agregar una notificación (webhook) cuando hay novedades, o hacer que la capa intermedia consulte cada poco tiempo (polling) y avise a la app. Reemplazar todo de una vez es más prolijo a largo plazo, pero mucho más caro y riesgoso a corto plazo: por eso muchas empresas migran de a poco (patrón "strangler fig"), reemplazando partes chicas mientras el sistema viejo sigue funcionando.',
   },
   {
     id: 'c2',
@@ -90,6 +96,7 @@ const CASES = [
       '¿En qué ayudaría poner una "fila de espera" (una cola de mensajes) entre las ventas y los envíos?',
       '¿Qué se pierde y qué se gana si el cliente ya no recibe la confirmación de su compra al instante?',
     ],
+    answer: 'El problema central es que las ventas dependen de que el sistema de envíos esté disponible en el momento exacto de la compra. Si en vez de llamarse directamente, el sistema de ventas deja el pedido en una cola de mensajes, la venta se puede confirmar enseguida (el pago y el stock ya se validaron) y el sistema de envíos procesa esa cola a su propio ritmo, incluso si está saturado o momentáneamente caído. Se pierde la confirmación de envío inmediata (el cliente sabe que compró, pero no en qué momento exacto se despacha), pero se gana muchísima resistencia a picos de tráfico: ninguna caída de envíos frena las ventas. Es un buen ejemplo de por qué conviene desacoplar procesos que no necesitan pasar en el mismo instante.',
   },
   {
     id: 'c3',
@@ -100,6 +107,7 @@ const CASES = [
       '¿Conviene cambiar todo de golpe, o se puede ir migrando de a poco?',
       'Si ya no hay nadie "mirando todo desde el centro", ¿cómo se darían cuenta de qué pasó si algo sale mal?',
     ],
+    answer: 'Pasar a eventos le da a cada equipo más independencia para cambiar su propio sistema sin pedirle permiso a un equipo central, lo cual acelera el desarrollo. Lo que se pierde es esa visión centralizada: es más difícil saber "qué pasó" con un proceso que atraviesa varios sistemas. La migración casi nunca conviene hacerla de golpe: lo habitual es mover primero los flujos menos críticos a eventos, dejar el ESB para lo más delicado, y migrar el resto con el tiempo. Para no perder visibilidad, hace falta invertir en herramientas de trazabilidad (rastrear un pedido a través de todos los eventos que dispara) y en buenos logs, porque ahora esa responsabilidad queda repartida entre todos los sistemas en vez de estar en un solo lugar.',
   },
   {
     id: 'c4',
@@ -110,6 +118,7 @@ const CASES = [
       '¿Cuál de los dos sistemas debería ser el que tiene la información correcta, y por qué?',
       '¿Cómo se darían cuenta de este tipo de error antes de que lo note un paciente?',
     ],
+    answer: 'Lo primero es definir cuál de los dos sistemas es la "fuente de verdad" para los datos personales del paciente (por ejemplo, el sistema de turnos, si es donde se cargan los datos de contacto). A partir de ahí, cualquier cambio en ese sistema debería avisarle automáticamente al otro (por ejemplo, con un evento o un webhook), en vez de que cada uno mantenga su propia copia sin comunicarse. Como ninguna sincronización es 100% infalible, conviene además tener un proceso periódico (por ejemplo, una vez por semana) que compare los datos entre ambos sistemas y avise si encuentra diferencias, así el error se detecta antes de que lo note un paciente.',
   },
   {
     id: 'c5',
@@ -120,6 +129,7 @@ const CASES = [
       '¿Se puede tener seguridad fuerte sin perder toda la simplicidad que pide la fintech? ¿Cómo?',
       '¿Qué otras cosas, además de la forma de comunicarse, ayudarían a que esta conexión sea segura?',
     ],
+    answer: 'No hace falta elegir SOAP para tener seguridad: hoy en día la mayoría de los bancos exponen APIs REST con capas de seguridad adicionales, en vez de volver a algo más pesado como SOAP. Por ejemplo: autenticación fuerte con OAuth2, certificados para verificar la identidad de la fintech (mTLS), firmar cada mensaje para asegurarse de que no fue modificado en el camino, y límites de uso (rate limiting) para evitar abusos. Esto le da al banco el control y la seguridad que necesita, sin obligar a la fintech a lidiar con la complejidad de SOAP. La seguridad de una integración no depende solo del protocolo elegido, sino de todas estas capas adicionales que se le agregan.',
   },
   {
     id: 'c6',
@@ -130,6 +140,7 @@ const CASES = [
       '¿Por qué conviene que la acción de marcar "pedido pagado" dé el mismo resultado aunque se haga dos veces por error?',
       '¿Confiarían solo en ese aviso automático, o sumarían otra forma de revisar si el pago llegó?',
     ],
+    answer: 'Ningún mecanismo de aviso automático es 100% confiable, así que conviene no depender solo de él. Una buena solución combina el webhook (rápido, para la mayoría de los casos) con un proceso de respaldo que, cada cierto tiempo, le pregunte directamente a la plataforma de pagos por el estado de los pedidos que quedaron "pendientes" más de lo esperado. Además, la operación de marcar un pedido como pagado tiene que ser idempotente: si el webhook llega dos veces (algo común cuando hay reintentos automáticos), procesar el mismo pago dos veces no debería duplicar nada ni causar problemas. Esta combinación de "aviso automático + verificación de respaldo + operación segura ante repeticiones" es un patrón muy común en integraciones con pagos.',
   },
 ];
 

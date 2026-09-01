@@ -5,10 +5,12 @@ funcional offline. 100% estática (sin back-end), pensada para GitHub Pages.
 
 ## Secciones (MVP)
 
-- **Apuntes**: resumen en acordeón de los temas clave de la materia.
-- **Cuestionario**: 10 preguntas de opción única con calificación automática.
-- **Casos**: situaciones de integración reales para debatir en clase, con preguntas guía (sin respuesta única correcta).
-- **Glosario**: términos técnicos con buscador en tiempo real.
+- **Apuntes**: resumen en acordeón de los temas clave, con botón para expandir/colapsar todo.
+- **Cuestionario**: 10 preguntas de opción única. Al terminar, muestra qué preguntas fallaste y cuál era la respuesta correcta. Guarda tu mejor puntaje en el dispositivo.
+- **Casos**: situaciones de integración reales para debatir en clase, con preguntas guía y una respuesta sugerida oculta (para comparar después de debatir), más botón de expandir/colapsar todo.
+- **Glosario**: términos técnicos con buscador en tiempo real que resalta la coincidencia.
+
+La app recuerda la última pestaña que visitaste, así que al volver a abrirla no arranca siempre en "Apuntes".
 
 ## Estructura
 
@@ -49,9 +51,16 @@ Todo el contenido vive en `data.js`, en tres arreglos:
 - `NOTES` → apuntes (título + texto)
 - `GLOSSARY` → términos + definición
 - `QUESTIONS` → preguntas del cuestionario (con `correctIndex`)
-- `CASES` → casos de debate (`title`, `scenario`, `questions`)
+- `CASES` → casos de debate (`title`, `scenario`, `questions`, `answer`)
 
 No hace falta tocar `app.js` ni `index.html` para agregar o editar contenido.
+
+## Datos guardados en el dispositivo
+
+La app usa `localStorage` del navegador (no un servidor) para recordar la
+última pestaña que visitaste y tu mejor puntaje en el cuestionario. Esto es
+por dispositivo/navegador: cada alumno ve solo lo suyo, sin compartirse con
+nadie ni con ningún servidor.
 
 ## Qué falta para la versión completa
 

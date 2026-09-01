@@ -16,6 +16,28 @@
   };
 
   // ---------------------------------------------------------------------
+  // Almacenamiento local (mejor puntaje + última pestaña visitada).
+  // Todo envuelto en try/catch por si el navegador bloquea localStorage.
+  // ---------------------------------------------------------------------
+  const STORAGE_KEYS = { lastTab: 'is-app:last-tab', bestScore: 'is-app:best-score' };
+
+  function storageGet(key) {
+    try {
+      return localStorage.getItem(key);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function storageSet(key, value) {
+    try {
+      localStorage.setItem(key, value);
+    } catch (e) {
+      /* silencioso: la app funciona igual sin persistencia */
+    }
+  }
+
+  // ---------------------------------------------------------------------
   // Router simple entre pestañas
   // ---------------------------------------------------------------------
   function setActiveTab(name) {
@@ -25,24 +47,68 @@
     });
   }
 
-  function navigate(name) {
+  function navigate(name, remember = true) {
     setActiveTab(name);
     viewEl.innerHTML = '';
     viewEl.scrollTop = 0;
+    if (remember) storageSet(STORAGE_KEYS.lastTab, name);
+
     if (name === 'notes') renderNotes();
     else if (name === 'quiz') renderQuizIntro();
     else if (name === 'glossary') renderGlossary();
     else if (name === 'cases') renderCases();
+
+    const heading = viewEl.querySelector('h1');
+    if (heading) {
+      heading.setAttribute('tabindex', '-1');
+      heading.focus({ preventScroll: true });
+    }
   }
 
   tabs.forEach((t) => t.addEventListener('click', () => navigate(t.dataset.view)));
+
+  // ---------------------------------------------------------------------
+  // Utilidad: resaltar coincidencias de búsqueda dentro de un texto
+  // ---------------------------------------------------------------------
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function highlight(text, query) {
+    if (!query) return escapeHtml(text);
+    const safeText = escapeHtml(text);
+    const safeQuery = escapeHtml(query).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return safeText.replace(new RegExp(`(${safeQuery})`, 'ig'), '<mark>$1</mark>');
+  }
+
+  // ---------------------------------------------------------------------
+  // Acordeones con soporte de "expandir/colapsar todo"
+  // ---------------------------------------------------------------------
+  function wireToggleAll(container, button) {
+    function setAll(expand) {
+      container.querySelectorAll('.accordion__head').forEach((head) => {
+        head.setAttribute('aria-expanded', String(expand));
+        head.nextElementSibling.hidden = !expand;
+      });
+      button.textContent = expand ? 'Colapsar todo' : 'Expandir todo';
+      button.dataset.expanded = String(expand);
+    }
+
+    button.dataset.expanded = 'false';
+    button.addEventListener('click', () => {
+      setAll(button.dataset.expanded !== 'true');
+    });
+  }
 
   // ---------------------------------------------------------------------
   // Apuntes (acordeón)
   // ---------------------------------------------------------------------
   function renderNotes() {
     const node = templates.notes.content.cloneNode(true);
-    const list = node.getElementById ? node.getElementById('notes-list') : node.querySelector('#notes-list');
+    const list = node.querySelector('#notes-list');
+    const toggleBtn = node.querySelector('.btn-toggle-all');
 
     NOTES.forEach((note) => {
       const item = templates.noteItem.content.cloneNode(true);
@@ -64,6 +130,7 @@
     });
 
     viewEl.appendChild(node);
+    wireToggleAll(document.getElementById('notes-list'), document.querySelector('#view .btn-toggle-all'));
   }
 
   // ---------------------------------------------------------------------
@@ -80,6 +147,9 @@
       const body = item.querySelector('.accordion__body');
       const scenario = item.querySelector('.case__scenario');
       const questionsList = item.querySelector('.case__questions');
+      const answerToggle = item.querySelector('.case__answer-toggle');
+      const answerBox = item.querySelector('.case__answer');
+      const answerText = item.querySelector('.case__answer-text');
 
       title.textContent = c.title;
       scenario.textContent = c.scenario;
@@ -88,6 +158,7 @@
         li.textContent = q;
         questionsList.appendChild(li);
       });
+      answerText.textContent = c.answer;
 
       head.addEventListener('click', () => {
         const expanded = head.getAttribute('aria-expanded') === 'true';
@@ -95,14 +166,22 @@
         body.hidden = expanded;
       });
 
+      answerToggle.addEventListener('click', () => {
+        const shown = answerToggle.getAttribute('aria-expanded') === 'true';
+        answerToggle.setAttribute('aria-expanded', String(!shown));
+        answerBox.hidden = shown;
+        answerToggle.textContent = shown ? 'Ver respuesta sugerida' : 'Ocultar respuesta sugerida';
+      });
+
       list.appendChild(item);
     });
 
     viewEl.appendChild(node);
+    wireToggleAll(document.getElementById('cases-list'), document.querySelector('#view .btn-toggle-all'));
   }
 
   // ---------------------------------------------------------------------
-  // Glosario (con búsqueda)
+  // Glosario (con búsqueda y resaltado de coincidencias)
   // ---------------------------------------------------------------------
   function renderGlossary() {
     const node = templates.glossary.content.cloneNode(true);
@@ -113,9 +192,10 @@
 
     function paint(filter) {
       list.innerHTML = '';
-      const q = filter.trim().toLowerCase();
+      const q = filter.trim();
+      const qLower = q.toLowerCase();
       const filtered = GLOSSARY.filter(
-        (g) => g.term.toLowerCase().includes(q) || g.def.toLowerCase().includes(q)
+        (g) => g.term.toLowerCase().includes(qLower) || g.def.toLowerCase().includes(qLower)
       );
 
       if (filtered.length === 0) {
@@ -128,8 +208,8 @@
 
       filtered.forEach((g) => {
         const item = templates.glossaryItem.content.cloneNode(true);
-        item.querySelector('.glossary-item__term').textContent = g.term;
-        item.querySelector('.glossary-item__def').textContent = g.def;
+        item.querySelector('.glossary-item__term').innerHTML = highlight(g.term, q);
+        item.querySelector('.glossary-item__def').innerHTML = highlight(g.def, q);
         list.appendChild(item);
       });
     }
@@ -144,11 +224,24 @@
   let current = 0;
   const answers = {};
 
+  function getBestScore() {
+    const raw = storageGet(STORAGE_KEYS.bestScore);
+    return raw ? parseInt(raw, 10) : null;
+  }
+
   function renderQuizIntro() {
     Object.keys(answers).forEach((k) => delete answers[k]);
     current = 0;
     const node = templates.quizIntro.content.cloneNode(true);
     viewEl.appendChild(node);
+
+    const best = getBestScore();
+    const bestEl = document.getElementById('best-score');
+    if (best !== null) {
+      bestEl.innerHTML = `Tu mejor puntaje: <strong>${best} / ${QUESTIONS.length}</strong>`;
+      bestEl.hidden = false;
+    }
+
     document.getElementById('btn-start-quiz').addEventListener('click', renderQuestion);
   }
 
@@ -215,12 +308,23 @@
   function gradeQuiz() {
     let score = 0;
     const results = QUESTIONS.map((q) => {
-      const chosen = answers[q.id];
-      const isCorrect = chosen === q.correctIndex;
+      const chosenIdx = answers[q.id];
+      const isCorrect = chosenIdx === q.correctIndex;
       if (isCorrect) score += 1;
-      return { id: q.id, isCorrect };
+      return {
+        text: q.text,
+        isCorrect,
+        chosenText: chosenIdx !== undefined ? q.options[chosenIdx] : null,
+        correctText: q.options[q.correctIndex],
+      };
     });
     const total = QUESTIONS.length;
+
+    const prevBest = getBestScore();
+    if (prevBest === null || score > prevBest) {
+      storageSet(STORAGE_KEYS.bestScore, String(score));
+    }
+
     return { score, total, percentage: Math.round((score / total) * 100), results };
   }
 
@@ -233,13 +337,27 @@
     const list = node.querySelector('.result__list');
     data.results.forEach((r, i) => {
       const li = document.createElement('li');
+
+      const row = document.createElement('div');
+      row.className = 'tag-row';
       const tag = document.createElement('span');
       tag.className = `tag ${r.isCorrect ? 'tag--ok' : 'tag--no'}`;
       tag.textContent = r.isCorrect ? 'CORRECTA' : 'INCORRECTA';
       const label = document.createElement('span');
       label.textContent = `Pregunta ${i + 1}`;
-      li.appendChild(tag);
-      li.appendChild(label);
+      row.appendChild(tag);
+      row.appendChild(label);
+      li.appendChild(row);
+
+      if (!r.isCorrect) {
+        const detail = document.createElement('span');
+        detail.className = 'review-answer';
+        detail.innerHTML =
+          `Tu respuesta: <span class="is-wrong">${escapeHtml(r.chosenText ?? '(sin responder)')}</span><br>` +
+          `Respuesta correcta: <span class="is-right">${escapeHtml(r.correctText)}</span>`;
+        li.appendChild(detail);
+      }
+
       list.appendChild(li);
     });
 
@@ -250,9 +368,11 @@
   }
 
   // ---------------------------------------------------------------------
-  // Arranque
+  // Arranque: recuerda la última pestaña visitada
   // ---------------------------------------------------------------------
-  navigate('notes');
+  const savedTab = storageGet(STORAGE_KEYS.lastTab);
+  const validTabs = ['notes', 'quiz', 'glossary', 'cases'];
+  navigate(validTabs.includes(savedTab) ? savedTab : 'notes', false);
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {

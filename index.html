@@ -52,8 +52,13 @@
 <!-- Plantillas -->
 <template id="tpl-notes">
   <div class="panel">
-    <p class="panel__eyebrow mono">MATERIAL</p>
-    <h1 class="panel__title">Apuntes</h1>
+    <div class="panel__row">
+      <div>
+        <p class="panel__eyebrow mono">MATERIAL</p>
+        <h1 class="panel__title">Apuntes</h1>
+      </div>
+      <button class="btn-toggle-all mono" data-target="notes-list" type="button">Expandir todo</button>
+    </div>
     <ul class="accordion" id="notes-list"></ul>
   </div>
 </template>
@@ -72,8 +77,13 @@
 
 <template id="tpl-cases">
   <div class="panel">
-    <p class="panel__eyebrow mono">PARA DEBATIR EN CLASE</p>
-    <h1 class="panel__title">Casos</h1>
+    <div class="panel__row">
+      <div>
+        <p class="panel__eyebrow mono">PARA DEBATIR EN CLASE</p>
+        <h1 class="panel__title">Casos</h1>
+      </div>
+      <button class="btn-toggle-all mono" data-target="cases-list" type="button">Expandir todo</button>
+    </div>
     <p class="panel__lead panel__lead--left">No hay una única respuesta correcta. Léanlos en grupo, hablen sobre las preguntas y traten de llegar a una idea en común.</p>
     <ul class="accordion" id="cases-list"></ul>
   </div>
@@ -89,6 +99,11 @@
       <p class="case__scenario"></p>
       <p class="case__label mono">PREGUNTAS PARA DEBATIR</p>
       <ul class="case__questions"></ul>
+      <button class="case__answer-toggle mono" type="button" aria-expanded="false">Ver respuesta sugerida</button>
+      <div class="case__answer" hidden>
+        <p class="case__label mono">RESPUESTA SUGERIDA</p>
+        <p class="case__answer-text"></p>
+      </div>
     </div>
   </li>
 </template>
@@ -115,6 +130,7 @@
     <p class="panel__eyebrow mono">AUTOEVALUACIÓN</p>
     <h1 class="panel__title">Cuestionario</h1>
     <p class="panel__lead">10 preguntas de opción única sobre Integración de Sistemas. Lo podés repetir todas las veces que quieras.</p>
+    <p id="best-score" class="best-score mono" hidden></p>
     <button id="btn-start-quiz" class="btn btn--primary" type="button">Empezar</button>
   </div>
 </template>

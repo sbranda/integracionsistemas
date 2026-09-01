@@ -80,6 +80,58 @@ html, body {
   letter-spacing: -0.01em;
 }
 
+.panel__row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.btn-toggle-all {
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 11px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  margin-top: 2px;
+}
+
+.btn-toggle-all:hover {
+  border-color: var(--amber);
+  color: var(--amber);
+}
+
+.best-score {
+  color: var(--muted);
+  font-size: 12px;
+  margin: -12px 0 20px;
+}
+
+.best-score strong {
+  color: var(--amber);
+}
+
+mark {
+  background: rgba(255, 182, 72, 0.28);
+  color: inherit;
+  border-radius: 3px;
+  padding: 0 1px;
+}
+
+.review-answer {
+  display: block;
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.review-answer strong { color: var(--text); }
+.review-answer .is-wrong { color: var(--red); }
+.review-answer .is-right { color: var(--green); }
+
 .panel__lead {
   color: var(--muted);
   font-size: 14px;
@@ -114,6 +166,38 @@ html, body {
 
 .case__questions li {
   line-height: 1.55;
+}
+
+.case__answer-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px dashed var(--line);
+  color: var(--amber);
+  font-size: 11.5px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  margin-top: 16px;
+}
+
+.case__answer-toggle:hover {
+  border-color: var(--amber);
+}
+
+.case__answer {
+  margin-top: 14px;
+  padding: 14px 16px;
+  background: var(--surface-2);
+  border-left: 3px solid var(--amber);
+  border-radius: 0 8px 8px 0;
+}
+
+.case__answer-text {
+  margin: 0;
+  color: var(--text);
+  line-height: 1.6;
 }
 
 /* Acordeón de apuntes */
@@ -163,7 +247,7 @@ html, body {
 
 .accordion__body {
   padding: 0 16px 16px;
-  color: var(--muted);
+  color: var(--text);
   font-size: 14px;
   line-height: 1.6;
 }
@@ -215,7 +299,7 @@ html, body {
 }
 
 .glossary-item__def {
-  color: var(--muted);
+  color: var(--text);
   font-size: 13.5px;
   line-height: 1.55;
   margin: 0;
@@ -365,13 +449,21 @@ html, body {
 
 .result__list li {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 6px;
   padding: 10px 14px;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 8px;
   font-size: 13.5px;
+}
+
+.result__list li .tag-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
 }
 
 .result__list .tag {
