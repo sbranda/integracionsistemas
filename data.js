@@ -74,7 +74,8 @@ const GLOSSARY = [
 ];
 
 // Casos de estudio para debatir en clase (sin respuesta única correcta;
-// pensados para que el grupo discuta y proponga una solución).
+// pensados para que el grupo discuta y proponga una solución). La respuesta
+// sugerida queda oculta en la app hasta que el usuario la despliega.
 const CASES = [
   {
     id: 'c1',
@@ -143,7 +144,6 @@ const CASES = [
     answer: 'La app de turnos necesitaría poder preguntarle a la app de pagos, a través de una conexión entre las dos, si esa persona está al día antes de confirmarle el turno. El problema es que los pagos a veces tardan unos minutos en confirmarse, así que conviene decidir qué hacer en ese margen: por ejemplo, dejar reservar igual pero avisar que el turno se cancela si el pago no se confirma en un tiempo determinado. La gravedad del problema depende del gimnasio: si hay pocos lugares por clase, dejar reservar sin pagar puede hacer que alguien que sí pagó se quede sin lugar.',
   },
 ];
-
 
 // Cuestionario de opción única
 const QUESTIONS = [

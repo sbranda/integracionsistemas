@@ -2,7 +2,7 @@
 // de archivos (agregar/quitar archivos del app shell). Los cambios de
 // contenido (data.js) ya no necesitan esto: la estrategia network-first de
 // abajo siempre trae la versión más nueva cuando hay conexión.
-const CACHE_NAME = 'integracion-shell-v2';
+const CACHE_NAME = 'integracion-shell-v3';
 
 const APP_SHELL = [
   './',

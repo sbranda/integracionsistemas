@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Integración de Sistemas</title>
 <meta name="theme-color" content="#12131A" />
-<meta name="description" content="Apuntes, cuestionarios de autoevaluación y glosario de Integración de Sistemas." />
+<meta name="description" content="Apuntes, cuestionarios de autoevaluación, casos de debate y glosario de Integración de Sistemas." />
 
 <link rel="manifest" href="manifest.json" />
 <link rel="icon" href="icon-192.png" />
@@ -124,21 +124,28 @@
   </li>
 </template>
 
-<!-- Quiz (reutiliza la estética del cuestionario standalone) -->
+<!-- Cuestionario -->
 <template id="tpl-quiz-intro">
   <div class="panel panel--center">
     <p class="panel__eyebrow mono">AUTOEVALUACIÓN</p>
     <h1 class="panel__title">Cuestionario</h1>
-    <p class="panel__lead">10 preguntas de opción única sobre Integración de Sistemas. Lo podés repetir todas las veces que quieras.</p>
+    <p class="panel__lead">10 preguntas de opción única sobre Integración de Sistemas.</p>
     <p id="best-score" class="best-score mono" hidden></p>
-    <button id="btn-start-quiz" class="btn btn--primary" type="button">Empezar</button>
+    <div class="quiz-mode-buttons">
+      <button id="btn-start-practice" class="btn btn--ghost" type="button">Modo práctica</button>
+      <button id="btn-start-exam" class="btn btn--primary" type="button">Modo examen · 8 min</button>
+    </div>
+    <p class="quiz-mode-hint mono">Práctica: sin límite de tiempo, podés volver atrás.<br>Examen: 8 minutos en total, sin volver atrás.</p>
   </div>
 </template>
 
 <template id="tpl-question">
   <div class="question">
+    <div class="question__meta">
+      <p class="question__eyebrow mono">PREGUNTA <span class="q-index"></span> / <span class="q-total"></span></p>
+      <p id="quiz-timer" class="quiz-timer mono" hidden>08:00</p>
+    </div>
     <div class="track"><div class="track__fill" id="progress-fill"></div></div>
-    <p class="question__eyebrow mono">PREGUNTA <span class="q-index"></span> / <span class="q-total"></span></p>
     <h2 class="question__text"></h2>
     <ul class="options" role="listbox"></ul>
     <div class="question__nav">
@@ -158,6 +165,7 @@
 <template id="tpl-result">
   <div class="result">
     <p class="result__eyebrow mono">RESULTADO</p>
+    <p id="result-timeout-note" class="result__timeout mono" hidden>⏱ Se acabó el tiempo — se calificó lo que alcanzaste a responder.</p>
     <p class="result__score"><span class="result__score-num"></span><span class="result__score-den"></span></p>
     <p class="result__pct mono"></p>
     <ul class="result__list"></ul>

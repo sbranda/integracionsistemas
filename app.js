@@ -48,6 +48,7 @@
   }
 
   function navigate(name, remember = true) {
+    stopTimer();
     setActiveTab(name);
     viewEl.innerHTML = '';
     viewEl.scrollTop = 0;
@@ -108,7 +109,6 @@
   function renderNotes() {
     const node = templates.notes.content.cloneNode(true);
     const list = node.querySelector('#notes-list');
-    const toggleBtn = node.querySelector('.btn-toggle-all');
 
     NOTES.forEach((note) => {
       const item = templates.noteItem.content.cloneNode(true);
@@ -219,19 +219,62 @@
   }
 
   // ---------------------------------------------------------------------
-  // Cuestionario
+  // Cuestionario (con modo práctica y modo examen)
   // ---------------------------------------------------------------------
   let current = 0;
   const answers = {};
+  let examMode = false;
+  let timeLeft = 0;
+  let timerInterval = null;
+  let timedOut = false;
+  const EXAM_SECONDS = 8 * 60; // 8 minutos
 
   function getBestScore() {
     const raw = storageGet(STORAGE_KEYS.bestScore);
     return raw ? parseInt(raw, 10) : null;
   }
 
+  function stopTimer() {
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+  }
+
+  function formatTime(seconds) {
+    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const s = Math.floor(seconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  }
+
+  function updateTimerDisplay() {
+    const el = document.getElementById('quiz-timer');
+    if (!el) return;
+    el.textContent = formatTime(Math.max(timeLeft, 0));
+    el.classList.toggle('quiz-timer--warning', timeLeft <= 60);
+  }
+
+  function startTimer() {
+    stopTimer();
+    updateTimerDisplay();
+    timerInterval = setInterval(() => {
+      timeLeft -= 1;
+      updateTimerDisplay();
+      if (timeLeft <= 0) {
+        stopTimer();
+        timedOut = true;
+        renderResult(gradeQuiz());
+      }
+    }, 1000);
+  }
+
   function renderQuizIntro() {
+    stopTimer();
     Object.keys(answers).forEach((k) => delete answers[k]);
     current = 0;
+    examMode = false;
+    timedOut = false;
+
     const node = templates.quizIntro.content.cloneNode(true);
     viewEl.appendChild(node);
 
@@ -242,7 +285,19 @@
       bestEl.hidden = false;
     }
 
-    document.getElementById('btn-start-quiz').addEventListener('click', renderQuestion);
+    document.getElementById('btn-start-practice').addEventListener('click', () => startQuiz(false));
+    document.getElementById('btn-start-exam').addEventListener('click', () => startQuiz(true));
+  }
+
+  function startQuiz(isExam) {
+    examMode = isExam;
+    current = 0;
+    Object.keys(answers).forEach((k) => delete answers[k]);
+    if (examMode) {
+      timeLeft = EXAM_SECONDS;
+    }
+    renderQuestion();
+    if (examMode) startTimer();
   }
 
   function renderQuestion() {
@@ -282,8 +337,18 @@
     const btnPrev = document.getElementById('btn-prev');
     const btnNext = document.getElementById('btn-next');
     const fill = document.getElementById('progress-fill');
+    const timerEl = document.getElementById('quiz-timer');
 
-    btnPrev.disabled = current === 0;
+    if (examMode) {
+      timerEl.hidden = false;
+      updateTimerDisplay();
+      btnPrev.hidden = true;
+    } else {
+      timerEl.hidden = true;
+      btnPrev.hidden = false;
+      btnPrev.disabled = current === 0;
+    }
+
     btnNext.textContent = current === QUESTIONS.length - 1 ? 'Finalizar' : 'Siguiente';
     btnNext.disabled = answers[q.id] === undefined;
     fill.style.width = `${Math.round((Object.keys(answers).length / QUESTIONS.length) * 100)}%`;
@@ -300,6 +365,7 @@
         current += 1;
         renderQuestion();
       } else {
+        stopTimer();
         renderResult(gradeQuiz());
       }
     });
@@ -333,6 +399,10 @@
     node.querySelector('.result__score-num').textContent = data.score;
     node.querySelector('.result__score-den').textContent = `/${data.total}`;
     node.querySelector('.result__pct').textContent = `${data.percentage}% de aciertos`;
+
+    if (timedOut) {
+      node.querySelector('#result-timeout-note').hidden = false;
+    }
 
     const list = node.querySelector('.result__list');
     data.results.forEach((r, i) => {
