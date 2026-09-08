@@ -100,6 +100,68 @@ html, body {
   color: var(--amber);
 }
 
+/* Pregunta del día */
+.daily {
+  background: var(--surface);
+  border: 1px solid var(--amber);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 18px;
+}
+
+.daily__eyebrow {
+  color: var(--amber);
+  font-size: 11px;
+  margin: 0 0 10px;
+}
+
+.daily__text {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.4;
+  margin: 0 0 14px;
+}
+
+.daily__options {
+  margin: 0;
+}
+
+.daily__options .option {
+  padding: 10px 14px;
+  font-size: 13.5px;
+}
+
+.daily__feedback {
+  margin: 12px 0 0;
+  font-size: 11.5px;
+}
+
+.daily__feedback.is-correct { color: var(--green); }
+.daily__feedback.is-incorrect { color: var(--red); }
+
+.option--disabled {
+  cursor: default;
+}
+
+.option--correct {
+  border-color: var(--green) !important;
+}
+
+.option--correct .option__bubble {
+  border-color: var(--green) !important;
+  background: var(--green) !important;
+}
+
+.option--incorrect {
+  border-color: var(--red) !important;
+}
+
+.option--incorrect .option__bubble {
+  border-color: var(--red) !important;
+  background: var(--red) !important;
+}
+
 mark {
   background: rgba(255, 182, 72, 0.28);
   color: inherit;

@@ -59,7 +59,17 @@
       </div>
       <button class="btn-toggle-all mono" data-target="notes-list" type="button">Expandir todo</button>
     </div>
+    <div id="daily-slot"></div>
     <ul class="accordion" id="notes-list"></ul>
+  </div>
+</template>
+
+<template id="tpl-daily-question">
+  <div class="daily">
+    <p class="daily__eyebrow mono">PREGUNTA DEL DÍA</p>
+    <p class="daily__text"></p>
+    <ul class="options daily__options"></ul>
+    <p class="daily__feedback mono" hidden></p>
   </div>
 </template>
 

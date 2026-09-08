@@ -5,7 +5,7 @@ funcional offline. 100% estática (sin back-end), pensada para GitHub Pages.
 
 ## Secciones
 
-- **Apuntes**: resumen en acordeón de los temas clave, con botón para expandir/colapsar todo.
+- **Apuntes**: resumen en acordeón de los temas clave, con botón para expandir/colapsar todo. Arriba tiene la **pregunta del día**: se elige según la fecha (misma pregunta todo el día en ese dispositivo, cambia al día siguiente), y queda marcada como respondida una vez que la contestás.
 - **Cuestionario**: 10 preguntas de opción única, con dos modos:
   - **Modo práctica**: sin límite de tiempo, se puede volver atrás.
   - **Modo examen**: 8 minutos en total, sin volver atrás, con cronómetro visible (se pone rojo en el último minuto). Si se acaba el tiempo, se califica automáticamente lo que se alcanzó a responder.

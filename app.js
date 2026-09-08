@@ -15,13 +15,14 @@
     option: document.getElementById('tpl-option'),
     cases: document.getElementById('tpl-cases'),
     caseItem: document.getElementById('tpl-case-item'),
+    dailyQuestion: document.getElementById('tpl-daily-question'),
   };
 
   // ---------------------------------------------------------------------
   // Almacenamiento local (mejor puntaje + última pestaña visitada).
   // Todo envuelto en try/catch por si el navegador bloquea localStorage.
   // ---------------------------------------------------------------------
-  const STORAGE_KEYS = { lastTab: 'is-app:last-tab', bestScore: 'is-app:best-score' };
+  const STORAGE_KEYS = { lastTab: 'is-app:last-tab', bestScore: 'is-app:best-score', dailyAnswer: 'is-app:daily-answer' };
 
   function storageGet(key) {
     try {
@@ -109,6 +110,7 @@
   // Apuntes (acordeón)
   // ---------------------------------------------------------------------
   function renderNotes() {
+    viewEl.innerHTML = '';
     const node = templates.notes.content.cloneNode(true);
     const list = node.querySelector('#notes-list');
 
@@ -133,6 +135,78 @@
 
     viewEl.appendChild(node);
     wireToggleAll(document.getElementById('notes-list'), document.querySelector('#view .btn-toggle-all'));
+    renderDailyQuestion();
+  }
+
+  // ---------------------------------------------------------------------
+  // Pregunta del día: se elige a partir de la fecha, así es la misma
+  // durante todo el día en este dispositivo, y cambia al día siguiente.
+  // ---------------------------------------------------------------------
+  function hashString(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = (hash << 5) - hash + str.charCodeAt(i);
+      hash |= 0;
+    }
+    return Math.abs(hash);
+  }
+
+  function getTodayKey() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+
+  function renderDailyQuestion() {
+    const slot = document.getElementById('daily-slot');
+    if (!slot) return;
+    slot.innerHTML = '';
+
+    const todayKey = getTodayKey();
+    const qIndex = hashString(todayKey) % QUESTIONS.length;
+    const question = QUESTIONS[qIndex];
+
+    const node = templates.dailyQuestion.content.cloneNode(true);
+    slot.appendChild(node);
+
+    const textEl = slot.querySelector('.daily__text');
+    const optionsEl = slot.querySelector('.daily__options');
+    const feedbackEl = slot.querySelector('.daily__feedback');
+    textEl.textContent = question.text;
+
+    let stored = null;
+    try {
+      stored = JSON.parse(storageGet(STORAGE_KEYS.dailyAnswer) || 'null');
+    } catch (e) {
+      stored = null;
+    }
+    const alreadyAnswered = stored && stored.date === todayKey;
+
+    question.options.forEach((optText, idx) => {
+      const opt = templates.option.content.cloneNode(true);
+      const li = opt.querySelector('.option');
+      li.querySelector('.option__label').textContent = optText;
+
+      if (alreadyAnswered) {
+        li.classList.add('option--disabled');
+        if (idx === question.correctIndex) li.classList.add('option--correct');
+        if (idx === stored.chosenIndex && idx !== question.correctIndex) li.classList.add('option--incorrect');
+      } else {
+        li.addEventListener('click', () => {
+          storageSet(STORAGE_KEYS.dailyAnswer, JSON.stringify({ date: todayKey, chosenIndex: idx }));
+          renderDailyQuestion();
+        });
+      }
+      optionsEl.appendChild(opt);
+    });
+
+    if (alreadyAnswered) {
+      const isCorrect = stored.chosenIndex === question.correctIndex;
+      feedbackEl.hidden = false;
+      feedbackEl.textContent = isCorrect
+        ? 'Ya la respondiste hoy — ¡acertaste!'
+        : 'Ya la respondiste hoy — la correcta era otra opción.';
+      feedbackEl.classList.add(isCorrect ? 'is-correct' : 'is-incorrect');
+    }
   }
 
   // ---------------------------------------------------------------------
