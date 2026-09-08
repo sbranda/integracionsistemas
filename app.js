@@ -223,6 +223,7 @@
   // ---------------------------------------------------------------------
   let current = 0;
   const answers = {};
+  let optionOrder = {};
   let examMode = false;
   let timeLeft = 0;
   let timerInterval = null;
@@ -232,6 +233,16 @@
   function getBestScore() {
     const raw = storageGet(STORAGE_KEYS.bestScore);
     return raw ? parseInt(raw, 10) : null;
+  }
+
+  // Fisher-Yates: devuelve un nuevo arreglo con los índices mezclados
+  function shuffledIndexes(length) {
+    const arr = Array.from({ length }, (_, i) => i);
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
   }
 
   function stopTimer() {
@@ -294,6 +305,10 @@
     examMode = isExam;
     current = 0;
     Object.keys(answers).forEach((k) => delete answers[k]);
+    optionOrder = {};
+    QUESTIONS.forEach((q) => {
+      optionOrder[q.id] = shuffledIndexes(q.options.length);
+    });
     if (examMode) {
       timeLeft = EXAM_SECONDS;
     }
@@ -310,7 +325,9 @@
     node.querySelector('.question__text').textContent = q.text;
 
     const list = node.querySelector('.options');
-    q.options.forEach((optText, idx) => {
+    const order = optionOrder[q.id] || q.options.map((_, i) => i);
+    order.forEach((idx) => {
+      const optText = q.options[idx];
       const opt = templates.option.content.cloneNode(true);
       const li = opt.querySelector('.option');
       li.querySelector('.option__label').textContent = optText;
