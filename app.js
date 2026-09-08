@@ -8,6 +8,8 @@
     question: document.getElementById('tpl-question'),
     result: document.getElementById('tpl-result'),
     glossary: document.getElementById('tpl-glossary'),
+    glossaryList: document.getElementById('tpl-glossary-list'),
+    glossaryCards: document.getElementById('tpl-glossary-cards'),
     noteItem: document.getElementById('tpl-note-item'),
     glossaryItem: document.getElementById('tpl-glossary-item'),
     option: document.getElementById('tpl-option'),
@@ -181,11 +183,36 @@
   }
 
   // ---------------------------------------------------------------------
-  // Glosario (con búsqueda y resaltado de coincidencias)
+  // Glosario: modo lista (con búsqueda) y modo tarjetas (flashcards)
   // ---------------------------------------------------------------------
+  const GLOSSARY_MODE_KEY = 'is-app:glossary-mode';
+
   function renderGlossary() {
     const node = templates.glossary.content.cloneNode(true);
     viewEl.appendChild(node);
+
+    const savedMode = storageGet(GLOSSARY_MODE_KEY);
+    let mode = savedMode === 'cards' ? 'cards' : 'list';
+
+    const toggleBtns = [...document.querySelectorAll('.mode-toggle__btn')];
+
+    function setMode(newMode) {
+      mode = newMode;
+      storageSet(GLOSSARY_MODE_KEY, mode);
+      toggleBtns.forEach((b) => b.setAttribute('aria-selected', String(b.dataset.mode === mode)));
+      const body = document.getElementById('glossary-body');
+      body.innerHTML = '';
+      if (mode === 'list') renderGlossaryList(body);
+      else renderGlossaryCards(body);
+    }
+
+    toggleBtns.forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode)));
+    setMode(mode);
+  }
+
+  function renderGlossaryList(container) {
+    const node = templates.glossaryList.content.cloneNode(true);
+    container.appendChild(node);
 
     const search = document.getElementById('glossary-search');
     const list = document.getElementById('glossary-list');
@@ -216,6 +243,56 @@
 
     search.addEventListener('input', () => paint(search.value));
     paint('');
+  }
+
+  let flashOrder = GLOSSARY.map((_, i) => i);
+  let flashIndex = 0;
+
+  function renderGlossaryCards(container) {
+    const node = templates.glossaryCards.content.cloneNode(true);
+    container.appendChild(node);
+
+    if (flashIndex >= flashOrder.length) flashIndex = 0;
+
+    function paintCard() {
+      const term = GLOSSARY[flashOrder[flashIndex]];
+      const card = document.getElementById('flash-card');
+      card.classList.remove('is-flipped');
+      document.querySelector('.flash-card__term').textContent = term.term;
+      document.querySelector('.flash-card__def').textContent = term.def;
+      document.querySelector('.flash-index').textContent = flashIndex + 1;
+      document.querySelector('.flash-total').textContent = flashOrder.length;
+    }
+
+    function flip() {
+      document.getElementById('flash-card').classList.toggle('is-flipped');
+    }
+
+    document.getElementById('flash-card').addEventListener('click', flip);
+    document.getElementById('flash-card').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        flip();
+      }
+    });
+
+    document.getElementById('flash-prev').addEventListener('click', () => {
+      flashIndex = (flashIndex - 1 + flashOrder.length) % flashOrder.length;
+      paintCard();
+    });
+
+    document.getElementById('flash-next').addEventListener('click', () => {
+      flashIndex = (flashIndex + 1) % flashOrder.length;
+      paintCard();
+    });
+
+    document.getElementById('flash-shuffle').addEventListener('click', () => {
+      flashOrder = shuffledIndexes(GLOSSARY.length);
+      flashIndex = 0;
+      paintCard();
+    });
+
+    paintCard();
   }
 
   // ---------------------------------------------------------------------

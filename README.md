@@ -12,7 +12,9 @@ funcional offline. 100% estática (sin back-end), pensada para GitHub Pages.
   
   Al terminar (en cualquier modo), muestra qué preguntas fallaste y cuál era la respuesta correcta. Guarda tu mejor puntaje en el dispositivo.
 - **Casos**: situaciones cotidianas de integración para debatir en clase, con preguntas guía y una respuesta sugerida oculta (para comparar después de debatir), más botón de expandir/colapsar todo.
-- **Glosario**: 22 términos técnicos con buscador en tiempo real que resalta la coincidencia.
+- **Glosario**: 22 términos técnicos, con dos formas de repasar:
+  - **Lista**: buscador en tiempo real que resalta la coincidencia.
+  - **Tarjetas**: modo flashcard — mostrás el término, tocás la tarjeta para ver la definición (con animación de vuelta), navegás con Anterior/Siguiente, y podés mezclar el orden. La app recuerda cuál de los dos modos usaste la última vez.
 
 La app recuerda la última pestaña que visitaste, así que al volver a abrirla no arranca siempre en "Apuntes".
 
