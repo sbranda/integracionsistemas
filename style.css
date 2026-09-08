@@ -80,6 +80,10 @@ html, body {
   letter-spacing: -0.01em;
 }
 
+.panel__title:focus {
+  outline: none;
+}
+
 .panel__row {
   display: flex;
   align-items: flex-start;
