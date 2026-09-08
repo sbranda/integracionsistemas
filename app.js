@@ -275,6 +275,7 @@
     examMode = false;
     timedOut = false;
 
+    viewEl.innerHTML = '';
     const node = templates.quizIntro.content.cloneNode(true);
     viewEl.appendChild(node);
 
