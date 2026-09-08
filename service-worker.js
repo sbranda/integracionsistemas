@@ -1,8 +1,6 @@
 // Subí la versión del cache cada vez que hagas un cambio grande de estructura
-// de archivos (agregar/quitar archivos del app shell). Los cambios de
-// contenido (data.js) ya no necesitan esto: la estrategia network-first de
-// abajo siempre trae la versión más nueva cuando hay conexión.
-const CACHE_NAME = 'integracion-shell-v3';
+// de archivos (agregar/quitar archivos del app shell).
+const CACHE_NAME = 'integracion-shell-v4';
 
 const APP_SHELL = [
   './',
@@ -29,13 +27,14 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Network-first: si hay conexión, siempre trae la versión más nueva del
-// servidor y actualiza la caché. Si no hay conexión, usa la última copia
-// guardada. Esto evita que la app quede "pegada" mostrando contenido viejo
-// después de actualizar data.js, app.js, etc.
+// Network-first, ignorando también la caché HTTP normal del navegador
+// (cache: 'no-store'): así siempre se pide la versión más nueva al servidor
+// cuando hay conexión, sin importar los headers de caché que use el
+// hosting. Si no hay conexión, se usa la última copia guardada en la
+// Cache API (que sí actualizamos nosotros mismos en cada fetch exitoso).
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    fetch(event.request)
+    fetch(event.request, { cache: 'no-store' })
       .then((response) => {
         const copy = response.clone();
         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
