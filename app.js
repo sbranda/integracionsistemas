@@ -22,7 +22,7 @@
   // Almacenamiento local (mejor puntaje + última pestaña visitada).
   // Todo envuelto en try/catch por si el navegador bloquea localStorage.
   // ---------------------------------------------------------------------
-  const STORAGE_KEYS = { lastTab: 'is-app:last-tab', bestScore: 'is-app:best-score', dailyAnswer: 'is-app:daily-answer' };
+  const STORAGE_KEYS = { lastTab: 'is-app:last-tab', bestScore: 'is-app:best-score', dailyAnswer: 'is-app:daily-answer', notesRead: 'is-app:notes-read' };
 
   function storageGet(key) {
     try {
@@ -92,10 +92,14 @@
   // ---------------------------------------------------------------------
   function wireToggleAll(container, button) {
     function setAll(expand) {
-      container.querySelectorAll('.accordion__head').forEach((head) => {
-        head.setAttribute('aria-expanded', String(expand));
-        head.nextElementSibling.hidden = !expand;
-      });
+      container
+        .querySelectorAll('.accordion__head[aria-expanded], .accordion__toggle[aria-expanded]')
+        .forEach((el) => {
+          el.setAttribute('aria-expanded', String(expand));
+          const item = el.closest('.accordion__item');
+          const body = item ? item.querySelector('.accordion__body') : null;
+          if (body) body.hidden = !expand;
+        });
       button.textContent = expand ? 'Colapsar todo' : 'Expandir todo';
       button.dataset.expanded = String(expand);
     }
@@ -109,14 +113,36 @@
   // ---------------------------------------------------------------------
   // Apuntes (acordeón)
   // ---------------------------------------------------------------------
+  function getReadSet() {
+    try {
+      const raw = JSON.parse(storageGet(STORAGE_KEYS.notesRead) || '[]');
+      return new Set(Array.isArray(raw) ? raw : []);
+    } catch (e) {
+      return new Set();
+    }
+  }
+
+  function saveReadSet(set) {
+    storageSet(STORAGE_KEYS.notesRead, JSON.stringify([...set]));
+  }
+
+  function updateNotesProgress(readSet) {
+    const progressEl = document.getElementById('notes-progress');
+    if (!progressEl) return;
+    progressEl.textContent = `${readSet.size} / ${NOTES.length} leídos`;
+  }
+
   function renderNotes() {
     viewEl.innerHTML = '';
     const node = templates.notes.content.cloneNode(true);
     const list = node.querySelector('#notes-list');
+    const readSet = getReadSet();
 
     NOTES.forEach((note) => {
       const item = templates.noteItem.content.cloneNode(true);
-      const head = item.querySelector('.accordion__head');
+      const li = item.querySelector('.accordion__item');
+      const check = item.querySelector('.note-check');
+      const toggle = item.querySelector('.accordion__toggle');
       const title = item.querySelector('.accordion__title');
       const body = item.querySelector('.accordion__body');
       const p = item.querySelector('.accordion__body p');
@@ -124,9 +150,26 @@
       title.textContent = note.title;
       p.textContent = note.body;
 
-      head.addEventListener('click', () => {
-        const expanded = head.getAttribute('aria-expanded') === 'true';
-        head.setAttribute('aria-expanded', String(!expanded));
+      const isRead = readSet.has(note.id);
+      check.setAttribute('aria-checked', String(isRead));
+      li.classList.toggle('accordion__item--read', isRead);
+
+      check.addEventListener('click', () => {
+        const currentlyRead = check.getAttribute('aria-checked') === 'true';
+        const nextRead = !currentlyRead;
+        check.setAttribute('aria-checked', String(nextRead));
+        li.classList.toggle('accordion__item--read', nextRead);
+
+        const set = getReadSet();
+        if (nextRead) set.add(note.id);
+        else set.delete(note.id);
+        saveReadSet(set);
+        updateNotesProgress(set);
+      });
+
+      toggle.addEventListener('click', () => {
+        const expanded = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', String(!expanded));
         body.hidden = expanded;
       });
 
@@ -134,6 +177,7 @@
     });
 
     viewEl.appendChild(node);
+    updateNotesProgress(readSet);
     wireToggleAll(document.getElementById('notes-list'), document.querySelector('#view .btn-toggle-all'));
     renderDailyQuestion();
   }

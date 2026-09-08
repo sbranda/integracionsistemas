@@ -59,6 +59,7 @@
       </div>
       <button class="btn-toggle-all mono" data-target="notes-list" type="button">Expandir todo</button>
     </div>
+    <p class="notes-progress mono" id="notes-progress"></p>
     <div id="daily-slot"></div>
     <ul class="accordion" id="notes-list"></ul>
   </div>
@@ -75,10 +76,13 @@
 
 <template id="tpl-note-item">
   <li class="accordion__item">
-    <button class="accordion__head" type="button" aria-expanded="false">
-      <span class="accordion__title"></span>
-      <span class="accordion__chevron" aria-hidden="true">⌄</span>
-    </button>
+    <div class="accordion__head">
+      <button class="note-check" type="button" role="checkbox" aria-checked="false" aria-label="Marcar como leído"></button>
+      <button class="accordion__toggle" type="button" aria-expanded="false">
+        <span class="accordion__title"></span>
+        <span class="accordion__chevron" aria-hidden="true">⌄</span>
+      </button>
+    </div>
     <div class="accordion__body" hidden>
       <p></p>
     </div>
