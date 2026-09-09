@@ -16,6 +16,7 @@
     cases: document.getElementById('tpl-cases'),
     caseItem: document.getElementById('tpl-case-item'),
     dailyQuestion: document.getElementById('tpl-daily-question'),
+    weeklyCase: document.getElementById('tpl-weekly-case'),
   };
 
   // ---------------------------------------------------------------------
@@ -298,6 +299,53 @@
 
     viewEl.appendChild(node);
     wireToggleAll(document.getElementById('cases-list'), document.querySelector('#view .btn-toggle-all'));
+    renderWeeklyCase();
+  }
+
+  // ---------------------------------------------------------------------
+  // Caso de la semana: se elige según la semana actual (cambia cada lunes),
+  // usando el mismo esquema de hash que la pregunta del día.
+  // ---------------------------------------------------------------------
+  function getWeekKey() {
+    const d = new Date();
+    const dayIndex = (d.getDay() + 6) % 7; // 0 = lunes
+    const monday = new Date(d);
+    monday.setDate(d.getDate() - dayIndex);
+    return `${monday.getFullYear()}-${String(monday.getMonth() + 1).padStart(2, '0')}-${String(monday.getDate()).padStart(2, '0')}`;
+  }
+
+  function renderWeeklyCase() {
+    const slot = document.getElementById('weekly-case-slot');
+    if (!slot) return;
+    slot.innerHTML = '';
+
+    const weekKey = getWeekKey();
+    const cIndex = hashString(`week-${weekKey}`) % CASES.length;
+    const c = CASES[cIndex];
+
+    const node = templates.weeklyCase.content.cloneNode(true);
+    slot.appendChild(node);
+
+    slot.querySelector('.weekly-case__title').textContent = c.title;
+    slot.querySelector('.weekly-case__scenario').textContent = c.scenario;
+
+    const questionsList = slot.querySelector('.case__questions');
+    c.questions.forEach((q) => {
+      const li = document.createElement('li');
+      li.textContent = q;
+      questionsList.appendChild(li);
+    });
+
+    const answerToggle = slot.querySelector('.case__answer-toggle');
+    const answerBox = slot.querySelector('.case__answer');
+    slot.querySelector('.case__answer-text').textContent = c.answer;
+
+    answerToggle.addEventListener('click', () => {
+      const shown = answerToggle.getAttribute('aria-expanded') === 'true';
+      answerToggle.setAttribute('aria-expanded', String(!shown));
+      answerBox.hidden = shown;
+      answerToggle.textContent = shown ? 'Ver respuesta sugerida' : 'Ocultar respuesta sugerida';
+    });
   }
 
   // ---------------------------------------------------------------------

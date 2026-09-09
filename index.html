@@ -99,7 +99,23 @@
       <button class="btn-toggle-all mono" data-target="cases-list" type="button">Expandir todo</button>
     </div>
     <p class="panel__lead panel__lead--left">No hay una única respuesta correcta. Léanlos en grupo, hablen sobre las preguntas y traten de llegar a una idea en común.</p>
+    <div id="weekly-case-slot"></div>
     <ul class="accordion" id="cases-list"></ul>
+  </div>
+</template>
+
+<template id="tpl-weekly-case">
+  <div class="weekly-case">
+    <p class="weekly-case__eyebrow mono">CASO DE LA SEMANA</p>
+    <h2 class="weekly-case__title"></h2>
+    <p class="weekly-case__scenario"></p>
+    <p class="case__label mono">PREGUNTAS PARA DEBATIR</p>
+    <ul class="case__questions"></ul>
+    <button class="case__answer-toggle mono" type="button" aria-expanded="false">Ver respuesta sugerida</button>
+    <div class="case__answer" hidden>
+      <p class="case__label mono">RESPUESTA SUGERIDA</p>
+      <p class="case__answer-text"></p>
+    </div>
   </div>
 </template>
 
