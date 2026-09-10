@@ -91,6 +91,25 @@ html, body {
   color: var(--amber);
 }
 
+.btn-print {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 11px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  margin: -8px 0 18px;
+}
+
+.btn-print:hover {
+  border-color: var(--amber);
+  color: var(--amber);
+}
+
 .best-score {
   color: var(--muted);
   font-size: 12px;
@@ -850,3 +869,85 @@ mark {
 
 .tab[aria-current="page"] { color: var(--amber); }
 .tab:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; }
+
+/* ---------------------------------------------------------------------
+   Impresión / Exportar a PDF
+   Se usa la función nativa de "Imprimir" del navegador (permite elegir
+   "Guardar como PDF" como destino), sin depender de ninguna librería ni
+   de conexión a internet. Estas reglas ocultan la navegación y fuerzan
+   a que el contenido colapsado se muestre completo al imprimir.
+--------------------------------------------------------------------- */
+@media print {
+  .tabbar,
+  .topbar,
+  .btn-toggle-all,
+  .btn-print,
+  .mode-toggle,
+  .search,
+  .note-check,
+  .accordion__chevron,
+  .best-score,
+  .daily,
+  .weekly-case,
+  .panel__lead {
+    display: none !important;
+  }
+
+  html, body {
+    background: #ffffff;
+    color: #111111;
+  }
+
+  .app-shell {
+    max-width: none;
+    min-height: 0;
+  }
+
+  .view {
+    overflow: visible;
+    padding: 0;
+  }
+
+  .panel__eyebrow,
+  .glossary-item__term {
+    color: #7A5200;
+  }
+
+  .panel__title {
+    color: #111111;
+  }
+
+  .accordion__item,
+  .glossary-item {
+    break-inside: avoid;
+    background: #ffffff;
+    border: 1px solid #cccccc;
+    margin-bottom: 10px;
+  }
+
+  .accordion__head {
+    padding: 8px 0;
+  }
+
+  .accordion__title {
+    color: #111111 !important;
+  }
+
+  /* Forzar que el contenido colapsado se muestre igual al imprimir */
+  .accordion__body[hidden] {
+    display: block !important;
+  }
+
+  .accordion__body {
+    color: #111111;
+    padding: 0 0 10px;
+  }
+
+  .glossary-item__def {
+    color: #111111;
+  }
+
+  .notes-progress {
+    color: #555555;
+  }
+}

@@ -181,6 +181,10 @@
     updateNotesProgress(readSet);
     wireToggleAll(document.getElementById('notes-list'), document.querySelector('#view .btn-toggle-all'));
     renderDailyQuestion();
+
+    document.querySelector('#view .btn-print').addEventListener('click', () => {
+      window.print();
+    });
   }
 
   // ---------------------------------------------------------------------
@@ -411,6 +415,11 @@
 
     toggleBtns.forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode)));
     setMode(mode);
+
+    document.querySelector('#view .btn-print').addEventListener('click', () => {
+      if (mode !== 'list') setMode('list');
+      window.print();
+    });
   }
 
   function renderGlossaryList(container) {
