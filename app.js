@@ -148,9 +148,17 @@
       const title = item.querySelector('.accordion__title');
       const body = item.querySelector('.accordion__body');
       const p = item.querySelector('.accordion__body p');
+      const resourceLink = item.querySelector('.note-resource');
 
       title.textContent = note.title;
       p.textContent = note.body;
+
+      if (note.resource) {
+        const icon = note.resource.type === 'video' ? '🎥' : '📄';
+        resourceLink.href = note.resource.url;
+        resourceLink.textContent = `${icon} ${note.resource.label}`;
+        resourceLink.hidden = false;
+      }
 
       const isRead = readSet.has(note.id);
       check.setAttribute('aria-checked', String(isRead));

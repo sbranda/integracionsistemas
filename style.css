@@ -502,6 +502,25 @@ mark {
 
 .accordion__body p { margin: 0; }
 
+.note-resource {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  padding: 8px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--amber);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.note-resource:hover {
+  border-color: var(--amber);
+}
+
 .case__scenario {
   margin: 0 0 14px;
 }
@@ -1119,5 +1138,19 @@ mark {
 
   .notes-progress {
     color: #555555;
+  }
+
+  .note-resource {
+    color: #7A5200;
+    border: none;
+    background: none;
+    padding: 0;
+    display: block;
+  }
+
+  .note-resource::after {
+    content: " (" attr(href) ")";
+    color: #555555;
+    font-weight: 400;
   }
 }

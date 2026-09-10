@@ -10,41 +10,49 @@ const NOTES = [
     id: 'n1',
     title: '¿Qué es la integración de sistemas?',
     body: 'Es conectar programas o sistemas distintos para que trabajen juntos, como si fueran uno solo. Así comparten información entre ellos y ninguno queda funcionando solo, como una isla separada del resto.',
+    resource: { type: 'article', label: 'Artículo: Qué es la integración de sistemas informáticos', url: 'https://www.aurum-informatica.es/blog/que-es-la-integracion-de-sistemas-informaticos' },
   },
   {
     id: 'n2',
     title: 'Acoplamiento fuerte vs. débil',
     body: 'El acoplamiento mide cuánto depende un sistema de otro. Si es "fuerte", un cambio chico en un sistema puede romper al otro. Si es "débil", los sistemas se hablan a través de reglas claras (como una API), y pueden cambiar por dentro sin afectarse, mientras sigan respetando esas reglas.',
+    resource: { type: 'article', label: 'Wikipedia: Acoplamiento (informática)', url: 'https://es.wikipedia.org/wiki/Acoplamiento_(inform%C3%A1tica)' },
   },
   {
     id: 'n3',
     title: 'Formas de conectar sistemas',
     body: 'Hay varias maneras de integrar sistemas: conectarlos de a uno directamente (simple, pero difícil de manejar si son muchos), usar un punto central que los conecta a todos, usar un "bus" que reparte los mensajes entre todos (ESB), o hacer que un sistema avise algo y otros lo reciban sin conocerse entre sí (publicación y suscripción).',
+    resource: { type: 'article', label: 'Microsoft Learn: Patrón de publicador-suscriptor', url: 'https://learn.microsoft.com/es-es/azure/architecture/patterns/publisher-subscriber' },
   },
   {
     id: 'n4',
     title: 'Middleware y ESB',
     body: 'El middleware es un programa intermedio que ayuda a que dos sistemas distintos se entiendan entre sí. Un ESB es un tipo de middleware pensado para conectar muchos sistemas de una empresa: recibe un mensaje, lo traduce al formato que el otro sistema necesita, y se lo entrega.',
+    resource: { type: 'video', label: 'Video: ESB, todo lo que debes saber en 3 minutos', url: 'https://www.youtube.com/watch?v=QQ-s0tIkJIE' },
   },
   {
     id: 'n5',
     title: 'Mensajes que no necesitan respuesta inmediata',
     body: 'En vez de que un sistema llame a otro y se quede esperando la respuesta ahí mismo, puede dejar el mensaje en una fila (una "cola") y seguir con lo suyo. El otro sistema lee ese mensaje cuando puede. Así, los dos sistemas no necesitan estar disponibles exactamente al mismo tiempo.',
+    resource: { type: 'article', label: 'Artículo: RabbitMQ explicado en 5 minutos o menos', url: 'https://geekflare.com/es/rabbitmq-explained/' },
   },
   {
     id: 'n6',
     title: 'REST y SOAP: dos formas de comunicarse',
     body: 'REST es una forma simple de conectar sistemas por internet, usando las mismas acciones básicas que usa un navegador (pedir, crear, cambiar, borrar), casi siempre con datos en un formato llamado JSON. SOAP es más formal y estricto, usa un formato llamado XML, y se usa mucho en sistemas donde el control y la seguridad son muy importantes, como en bancos.',
+    resource: { type: 'article', label: 'Artículo: REST vs. SOAP, ¿cuál es la diferencia?', url: 'https://www.arsys.es/blog/rest-vs-soap-cual-es-la-diferencia' },
   },
   {
     id: 'n7',
     title: 'Formas de compartir datos: ETL, replicación y virtualización',
     body: 'ETL significa sacar datos de un lugar, transformarlos, y llevarlos a otro lugar, normalmente en bloques (por ejemplo, una vez por noche). La replicación mantiene copias de los mismos datos actualizadas en varios sistemas al mismo tiempo. La virtualización de datos no copia nada: crea una especie de "ventana" que muestra los datos originales en el momento, sin duplicarlos en ningún lado.',
+    resource: { type: 'article', label: 'Artículo: ¿Qué es ETL?', url: 'https://cloud.google.com/learn/what-is-etl?hl=es' },
   },
   {
     id: 'n8',
     title: 'Orquestación y coreografía',
     body: 'En la orquestación hay un "jefe" (un sistema central) que decide qué pasa primero, qué sistema se usa y en qué momento. En la coreografía no hay jefe: cada sistema sabe qué hacer cuando ve cierto aviso, y así el proceso avanza solo, sin que nadie lo dirija desde el centro.',
+    resource: { type: 'video', label: 'Video: Orquestación o coreografía, con Marcia Villalba', url: 'https://www.youtube.com/watch?v=oZlvabdqYDs' },
   },
 ];
 
