@@ -23,7 +23,7 @@
   // Almacenamiento local (mejor puntaje + última pestaña visitada).
   // Todo envuelto en try/catch por si el navegador bloquea localStorage.
   // ---------------------------------------------------------------------
-  const STORAGE_KEYS = { lastTab: 'is-app:last-tab', bestScore: 'is-app:best-score', dailyAnswer: 'is-app:daily-answer', notesRead: 'is-app:notes-read' };
+  const STORAGE_KEYS = { lastTab: 'is-app:last-tab', bestScore: 'is-app:best-score', dailyAnswer: 'is-app:daily-answer', notesRead: 'is-app:notes-read', fontScale: 'is-app:font-scale' };
 
   function storageGet(key) {
     try {
@@ -743,6 +743,37 @@
 
     document.getElementById('btn-retry').addEventListener('click', renderQuizIntro);
   }
+
+  // ---------------------------------------------------------------------
+  // Selector de tamaño de letra (afecta a toda la app, vía --font-scale)
+  // ---------------------------------------------------------------------
+  const btnFontSize = document.getElementById('btn-font-size');
+  const fontSizePanel = document.getElementById('font-size-panel');
+  const fontSizeBtns = [...fontSizePanel.querySelectorAll('.font-size-panel__btn')];
+
+  function applyFontScale(scale) {
+    document.documentElement.style.setProperty('--font-scale', scale);
+    fontSizeBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.scale === String(scale))));
+  }
+
+  const savedScale = storageGet(STORAGE_KEYS.fontScale) || '1';
+  applyFontScale(savedScale);
+
+  btnFontSize.addEventListener('click', () => {
+    const isOpen = btnFontSize.getAttribute('aria-expanded') === 'true';
+    btnFontSize.setAttribute('aria-expanded', String(!isOpen));
+    fontSizePanel.hidden = isOpen;
+  });
+
+  fontSizeBtns.forEach((b) => {
+    b.addEventListener('click', () => {
+      const scale = b.dataset.scale;
+      applyFontScale(scale);
+      storageSet(STORAGE_KEYS.fontScale, scale);
+      fontSizePanel.hidden = true;
+      btnFontSize.setAttribute('aria-expanded', 'false');
+    });
+  });
 
   // ---------------------------------------------------------------------
   // Arranque: recuerda la última pestaña visitada

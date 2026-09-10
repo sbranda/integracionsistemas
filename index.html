@@ -22,9 +22,19 @@
 <div class="app-shell">
 
   <header class="topbar">
-    <span class="topbar__mark" aria-hidden="true">●</span>
-    <span class="topbar__title">Integración de Sistemas</span>
+    <span class="topbar__brand">
+      <span class="topbar__mark" aria-hidden="true">●</span>
+      <span class="topbar__title">Integración de Sistemas</span>
+    </span>
+    <button id="btn-font-size" class="icon-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Tamaño de letra">Aa</button>
   </header>
+
+  <div id="font-size-panel" class="font-size-panel" hidden>
+    <button class="font-size-panel__btn" data-scale="0.9" type="button" aria-pressed="false">Chica</button>
+    <button class="font-size-panel__btn" data-scale="1" type="button" aria-pressed="true">Normal</button>
+    <button class="font-size-panel__btn" data-scale="1.15" type="button" aria-pressed="false">Grande</button>
+    <button class="font-size-panel__btn" data-scale="1.3" type="button" aria-pressed="false">Muy grande</button>
+  </div>
 
   <main id="view" class="view" aria-live="polite"></main>
 
