@@ -257,6 +257,9 @@
   // ---------------------------------------------------------------------
   // Casos para debatir en clase
   // ---------------------------------------------------------------------
+  let casesMode = 'student';
+  const CASES_MODE_KEY = 'is-app:cases-mode';
+
   function renderCases() {
     const node = templates.cases.content.cloneNode(true);
     const list = node.querySelector('#cases-list');
@@ -271,6 +274,7 @@
       const answerToggle = item.querySelector('.case__answer-toggle');
       const answerBox = item.querySelector('.case__answer');
       const answerText = item.querySelector('.case__answer-text');
+      const tipsList = item.querySelector('.case__tips-list');
 
       title.textContent = c.title;
       scenario.textContent = c.scenario;
@@ -280,6 +284,11 @@
         questionsList.appendChild(li);
       });
       answerText.textContent = c.answer;
+      (c.tips || []).forEach((t) => {
+        const li = document.createElement('li');
+        li.textContent = t;
+        tipsList.appendChild(li);
+      });
 
       head.addEventListener('click', () => {
         const expanded = head.getAttribute('aria-expanded') === 'true';
@@ -300,6 +309,25 @@
     viewEl.appendChild(node);
     wireToggleAll(document.getElementById('cases-list'), document.querySelector('#view .btn-toggle-all'));
     renderWeeklyCase();
+
+    const savedMode = storageGet(CASES_MODE_KEY);
+    casesMode = savedMode === 'teacher' ? 'teacher' : 'student';
+    const modeBtns = [...document.querySelectorAll('#view .mode-toggle__btn')];
+    modeBtns.forEach((b) => {
+      b.addEventListener('click', () => {
+        casesMode = b.dataset.mode;
+        storageSet(CASES_MODE_KEY, casesMode);
+        applyCasesMode(modeBtns);
+      });
+    });
+    applyCasesMode(modeBtns);
+  }
+
+  function applyCasesMode(modeBtns) {
+    modeBtns.forEach((b) => b.setAttribute('aria-selected', String(b.dataset.mode === casesMode)));
+    document.querySelectorAll('#view .case__tips').forEach((el) => {
+      el.hidden = casesMode !== 'teacher';
+    });
   }
 
   // ---------------------------------------------------------------------
@@ -340,12 +368,21 @@
     const answerBox = slot.querySelector('.case__answer');
     slot.querySelector('.case__answer-text').textContent = c.answer;
 
+    const tipsList = slot.querySelector('.case__tips-list');
+    (c.tips || []).forEach((t) => {
+      const li = document.createElement('li');
+      li.textContent = t;
+      tipsList.appendChild(li);
+    });
+
     answerToggle.addEventListener('click', () => {
       const shown = answerToggle.getAttribute('aria-expanded') === 'true';
       answerToggle.setAttribute('aria-expanded', String(!shown));
       answerBox.hidden = shown;
       answerToggle.textContent = shown ? 'Ver respuesta sugerida' : 'Ocultar respuesta sugerida';
     });
+
+    slot.querySelector('.case__tips').hidden = casesMode !== 'teacher';
   }
 
   // ---------------------------------------------------------------------

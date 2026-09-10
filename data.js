@@ -87,6 +87,11 @@ const CASES = [
       '¿Qué pasaría si un alumno cambia de curso y eso no se actualiza en los dos sistemas?',
     ],
     answer: 'Lo más simple sería que uno de los sistemas (por ejemplo, el de asistencia) tenga una forma de compartir sus datos, como una API, para que el otro los pueda leer y cruzar automáticamente. No hace falta unificar todo en un solo sistema: alcanza con que se "entiendan" a través de esa conexión. Si un dato como el curso de un alumno cambia, conviene que ese cambio se avise automáticamente al otro sistema, para que no queden datos desactualizados en ninguno de los dos.',
+    tips: [
+      '¿A alguien le pasó algo parecido con el boletín o el campus virtual del colegio? Es un buen punto de partida.',
+      'Si el grupo se traba, preguntá: "¿cuál de los dos sistemas debería avisarle al otro primero?"',
+      'Buen momento para nombrar el concepto de acoplamiento débil si ya lo vieron en Apuntes.',
+    ],
   },
   {
     id: 'c2',
@@ -98,6 +103,11 @@ const CASES = [
       '¿Qué pasa si justo cuando llega un pedido se corta la conexión a internet?',
     ],
     answer: 'Conviene que los dos canales (WhatsApp y la web) manden cada pedido a un mismo lugar central apenas se genera, en vez de guardarse cada uno por su lado. Cada pedido debería llevar la hora exacta en que llegó, así ese lugar central puede ordenarlos bien sin importar de qué canal vinieron. Si se corta la conexión un momento, conviene que los pedidos que no se pudieron enviar queden guardados y se manden apenas vuelva la conexión, en vez de perderse.',
+    tips: [
+      'Pedí ejemplos de apps de delivery que ya usan — seguro reconocen enseguida el mismo problema.',
+      'Si nadie menciona la hora exacta del pedido, guialos con: "¿cómo sabrían cuál llegó primero?"',
+      'Es un buen caso para introducir la idea de timestamp si todavía no salió en la clase.',
+    ],
   },
   {
     id: 'c3',
@@ -109,6 +119,10 @@ const CASES = [
       '¿Conviene que sigan siendo dos sistemas separados, o unirlos en uno solo? ¿Por qué?',
     ],
     answer: 'El problema es que hay dos copias de la misma información (qué libros están disponibles) y una se actualiza sin avisarle a la otra. Para solucionarlo, cada vez que el bibliotecario registra un préstamo, ese sistema debería avisarle automáticamente al catálogo online que ese libro ya no está disponible, en vez de que cada uno mantenga su propia lista por separado. Unificar todo en un solo sistema también sería una solución, pero no siempre es práctico si los dos ya existen y funcionan bien en lo suyo: muchas veces es más fácil conectarlos que reemplazarlos.',
+    tips: [
+      'Arrancá preguntando: "¿les pasó comprar algo online que después no había en el local?" — mismo problema, otro rubro.',
+      'Si el debate deriva en "unificar todo en un sistema", aprovechá para hablar de costos y riesgos de migrar sistemas que ya funcionan bien.',
+    ],
   },
   {
     id: 'c4',
@@ -120,6 +134,10 @@ const CASES = [
       '¿Qué pasaría si alguien cambia su número de teléfono en una de las dos apps?',
     ],
     answer: 'La solución típica es que un solo sistema guarde los datos personales de cada socio (por ejemplo, la app de socios), y que la app de entradas, en vez de pedir los datos de nuevo, se conecte a ese sistema para usarlos (por ejemplo, con un botón de "iniciar sesión con tu cuenta de socio"). Si alguien cambia su teléfono, ese cambio debería hacerse en un solo lugar y reflejarse automáticamente en el otro, en vez de actualizarlo dos veces por separado.',
+    tips: [
+      'Preguntá cuántas veces cargaron los mismos datos en dos apps distintas — genera enganche rápido.',
+      'Si no aparece sola, guialos hacia la idea de "iniciar sesión con una sola cuenta" (como Google o Apple ID).',
+    ],
   },
   {
     id: 'c5',
@@ -131,6 +149,11 @@ const CASES = [
       '¿Qué harían con el pedido de la persona que compró por la web una remera que ya no había?',
     ],
     answer: 'Lo ideal es que exista un único lugar donde se guarda el stock real, y que tanto el local como la web lo consulten y lo actualicen ahí mismo, en vez de que cada uno tenga su propia lista separada. Así, apenas se vende algo en el local, la web ve el stock actualizado al instante. Como ningún sistema es perfecto, también conviene tener un plan para cuando igual pasa un error: por ejemplo, avisarle rápido al cliente y ofrecerle un cambio o la devolución del dinero.',
+    tips: [
+      'Preguntá si alguien compró algo que "estaba" pero después le avisaron que no había stock.',
+      'Empujá el debate hacia quién debería ser el "dueño" del dato de stock: ¿el local, la web, o un tercero?',
+      'Cerrá señalando que ningún sistema es perfecto: siempre conviene un plan B para cuando falla la sincronización.',
+    ],
   },
   {
     id: 'c6',
@@ -142,6 +165,11 @@ const CASES = [
       '¿Es un problema grave que alguien reserve sin pagar, o depende del gimnasio? ¿Por qué?',
     ],
     answer: 'La app de turnos necesitaría poder preguntarle a la app de pagos, a través de una conexión entre las dos, si esa persona está al día antes de confirmarle el turno. El problema es que los pagos a veces tardan unos minutos en confirmarse, así que conviene decidir qué hacer en ese margen: por ejemplo, dejar reservar igual pero avisar que el turno se cancela si el pago no se confirma en un tiempo determinado. La gravedad del problema depende del gimnasio: si hay pocos lugares por clase, dejar reservar sin pagar puede hacer que alguien que sí pagó se quede sin lugar.',
+    tips: [
+      'Preguntá qué pasaría si esto fuera con dinero real en una app de banco, para subir la temperatura del debate.',
+      'Si nadie lo menciona, introducí la palabra "idempotencia" y pregunten juntos por qué importa acá.',
+      'Buen cierre: pedirles que decidan una regla concreta ("dejamos reservar X minutos igual, después se cancela").',
+    ],
   },
 ];
 

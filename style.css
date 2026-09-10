@@ -8,6 +8,7 @@
   --amber: #FFB648;
   --green: #4ADE80;
   --red: #F87171;
+  --teal: #5EEAD4;
 
   --font-display: 'Space Grotesk', sans-serif;
   --font-body: 'Inter', sans-serif;
@@ -393,6 +394,29 @@ mark {
   margin: 0;
   color: var(--text);
   line-height: 1.6;
+}
+
+.case__label--teacher {
+  color: var(--teal);
+}
+
+.case__tips {
+  margin-top: 14px;
+  padding: 14px 16px;
+  background: var(--surface-2);
+  border-left: 3px solid var(--teal);
+  border-radius: 0 8px 8px 0;
+}
+
+.case__tips-list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--text);
+  font-size: 13.5px;
+  line-height: 1.55;
 }
 
 /* Glosario */

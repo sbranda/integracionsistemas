@@ -99,6 +99,10 @@
       <button class="btn-toggle-all mono" data-target="cases-list" type="button">Expandir todo</button>
     </div>
     <p class="panel__lead panel__lead--left">No hay una única respuesta correcta. Léanlos en grupo, hablen sobre las preguntas y traten de llegar a una idea en común.</p>
+    <div class="mode-toggle" role="tablist">
+      <button class="mode-toggle__btn" data-mode="student" type="button" role="tab" aria-selected="true">Vista alumno</button>
+      <button class="mode-toggle__btn" data-mode="teacher" type="button" role="tab" aria-selected="false">Modo profesor</button>
+    </div>
     <div id="weekly-case-slot"></div>
     <ul class="accordion" id="cases-list"></ul>
   </div>
@@ -115,6 +119,10 @@
     <div class="case__answer" hidden>
       <p class="case__label mono">RESPUESTA SUGERIDA</p>
       <p class="case__answer-text"></p>
+    </div>
+    <div class="case__tips" hidden>
+      <p class="case__label case__label--teacher mono">💡 TIPS PARA GUIAR EL DEBATE</p>
+      <ul class="case__tips-list"></ul>
     </div>
   </div>
 </template>
@@ -133,6 +141,10 @@
       <div class="case__answer" hidden>
         <p class="case__label mono">RESPUESTA SUGERIDA</p>
         <p class="case__answer-text"></p>
+      </div>
+      <div class="case__tips" hidden>
+        <p class="case__label case__label--teacher mono">💡 TIPS PARA GUIAR EL DEBATE</p>
+        <ul class="case__tips-list"></ul>
       </div>
     </div>
   </li>
