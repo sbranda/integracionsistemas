@@ -23,7 +23,7 @@
   // Almacenamiento local (mejor puntaje + última pestaña visitada).
   // Todo envuelto en try/catch por si el navegador bloquea localStorage.
   // ---------------------------------------------------------------------
-  const STORAGE_KEYS = { lastTab: 'is-app:last-tab', bestScore: 'is-app:best-score', dailyAnswer: 'is-app:daily-answer', notesRead: 'is-app:notes-read', fontScale: 'is-app:font-scale' };
+  const STORAGE_KEYS = { lastTab: 'is-app:last-tab', bestScore: 'is-app:best-score', dailyAnswer: 'is-app:daily-answer', notesRead: 'is-app:notes-read', fontScale: 'is-app:font-scale', theme: 'is-app:theme' };
 
   function storageGet(key) {
     try {
@@ -745,33 +745,62 @@
   }
 
   // ---------------------------------------------------------------------
-  // Selector de tamaño de letra (afecta a toda la app, vía --font-scale)
+  // Selector de tema (Oscuro / Claro / Alto contraste) y de tamaño de
+  // letra. Ambos afectan a toda la app vía atributos/variables en <html>.
   // ---------------------------------------------------------------------
+  const btnTheme = document.getElementById('btn-theme');
+  const themePanel = document.getElementById('theme-panel');
+  const themeBtns = [...themePanel.querySelectorAll('.settings-panel__btn')];
+
   const btnFontSize = document.getElementById('btn-font-size');
   const fontSizePanel = document.getElementById('font-size-panel');
-  const fontSizeBtns = [...fontSizePanel.querySelectorAll('.font-size-panel__btn')];
+  const fontSizeBtns = [...fontSizePanel.querySelectorAll('.settings-panel__btn')];
+
+  function closePanel(btn, panel) {
+    panel.hidden = true;
+    btn.setAttribute('aria-expanded', 'false');
+  }
+
+  function togglePanel(btn, panel, otherBtn, otherPanel) {
+    const isOpen = btn.getAttribute('aria-expanded') === 'true';
+    closePanel(otherBtn, otherPanel);
+    if (isOpen) {
+      closePanel(btn, panel);
+    } else {
+      panel.hidden = false;
+      btn.setAttribute('aria-expanded', 'true');
+    }
+  }
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    themeBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.theme === theme)));
+  }
 
   function applyFontScale(scale) {
     document.documentElement.style.setProperty('--font-scale', scale);
     fontSizeBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.scale === String(scale))));
   }
 
-  const savedScale = storageGet(STORAGE_KEYS.fontScale) || '1';
-  applyFontScale(savedScale);
+  applyTheme(storageGet(STORAGE_KEYS.theme) || 'dark');
+  applyFontScale(storageGet(STORAGE_KEYS.fontScale) || '1');
 
-  btnFontSize.addEventListener('click', () => {
-    const isOpen = btnFontSize.getAttribute('aria-expanded') === 'true';
-    btnFontSize.setAttribute('aria-expanded', String(!isOpen));
-    fontSizePanel.hidden = isOpen;
+  btnTheme.addEventListener('click', () => togglePanel(btnTheme, themePanel, btnFontSize, fontSizePanel));
+  btnFontSize.addEventListener('click', () => togglePanel(btnFontSize, fontSizePanel, btnTheme, themePanel));
+
+  themeBtns.forEach((b) => {
+    b.addEventListener('click', () => {
+      applyTheme(b.dataset.theme);
+      storageSet(STORAGE_KEYS.theme, b.dataset.theme);
+      closePanel(btnTheme, themePanel);
+    });
   });
 
   fontSizeBtns.forEach((b) => {
     b.addEventListener('click', () => {
-      const scale = b.dataset.scale;
-      applyFontScale(scale);
-      storageSet(STORAGE_KEYS.fontScale, scale);
-      fontSizePanel.hidden = true;
-      btnFontSize.setAttribute('aria-expanded', 'false');
+      applyFontScale(b.dataset.scale);
+      storageSet(STORAGE_KEYS.fontScale, b.dataset.scale);
+      closePanel(btnFontSize, fontSizePanel);
     });
   });
 

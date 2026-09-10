@@ -26,14 +26,23 @@
       <span class="topbar__mark" aria-hidden="true">●</span>
       <span class="topbar__title">Integración de Sistemas</span>
     </span>
-    <button id="btn-font-size" class="icon-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Tamaño de letra">Aa</button>
+    <span class="topbar__actions">
+      <button id="btn-theme" class="icon-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Tema">🎨</button>
+      <button id="btn-font-size" class="icon-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Tamaño de letra">Aa</button>
+    </span>
   </header>
 
-  <div id="font-size-panel" class="font-size-panel" hidden>
-    <button class="font-size-panel__btn" data-scale="0.9" type="button" aria-pressed="false">Chica</button>
-    <button class="font-size-panel__btn" data-scale="1" type="button" aria-pressed="true">Normal</button>
-    <button class="font-size-panel__btn" data-scale="1.15" type="button" aria-pressed="false">Grande</button>
-    <button class="font-size-panel__btn" data-scale="1.3" type="button" aria-pressed="false">Muy grande</button>
+  <div id="theme-panel" class="settings-panel" hidden>
+    <button class="settings-panel__btn" data-theme="dark" type="button" aria-pressed="true">Oscuro</button>
+    <button class="settings-panel__btn" data-theme="light" type="button" aria-pressed="false">Claro</button>
+    <button class="settings-panel__btn" data-theme="contrast" type="button" aria-pressed="false">Alto contraste</button>
+  </div>
+
+  <div id="font-size-panel" class="settings-panel" hidden>
+    <button class="settings-panel__btn" data-scale="0.9" type="button" aria-pressed="false">Chica</button>
+    <button class="settings-panel__btn" data-scale="1" type="button" aria-pressed="true">Normal</button>
+    <button class="settings-panel__btn" data-scale="1.15" type="button" aria-pressed="false">Grande</button>
+    <button class="settings-panel__btn" data-scale="1.3" type="button" aria-pressed="false">Muy grande</button>
   </div>
 
   <main id="view" class="view" aria-live="polite"></main>

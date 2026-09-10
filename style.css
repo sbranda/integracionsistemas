@@ -17,6 +17,36 @@
   --font-mono: 'JetBrains Mono', monospace;
 }
 
+/* Tema claro */
+[data-theme="light"] {
+  --bg: #FAFAF7;
+  --surface: #FFFFFF;
+  --surface-2: #F0F0EC;
+  --line: #DBDBD4;
+  --text: #1A1B22;
+  --muted: #64656F;
+  --amber: #B4530A;
+  --green: #157F3C;
+  --red: #C42A2A;
+  --teal: #0C7A6E;
+}
+
+/* Alto contraste: negro/blanco puros + acentos muy saturados, pensado para
+   máxima legibilidad (WCAG AAA). Se sacrifica la jerarquía sutil de grises
+   a favor del contraste. */
+[data-theme="contrast"] {
+  --bg: #000000;
+  --surface: #000000;
+  --surface-2: #1A1A1A;
+  --line: #FFFFFF;
+  --text: #FFFFFF;
+  --muted: #FFFFFF;
+  --amber: #FFD60A;
+  --green: #3CFF3C;
+  --red: #FF3B3B;
+  --teal: #00F0FF;
+}
+
 * { box-sizing: border-box; }
 
 html, body {
@@ -54,6 +84,12 @@ html, body {
 
 .topbar__mark { color: var(--amber); font-size: calc(14px * var(--font-scale, 1)); }
 
+.topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .icon-btn {
   flex-shrink: 0;
   background: transparent;
@@ -73,14 +109,14 @@ html, body {
   color: var(--amber);
 }
 
-.font-size-panel {
+.settings-panel {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   padding: 0 20px 14px;
 }
 
-.font-size-panel__btn {
+.settings-panel__btn {
   flex: 1;
   min-width: 70px;
   background: var(--surface);
@@ -94,7 +130,7 @@ html, body {
   cursor: pointer;
 }
 
-.font-size-panel__btn[aria-pressed="true"] {
+.settings-panel__btn[aria-pressed="true"] {
   background: var(--amber);
   border-color: var(--amber);
   color: #1A1200;
