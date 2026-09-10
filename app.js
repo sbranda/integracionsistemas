@@ -17,6 +17,7 @@
     caseItem: document.getElementById('tpl-case-item'),
     dailyQuestion: document.getElementById('tpl-daily-question'),
     weeklyCase: document.getElementById('tpl-weekly-case'),
+    misconceptionItem: document.getElementById('tpl-misconception-item'),
   };
 
   // ---------------------------------------------------------------------
@@ -186,9 +187,31 @@
       list.appendChild(item);
     });
 
+    const misconceptionsList = node.querySelector('#misconceptions-list');
+    MISCONCEPTIONS.forEach((m) => {
+      const item = templates.misconceptionItem.content.cloneNode(true);
+      const li = item.querySelector('.accordion__item');
+      li.dataset.id = m.id;
+      const head = item.querySelector('.accordion__head');
+      const title = item.querySelector('.accordion__title');
+      const body = item.querySelector('.accordion__body');
+      const p = item.querySelector('.accordion__body p');
+
+      title.textContent = m.title;
+      p.textContent = m.body;
+
+      head.addEventListener('click', () => {
+        const expanded = head.getAttribute('aria-expanded') === 'true';
+        head.setAttribute('aria-expanded', String(!expanded));
+        body.hidden = expanded;
+      });
+
+      misconceptionsList.appendChild(item);
+    });
+
     viewEl.appendChild(node);
     updateNotesProgress(readSet);
-    wireToggleAll(document.getElementById('notes-list'), document.querySelector('#view .btn-toggle-all'));
+    wireToggleAll(document.querySelector('#view .panel'), document.querySelector('#view .btn-toggle-all'));
     renderDailyQuestion();
 
     document.querySelector('#view .btn-print').addEventListener('click', () => {
@@ -867,6 +890,19 @@
     toggle.focus({ preventScroll: true });
   }
 
+  function jumpToMisconception(id) {
+    closeSearch();
+    navigate('notes');
+    const li = document.querySelector(`#misconceptions-list [data-id="${id}"]`);
+    if (!li) return;
+    const head = li.querySelector('.accordion__head');
+    const body = li.querySelector('.accordion__body');
+    head.setAttribute('aria-expanded', 'true');
+    body.hidden = false;
+    if (li.scrollIntoView) li.scrollIntoView({ block: 'center' });
+    head.focus({ preventScroll: true });
+  }
+
   function jumpToCase(id) {
     closeSearch();
     navigate('cases');
@@ -901,6 +937,9 @@
     const noteMatches = NOTES.filter(
       (n) => n.title.toLowerCase().includes(qLower) || n.body.toLowerCase().includes(qLower)
     );
+    const misconceptionMatches = MISCONCEPTIONS.filter(
+      (m) => m.title.toLowerCase().includes(qLower) || m.body.toLowerCase().includes(qLower)
+    );
     const caseMatches = CASES.filter(
       (c) =>
         c.title.toLowerCase().includes(qLower) ||
@@ -911,7 +950,12 @@
       (qs) => qs.text.toLowerCase().includes(qLower) || qs.options.some((o) => o.toLowerCase().includes(qLower))
     );
 
-    if (noteMatches.length === 0 && caseMatches.length === 0 && questionMatches.length === 0) {
+    if (
+      noteMatches.length === 0 &&
+      misconceptionMatches.length === 0 &&
+      caseMatches.length === 0 &&
+      questionMatches.length === 0
+    ) {
       const empty = document.createElement('p');
       empty.className = 'search-empty';
       empty.textContent = 'No se encontraron resultados.';
@@ -934,6 +978,15 @@
       btn.type = 'button';
       btn.innerHTML = `<p class="search-result__title">${highlight(n.title, q)}</p><p class="search-result__snippet">${buildSnippet(n.body, q)}</p>`;
       btn.addEventListener('click', () => jumpToNote(n.id));
+      return btn;
+    });
+
+    addGroup('ERRORES COMUNES', misconceptionMatches, (m) => {
+      const btn = document.createElement('button');
+      btn.className = 'search-result';
+      btn.type = 'button';
+      btn.innerHTML = `<p class="search-result__title">${highlight(m.title, q)}</p><p class="search-result__snippet">${buildSnippet(m.body, q)}</p>`;
+      btn.addEventListener('click', () => jumpToMisconception(m.id));
       return btn;
     });
 

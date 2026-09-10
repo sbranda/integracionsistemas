@@ -91,7 +91,25 @@
     <button class="btn-print mono" type="button">🖨️ Exportar apuntes a PDF</button>
     <div id="daily-slot"></div>
     <ul class="accordion" id="notes-list"></ul>
+
+    <div class="section-divider"></div>
+    <p class="panel__eyebrow mono">PARA NO CONFUNDIRSE</p>
+    <h2 class="section-title">Errores comunes</h2>
+    <p class="panel__lead panel__lead--left">Malentendidos típicos sobre integración de sistemas, aclarados en pocas líneas.</p>
+    <ul class="accordion" id="misconceptions-list"></ul>
   </div>
+</template>
+
+<template id="tpl-misconception-item">
+  <li class="accordion__item">
+    <button class="accordion__head" type="button" aria-expanded="false">
+      <span class="accordion__title"></span>
+      <span class="accordion__chevron" aria-hidden="true">⌄</span>
+    </button>
+    <div class="accordion__body" hidden>
+      <p></p>
+    </div>
+  </li>
 </template>
 
 <template id="tpl-daily-question">

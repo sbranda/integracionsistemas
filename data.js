@@ -284,3 +284,38 @@ const QUESTIONS = [
     correctIndex: 0,
   },
 ];
+
+// Errores comunes: malentendidos típicos sobre integración de sistemas,
+// aclarados en pocas líneas. Se muestran dentro de la pestaña Apuntes.
+const MISCONCEPTIONS = [
+  {
+    id: 'm1',
+    title: 'Integrar sistemas es lo mismo que exportar un Excel y subirlo a otro lado',
+    body: 'Pasar datos a mano de un sistema a otro (por ejemplo, exportar un Excel y cargarlo en otro programa) no es integración de verdad: es un parche manual, propenso a errores, que alguien tiene que acordarse de hacer cada vez. Una integración real conecta los sistemas para que el intercambio de datos sea automático, sin que una persona tenga que mover archivos de un lado a otro.',
+  },
+  {
+    id: 'm2',
+    title: 'Cuanta más tecnología (ESB, microservicios, colas) se use, mejor integración',
+    body: 'No todas las integraciones necesitan la misma complejidad. Conectar dos sistemas simples con una llamada directa (point-to-point) puede ser perfectamente razonable. Meter un ESB o una arquitectura de microservicios para un caso chico agrega complejidad innecesaria, más cosas que mantener, y más lugares donde algo puede salir mal.',
+  },
+  {
+    id: 'm3',
+    title: "Si un sistema tiene una API, ya está \"integrado\" con los demás",
+    body: 'Tener una API disponible no significa que los sistemas se estén comunicando de verdad. La API es solo la puerta: alguien tiene que construir la conexión que realmente la use, manejar los errores, y mantenerla funcionando con el tiempo. Publicar una API es el primer paso, no la integración en sí.',
+  },
+  {
+    id: 'm4',
+    title: 'Una vez que la integración está hecha, ya no hay que tocarla más',
+    body: 'Los sistemas cambian: se actualizan versiones, cambian formatos de datos, se agregan funciones nuevas. Una integración que funciona hoy puede romperse si uno de los dos sistemas cambia su forma de exponer los datos. Por eso las integraciones necesitan mantenimiento, igual que cualquier otro software.',
+  },
+  {
+    id: 'm5',
+    title: 'Acoplamiento débil significa que los sistemas no dependen de nada',
+    body: 'Acoplamiento débil no es depender de cero: siempre hay alguna dependencia, al menos respetar el formato de los mensajes o el contrato de una API. Lo que busca el acoplamiento débil es que esa dependencia sea mínima y esté bien definida, para que un cambio interno en un sistema no obligue a cambiar también al otro.',
+  },
+  {
+    id: 'm6',
+    title: 'REST siempre es mejor que SOAP, porque es más moderno',
+    body: "REST es más simple y liviano, pero eso no lo hace automáticamente \"mejor\" para cualquier caso. SOAP sigue siendo una opción válida cuando se necesita un contrato muy formal, validaciones estrictas o mecanismos de seguridad específicos, como en algunos sistemas bancarios o gubernamentales. La elección depende del contexto, no de cuál salió después.",
+  },
+];
