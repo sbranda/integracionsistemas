@@ -142,6 +142,7 @@
     NOTES.forEach((note) => {
       const item = templates.noteItem.content.cloneNode(true);
       const li = item.querySelector('.accordion__item');
+      li.dataset.id = note.id;
       const check = item.querySelector('.note-check');
       const toggle = item.querySelector('.accordion__toggle');
       const title = item.querySelector('.accordion__title');
@@ -270,6 +271,8 @@
 
     CASES.forEach((c) => {
       const item = templates.caseItem.content.cloneNode(true);
+      const liCase = item.querySelector('.accordion__item');
+      liCase.dataset.id = c.id;
       const head = item.querySelector('.accordion__head');
       const title = item.querySelector('.accordion__title');
       const body = item.querySelector('.accordion__body');
@@ -802,6 +805,154 @@
       storageSet(STORAGE_KEYS.fontScale, b.dataset.scale);
       closePanel(btnFontSize, fontSizePanel);
     });
+  });
+
+  // ---------------------------------------------------------------------
+  // Buscador global: busca en Apuntes, Casos y Cuestionario a la vez.
+  // ---------------------------------------------------------------------
+  const btnSearch = document.getElementById('btn-search');
+  const searchOverlay = document.getElementById('search-overlay');
+  const searchInput = document.getElementById('global-search-input');
+  const searchResults = document.getElementById('global-search-results');
+  const btnSearchClose = document.getElementById('btn-search-close');
+
+  function buildSnippet(text, query, maxLen = 110) {
+    const lower = text.toLowerCase();
+    const qLower = query.toLowerCase();
+    const idx = lower.indexOf(qLower);
+    if (idx === -1) {
+      return escapeHtml(text.length > maxLen ? text.slice(0, maxLen) + '…' : text);
+    }
+    const start = Math.max(0, idx - 45);
+    const end = Math.min(text.length, idx + qLower.length + 65);
+    let snippet = text.slice(start, end);
+    if (start > 0) snippet = '…' + snippet;
+    if (end < text.length) snippet += '…';
+    return highlight(snippet, query);
+  }
+
+  function openSearch() {
+    closePanel(btnTheme, themePanel);
+    closePanel(btnFontSize, fontSizePanel);
+    searchOverlay.hidden = false;
+    btnSearch.setAttribute('aria-expanded', 'true');
+    searchInput.value = '';
+    paintSearchResults('');
+    searchInput.focus();
+  }
+
+  function closeSearch() {
+    searchOverlay.hidden = true;
+    btnSearch.setAttribute('aria-expanded', 'false');
+  }
+
+  function jumpToNote(id) {
+    closeSearch();
+    navigate('notes');
+    const li = document.querySelector(`#notes-list [data-id="${id}"]`);
+    if (!li) return;
+    const toggle = li.querySelector('.accordion__toggle');
+    const body = li.querySelector('.accordion__body');
+    toggle.setAttribute('aria-expanded', 'true');
+    body.hidden = false;
+    if (li.scrollIntoView) li.scrollIntoView({ block: 'center' });
+    toggle.focus({ preventScroll: true });
+  }
+
+  function jumpToCase(id) {
+    closeSearch();
+    navigate('cases');
+    const li = document.querySelector(`#cases-list [data-id="${id}"]`);
+    if (!li) return;
+    const head = li.querySelector('.accordion__head');
+    const body = li.querySelector('.accordion__body');
+    head.setAttribute('aria-expanded', 'true');
+    body.hidden = false;
+    if (li.scrollIntoView) li.scrollIntoView({ block: 'center' });
+    head.focus({ preventScroll: true });
+  }
+
+  function jumpToQuiz() {
+    closeSearch();
+    navigate('quiz');
+  }
+
+  function paintSearchResults(query) {
+    searchResults.innerHTML = '';
+    const q = query.trim();
+
+    if (!q) {
+      const hint = document.createElement('p');
+      hint.className = 'search-hint';
+      hint.textContent = 'Escribí para buscar en apuntes, casos y preguntas del cuestionario.';
+      searchResults.appendChild(hint);
+      return;
+    }
+
+    const qLower = q.toLowerCase();
+    const noteMatches = NOTES.filter(
+      (n) => n.title.toLowerCase().includes(qLower) || n.body.toLowerCase().includes(qLower)
+    );
+    const caseMatches = CASES.filter(
+      (c) =>
+        c.title.toLowerCase().includes(qLower) ||
+        c.scenario.toLowerCase().includes(qLower) ||
+        c.questions.some((qq) => qq.toLowerCase().includes(qLower))
+    );
+    const questionMatches = QUESTIONS.filter(
+      (qs) => qs.text.toLowerCase().includes(qLower) || qs.options.some((o) => o.toLowerCase().includes(qLower))
+    );
+
+    if (noteMatches.length === 0 && caseMatches.length === 0 && questionMatches.length === 0) {
+      const empty = document.createElement('p');
+      empty.className = 'search-empty';
+      empty.textContent = 'No se encontraron resultados.';
+      searchResults.appendChild(empty);
+      return;
+    }
+
+    function addGroup(label, items, buildResult) {
+      if (items.length === 0) return;
+      const groupLabel = document.createElement('p');
+      groupLabel.className = 'search-group__label mono';
+      groupLabel.textContent = `${label} (${items.length})`;
+      searchResults.appendChild(groupLabel);
+      items.forEach((item) => searchResults.appendChild(buildResult(item)));
+    }
+
+    addGroup('APUNTES', noteMatches, (n) => {
+      const btn = document.createElement('button');
+      btn.className = 'search-result';
+      btn.type = 'button';
+      btn.innerHTML = `<p class="search-result__title">${highlight(n.title, q)}</p><p class="search-result__snippet">${buildSnippet(n.body, q)}</p>`;
+      btn.addEventListener('click', () => jumpToNote(n.id));
+      return btn;
+    });
+
+    addGroup('CASOS', caseMatches, (c) => {
+      const btn = document.createElement('button');
+      btn.className = 'search-result';
+      btn.type = 'button';
+      btn.innerHTML = `<p class="search-result__title">${highlight(c.title, q)}</p><p class="search-result__snippet">${buildSnippet(c.scenario, q)}</p>`;
+      btn.addEventListener('click', () => jumpToCase(c.id));
+      return btn;
+    });
+
+    addGroup('CUESTIONARIO', questionMatches, (qs) => {
+      const btn = document.createElement('button');
+      btn.className = 'search-result';
+      btn.type = 'button';
+      btn.innerHTML = `<p class="search-result__title">${highlight(qs.text, q)}</p><p class="search-result__snippet">Tocá para ir al cuestionario</p>`;
+      btn.addEventListener('click', jumpToQuiz);
+      return btn;
+    });
+  }
+
+  btnSearch.addEventListener('click', openSearch);
+  btnSearchClose.addEventListener('click', closeSearch);
+  searchInput.addEventListener('input', () => paintSearchResults(searchInput.value));
+  searchOverlay.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeSearch();
   });
 
   // ---------------------------------------------------------------------
