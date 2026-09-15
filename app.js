@@ -1146,6 +1146,82 @@
   });
 
   // ---------------------------------------------------------------------
+  // Banner de instalación de la PWA.
+  // - Android/Chrome/Edge: capturamos el aviso nativo (beforeinstallprompt)
+  //   y lo mostramos con nuestro propio diseño.
+  // - iPhone/iPad (Safari): no existe esa API, así que mostramos
+  //   instrucciones manuales.
+  // ---------------------------------------------------------------------
+  const INSTALL_DISMISSED_KEY = 'is-app:install-dismissed';
+  const installBanner = document.getElementById('install-banner');
+  const installBannerText = document.getElementById('install-banner-text');
+  const btnInstall = document.getElementById('btn-install');
+  const btnInstallDismiss = document.getElementById('btn-install-dismiss');
+
+  let deferredInstallPrompt = null;
+
+  function isStandaloneDisplay() {
+    return (
+      (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+      window.navigator.standalone === true
+    );
+  }
+
+  function isIosDevice() {
+    return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+  }
+
+  function isSafariBrowser() {
+    return /^((?!chrome|android|crios|fxios).)*safari/i.test(window.navigator.userAgent);
+  }
+
+  function dismissInstallBanner() {
+    installBanner.hidden = true;
+    storageSet(INSTALL_DISMISSED_KEY, '1');
+  }
+
+  function showInstallBanner(mode) {
+    if (isStandaloneDisplay() || storageGet(INSTALL_DISMISSED_KEY)) return;
+    if (mode === 'native') {
+      installBannerText.textContent = 'Instalá esta app en tu dispositivo para usarla sin conexión, como una app normal.';
+      btnInstall.hidden = false;
+    } else {
+      installBannerText.textContent = 'Para instalar: tocá el ícono de compartir (⬆️) y elegí "Agregar a pantalla de inicio".';
+      btnInstall.hidden = true;
+    }
+    installBanner.hidden = false;
+  }
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    showInstallBanner('native');
+  });
+
+  window.addEventListener('appinstalled', () => {
+    installBanner.hidden = true;
+    deferredInstallPrompt = null;
+    storageSet(INSTALL_DISMISSED_KEY, '1');
+  });
+
+  btnInstall.addEventListener('click', async () => {
+    if (!deferredInstallPrompt) return;
+    deferredInstallPrompt.prompt();
+    const choice = await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    installBanner.hidden = true;
+    if (choice.outcome === 'accepted') {
+      storageSet(INSTALL_DISMISSED_KEY, '1');
+    }
+  });
+
+  btnInstallDismiss.addEventListener('click', dismissInstallBanner);
+
+  if (isIosDevice() && isSafariBrowser() && !isStandaloneDisplay()) {
+    showInstallBanner('ios');
+  }
+
+  // ---------------------------------------------------------------------
   // Arranque: recuerda la última pestaña visitada
   // ---------------------------------------------------------------------
   const savedTab = storageGet(STORAGE_KEYS.lastTab);

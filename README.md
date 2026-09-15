@@ -73,6 +73,21 @@ https://TU_USUARIO.github.io/TU_REPO/generador.html
 
 Guardala en tus favoritos — no hace falta compartirla con los alumnos.
 
+## Banner de instalación
+
+Además de que el navegador pueda ofrecer instalar la app por su cuenta, la
+app tiene su propio banner de instalación (con el diseño de la app, no el
+genérico del navegador):
+
+- **Android / Chrome / Edge**: capturamos el aviso nativo del navegador
+  (evento `beforeinstallprompt`) y mostramos nuestro banner con un botón
+  "Instalar" que dispara ese mismo aviso.
+- **iPhone / iPad (Safari)**: Apple no permite instalar programáticamente,
+  así que el banner muestra instrucciones ("tocá compartir → agregar a
+  pantalla de inicio").
+- Si ya está instalada (corriendo en modo standalone), el banner no aparece.
+- Se puede cerrar con la "✕", y esa preferencia se recuerda en el dispositivo.
+
 ## Editar contenido
 
 Todo el contenido vive en `data.js`, en cuatro arreglos:
