@@ -86,8 +86,6 @@ html, body {
   max-width: 46ch;
 }
 
-.topbar__mark { color: var(--amber); }
-
 .topbar__actions {
   display: flex;
   align-items: center;
@@ -220,18 +218,31 @@ html, body {
 }
 
 .topbar__title {
-  font-family: var(--font-display);
+  font-family: var(--font-mono);
   font-weight: 700;
-  font-size: calc(17px * var(--font-scale, 1));
-  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: calc(19px * var(--font-scale, 1));
+  color: var(--text);
 }
 
 .topbar__subtitle {
-  font-family: var(--font-display);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--amber);
+  font-size: calc(13px * var(--font-scale, 1));
+  letter-spacing: 0.02em;
+}
+
+.topbar__description {
+  font-family: var(--font-body);
+  font-style: italic;
   font-weight: 500;
-  color: var(--muted);
-  font-size: calc(16px * var(--font-scale, 1));
-  line-height: 1.35;
+  color: var(--text);
+  font-size: calc(14.5px * var(--font-scale, 1));
+  line-height: 1.6;
+  max-width: 38ch;
+  margin-top: 4px;
 }
 
 .view {
