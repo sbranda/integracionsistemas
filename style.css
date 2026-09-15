@@ -203,6 +203,10 @@ html, body {
   padding: 0 20px 14px;
 }
 
+.settings-panel[hidden] {
+  display: none;
+}
+
 .settings-panel__btn {
   flex: 1;
   min-width: 70px;
@@ -644,6 +648,10 @@ mark {
   font-size: 12px;
   font-weight: 600;
   text-decoration: none;
+}
+
+.note-resource[hidden] {
+  display: none;
 }
 
 .note-resource:hover {
