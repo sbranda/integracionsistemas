@@ -49,6 +49,12 @@
 
 * { box-sizing: border-box; }
 
+button {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
 html, body {
   margin: 0;
   padding: 0;
@@ -501,16 +507,22 @@ mark {
 }
 
 .reset-progress-link {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
   display: block;
+  width: fit-content;
   margin: 14px auto 0;
-  background: none;
+  background: transparent;
   border: none;
+  outline: none;
   color: var(--muted);
+  font-family: var(--font-body);
   font-size: calc(11px * var(--font-scale, 1));
   text-decoration: underline;
   text-underline-offset: 2px;
   cursor: pointer;
-  padding: 4px;
+  padding: 4px 8px;
 }
 
 .reset-progress-link:hover {
