@@ -58,15 +58,15 @@ const NOTES = [
 
 const GLOSSARY = [
   { term: 'Acoplamiento', def: 'Cuánto depende un sistema de otro. Si dependen mucho entre sí, un cambio chico puede romper todo.' },
-  { term: 'API', def: 'Una forma en que un programa deja que otro use sus funciones o datos, sin tener que mostrarle cómo funciona por dentro.' },
+  { term: 'API (Application Programming Interface / Interfaz de Programación de Aplicaciones)', def: 'Una forma en que un programa deja que otro use sus funciones o datos, sin tener que mostrarle cómo funciona por dentro.' },
   { term: 'Back-end', def: 'La parte de un sistema que no se ve: se encarga de la lógica, los datos y las reglas de negocio, y responde a lo que le pide el front-end.' },
   { term: 'Broker de mensajes', def: 'Un programa que recibe mensajes de un sistema y se encarga de entregárselos a otro, guardándolos mientras tanto si hace falta.' },
   { term: 'Coreografía', def: 'Forma de organizar sistemas donde cada uno reacciona solo ante ciertos avisos, sin que nadie los dirija desde un punto central.' },
-  { term: 'Diseño UI', def: 'Diseño de Interfaz de Usuario: cómo se ven y se acomodan los elementos de una pantalla (colores, botones, textos), para que sea clara y agradable de usar.' },
-  { term: 'Diseño UX', def: 'Diseño de Experiencia de Usuario: cómo se siente usar una aplicación de principio a fin, pensando en que sea fácil de entender y resuelva lo que la persona necesita.' },
+  { term: 'Diseño UI (User Interface / Interfaz de Usuario)', def: 'Diseño de Interfaz de Usuario: cómo se ven y se acomodan los elementos de una pantalla (colores, botones, textos), para que sea clara y agradable de usar.' },
+  { term: 'Diseño UX (User Experience / Experiencia de Usuario)', def: 'Diseño de Experiencia de Usuario: cómo se siente usar una aplicación de principio a fin, pensando en que sea fácil de entender y resuelva lo que la persona necesita.' },
   { term: 'Endpoint', def: 'La dirección donde un sistema pone algo a disposición para que otros lo usen.' },
-  { term: 'ESB (Enterprise Service Bus)', def: 'Un programa central que ayuda a que muchos sistemas se comuniquen entre sí, ordenando y traduciendo los mensajes que se envían.' },
-  { term: 'ETL', def: 'Sacar datos de un lugar, cambiarlos de formato, y guardarlos en otro lugar.' },
+  { term: 'ESB (Enterprise Service Bus / Bus de Servicios Empresariales)', def: 'Un programa central que ayuda a que muchos sistemas se comuniquen entre sí, ordenando y traduciendo los mensajes que se envían.' },
+  { term: 'ETL (Extract, Transform, Load / Extracción, Transformación y Carga)', def: 'Sacar datos de un lugar, cambiarlos de formato, y guardarlos en otro lugar.' },
   { term: 'Front-end', def: 'La parte de una aplicación con la que interactúa directamente quien la usa: lo que ve y toca en la pantalla (botones, textos, imágenes).' },
   { term: 'Full stack', def: 'Un desarrollo (o una persona) que abarca tanto el front-end como el back-end de una aplicación, es decir, todas las capas necesarias para que funcione de punta a punta.' },
   { term: 'Idempotencia', def: 'Que una acción dé el mismo resultado aunque se repita varias veces por error.' },
@@ -75,9 +75,9 @@ const GLOSSARY = [
   { term: 'Middleware', def: 'Un programa que ayuda a que dos sistemas distintos se entiendan entre sí.' },
   { term: 'Orquestación', def: 'Forma de organizar sistemas donde uno central decide el orden en que pasan las cosas.' },
   { term: 'Payload', def: 'La parte importante de un mensaje, sin contar los datos extra que lo acompañan.' },
-  { term: 'Pub/Sub (Publicación/Suscripción)', def: 'Un sistema avisa que pasó algo, y todos los que están "anotados" para recibir ese aviso lo reciben, sin conocerse entre sí.' },
-  { term: 'REST', def: 'Una forma simple de comunicar sistemas por internet, usando acciones básicas como pedir, crear, cambiar o borrar datos.' },
-  { term: 'SOAP', def: 'Una forma más formal y estricta de comunicar sistemas, usando un formato de mensajes llamado XML.' },
+  { term: 'Pub/Sub (Publish/Subscribe / Publicación/Suscripción)', def: 'Un sistema avisa que pasó algo, y todos los que están "anotados" para recibir ese aviso lo reciben, sin conocerse entre sí.' },
+  { term: 'REST (Representational State Transfer / Transferencia de Estado Representacional)', def: 'Una forma simple de comunicar sistemas por internet, usando acciones básicas como pedir, crear, cambiar o borrar datos.' },
+  { term: 'SOAP (Simple Object Access Protocol / Protocolo Simple de Acceso a Objetos)', def: 'Una forma más formal y estricta de comunicar sistemas, usando un formato de mensajes llamado XML.' },
   { term: 'Webhook', def: 'Cuando un sistema le avisa automáticamente a otro apenas pasa algo, en vez de que el otro tenga que estar preguntando todo el tiempo.' },
 ];
 
