@@ -63,7 +63,8 @@ html, body {
 .app-shell {
   max-width: 560px;
   margin: 0 auto;
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
 }
@@ -224,6 +225,7 @@ html, body {
 
 .view {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   padding: 4px 20px 20px;
 }
@@ -1167,11 +1169,15 @@ mark {
 
   .app-shell {
     max-width: none;
+    height: auto;
     min-height: 0;
+    display: block;
   }
 
   .view {
     overflow: visible;
+    height: auto;
+    min-height: 0;
     padding: 0;
   }
 
