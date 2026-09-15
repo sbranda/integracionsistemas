@@ -24,7 +24,7 @@
   // Almacenamiento local (mejor puntaje + última pestaña visitada).
   // Todo envuelto en try/catch por si el navegador bloquea localStorage.
   // ---------------------------------------------------------------------
-  const STORAGE_KEYS = { lastTab: 'is-app:last-tab', bestScore: 'is-app:best-score', dailyAnswer: 'is-app:daily-answer', notesRead: 'is-app:notes-read', fontScale: 'is-app:font-scale', theme: 'is-app:theme' };
+  const STORAGE_KEYS = { lastTab: 'is-app:last-tab', bestScore: 'is-app:best-score', dailyAnswer: 'is-app:daily-answer', notesRead: 'is-app:notes-read', fontScale: 'is-app:font-scale', theme: 'is-app:theme', casesViewed: 'is-app:cases-viewed' };
 
   function storageGet(key) {
     try {
@@ -57,6 +57,7 @@
     setActiveTab(name);
     viewEl.innerHTML = '';
     viewEl.scrollTop = 0;
+    if (btnScrollTop) btnScrollTop.hidden = true;
     if (remember) storageSet(STORAGE_KEYS.lastTab, name);
 
     if (name === 'notes') renderNotes();
@@ -72,6 +73,22 @@
   }
 
   tabs.forEach((t) => t.addEventListener('click', () => navigate(t.dataset.view)));
+
+  // ---------------------------------------------------------------------
+  // Botón flotante "volver arriba", visible en cualquier pestaña cuando
+  // hay suficiente scroll dentro del contenido.
+  // ---------------------------------------------------------------------
+  const btnScrollTop = document.getElementById('btn-scroll-top');
+  const SCROLL_TOP_THRESHOLD = 300;
+
+  viewEl.addEventListener('scroll', () => {
+    btnScrollTop.hidden = viewEl.scrollTop < SCROLL_TOP_THRESHOLD;
+  });
+
+  btnScrollTop.addEventListener('click', () => {
+    if (viewEl.scrollTo) viewEl.scrollTo({ top: 0, behavior: 'smooth' });
+    else viewEl.scrollTop = 0;
+  });
 
   // ---------------------------------------------------------------------
   // Utilidad: resaltar coincidencias de búsqueda dentro de un texto
@@ -128,10 +145,37 @@
     storageSet(STORAGE_KEYS.notesRead, JSON.stringify([...set]));
   }
 
+  function getCasesViewedSet() {
+    try {
+      const raw = JSON.parse(storageGet(STORAGE_KEYS.casesViewed) || '[]');
+      return new Set(Array.isArray(raw) ? raw : []);
+    } catch (e) {
+      return new Set();
+    }
+  }
+
+  function markCaseViewed(id) {
+    const set = getCasesViewedSet();
+    if (!set.has(id)) {
+      set.add(id);
+      storageSet(STORAGE_KEYS.casesViewed, JSON.stringify([...set]));
+    }
+  }
+
   function updateNotesProgress(readSet) {
-    const progressEl = document.getElementById('notes-progress');
-    if (!progressEl) return;
-    progressEl.textContent = `${readSet.size} / ${NOTES.length} leídos`;
+    const el = document.getElementById('stat-notes-read');
+    if (el) el.textContent = `${readSet.size}/${NOTES.length}`;
+  }
+
+  function updateProgressSummary() {
+    updateNotesProgress(getReadSet());
+    const bestEl = document.getElementById('stat-best-score');
+    if (bestEl) {
+      const best = getBestScore();
+      bestEl.textContent = best === null ? '—' : `${best}/${QUESTIONS.length}`;
+    }
+    const casesEl = document.getElementById('stat-cases-viewed');
+    if (casesEl) casesEl.textContent = `${getCasesViewedSet().size}/${CASES.length}`;
   }
 
   function renderNotes() {
@@ -210,7 +254,7 @@
     });
 
     viewEl.appendChild(node);
-    updateNotesProgress(readSet);
+    updateProgressSummary();
     wireToggleAll(document.querySelector('#view .panel'), document.querySelector('#view .btn-toggle-all'));
     renderDailyQuestion();
 
@@ -274,6 +318,9 @@
       } else {
         li.addEventListener('click', () => {
           storageSet(STORAGE_KEYS.dailyAnswer, JSON.stringify({ date: todayKey, chosenIndex: idx }));
+          if (navigator.vibrate) {
+            navigator.vibrate(idx === question.correctIndex ? 25 : [40, 60, 40]);
+          }
           renderDailyQuestion();
         });
       }
@@ -332,6 +379,7 @@
         const expanded = head.getAttribute('aria-expanded') === 'true';
         head.setAttribute('aria-expanded', String(!expanded));
         body.hidden = expanded;
+        if (!expanded) markCaseViewed(c.id);
       });
 
       answerToggle.addEventListener('click', () => {
@@ -391,6 +439,7 @@
 
     const node = templates.weeklyCase.content.cloneNode(true);
     slot.appendChild(node);
+    markCaseViewed(c.id);
 
     slot.querySelector('.weekly-case__title').textContent = c.title;
     slot.querySelector('.weekly-case__scenario').textContent = c.scenario;
@@ -816,7 +865,13 @@
     fontSizeBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.scale === String(scale))));
   }
 
-  applyTheme(storageGet(STORAGE_KEYS.theme) || 'dark');
+  const storedTheme = storageGet(STORAGE_KEYS.theme);
+  let initialTheme = storedTheme;
+  if (!initialTheme) {
+    const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+    initialTheme = prefersLight ? 'light' : 'dark';
+  }
+  applyTheme(initialTheme);
   applyFontScale(storageGet(STORAGE_KEYS.fontScale) || '1');
 
   btnTheme.addEventListener('click', () => togglePanel(btnTheme, themePanel, btnFontSize, fontSizePanel));

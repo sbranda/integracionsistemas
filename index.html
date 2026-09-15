@@ -48,6 +48,8 @@
 
   <main id="view" class="view" aria-live="polite"></main>
 
+  <button id="btn-scroll-top" class="scroll-top-btn" type="button" aria-label="Volver arriba" hidden>↑</button>
+
   <nav class="tabbar" aria-label="Secciones">
     <button class="tab" data-view="notes" type="button" aria-current="page">
       <svg viewBox="0 0 24 24" class="tab__icon" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h13a2 2 0 0 1 2 2v14H6a2 2 0 0 1-2-2V4Z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
@@ -87,7 +89,23 @@
       </div>
       <button class="btn-toggle-all mono" data-target="notes-list" type="button">Expandir todo</button>
     </div>
-    <p class="notes-progress mono" id="notes-progress"></p>
+    <div class="progress-summary">
+      <p class="progress-summary__eyebrow mono">TU PROGRESO</p>
+      <div class="progress-summary__grid">
+        <div class="progress-summary__stat">
+          <span class="progress-summary__num" id="stat-notes-read">0/8</span>
+          <span class="progress-summary__label">Apuntes leídos</span>
+        </div>
+        <div class="progress-summary__stat">
+          <span class="progress-summary__num" id="stat-best-score">—</span>
+          <span class="progress-summary__label">Mejor puntaje</span>
+        </div>
+        <div class="progress-summary__stat">
+          <span class="progress-summary__num" id="stat-cases-viewed">0/6</span>
+          <span class="progress-summary__label">Casos vistos</span>
+        </div>
+      </div>
+    </div>
     <button class="btn-print mono" type="button">🖨️ Exportar apuntes a PDF</button>
     <div id="daily-slot"></div>
     <ul class="accordion" id="notes-list"></ul>

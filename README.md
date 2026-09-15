@@ -16,13 +16,15 @@ funcional offline. 100% estática (sin back-end), pensada para GitHub Pages.
   - **Lista**: buscador en tiempo real que resalta la coincidencia.
   - **Tarjetas**: modo flashcard — mostrás el término, tocás la tarjeta para ver la definición (con animación de vuelta), navegás con Anterior/Siguiente, y podés mezclar el orden. La app recuerda cuál de los dos modos usaste la última vez.
 
-La app recuerda la última pestaña que visitaste, así que al volver a abrirla no arranca siempre en "Apuntes". En el encabezado (visible en cualquier pestaña) hay tres botones:
+La app recuerda la última pestaña que visitaste, así que al volver a abrirla no arranca siempre en "Apuntes". Un botón flotante "↑" aparece en cualquier pestaña al scrollear una lista larga, para volver arriba de un toque.
+
+En el encabezado (visible en cualquier pestaña) hay tres botones:
 
 - **"🔍" Buscar**: busca al mismo tiempo en Apuntes, Errores comunes, Casos y Cuestionario. Al tocar un resultado de Apuntes, Errores comunes o Casos, te lleva directo a esa pestaña con el ítem ya abierto. Los resultados de Cuestionario llevan a la pantalla de inicio del cuestionario (no se puede saltar a una pregunta específica en medio de un intento).
-- **"🎨" Tema**: Oscuro (por defecto) / Claro / Alto contraste (negro y blanco puros con acentos muy saturados, pensado para máxima legibilidad).
+- **"🎨" Tema**: Oscuro / Claro / Alto contraste (negro y blanco puros con acentos muy saturados, pensado para máxima legibilidad). La primera vez que se abre la app, detecta automáticamente si el sistema operativo prefiere modo claro u oscuro; una vez que elegís uno manualmente, esa elección queda guardada y no vuelve a cambiar sola.
 - **"Aa" Tamaño de letra**: Chica / Normal / Grande / Muy grande, escala todo el texto de la app proporcionalmente.
 
-Estas preferencias se guardan en el dispositivo.
+Estas preferencias se guardan en el dispositivo. Arriba de Apuntes hay una tarjeta de **"Tu progreso"** con tres datos: apuntes leídos, mejor puntaje del cuestionario, y casos vistos (se cuentan tanto los de la lista como el caso de la semana). La pregunta del día tiene una vibración sutil al responder (distinta si acertás o si fallás), en dispositivos que la soportan.
 
 ## Estructura
 
