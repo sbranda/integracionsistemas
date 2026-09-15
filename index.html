@@ -53,7 +53,10 @@
 
   <nav class="tabbar" aria-label="Secciones">
     <button class="tab" data-view="notes" type="button" aria-current="page">
-      <svg viewBox="0 0 24 24" class="tab__icon" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h13a2 2 0 0 1 2 2v14H6a2 2 0 0 1-2-2V4Z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+      <span class="tab__icon-wrap">
+        <svg viewBox="0 0 24 24" class="tab__icon" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h13a2 2 0 0 1 2 2v14H6a2 2 0 0 1-2-2V4Z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+        <span class="tab__badge" id="notes-tab-badge" hidden></span>
+      </span>
       <span>Apuntes</span>
     </button>
     <button class="tab" data-view="quiz" type="button">
@@ -106,6 +109,7 @@
           <span class="progress-summary__label">Casos vistos</span>
         </div>
       </div>
+      <button class="reset-progress-link" id="btn-reset-progress" type="button">Reiniciar progreso</button>
     </div>
     <button class="btn-print mono" type="button">🖨️ Exportar apuntes a PDF</button>
     <div id="daily-slot"></div>
@@ -313,7 +317,10 @@
     <p class="result__score"><span class="result__score-num"></span><span class="result__score-den"></span></p>
     <p class="result__pct mono"></p>
     <ul class="result__list"></ul>
-    <button id="btn-retry" class="btn btn--primary" type="button">Volver a intentar</button>
+    <div class="result__actions">
+      <button id="btn-share-result" class="btn btn--ghost" type="button">📤 Compartir resultado</button>
+      <button id="btn-retry" class="btn btn--primary" type="button">Volver a intentar</button>
+    </div>
   </div>
 </template>
 

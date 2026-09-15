@@ -261,6 +261,19 @@
     document.querySelector('#view .btn-print').addEventListener('click', () => {
       window.print();
     });
+
+    document.getElementById('btn-reset-progress').addEventListener('click', () => {
+      const confirmed = window.confirm(
+        '¿Reiniciar tu progreso? Se van a borrar los apuntes marcados como leídos, tu mejor puntaje del cuestionario, los casos vistos y la respuesta de la pregunta del día. Esta acción no se puede deshacer.'
+      );
+      if (!confirmed) return;
+      storageSet(STORAGE_KEYS.notesRead, '[]');
+      storageSet(STORAGE_KEYS.casesViewed, '[]');
+      storageSet(STORAGE_KEYS.bestScore, '');
+      storageSet(STORAGE_KEYS.dailyAnswer, '');
+      renderNotes();
+      updateNotesBadge();
+    });
   }
 
   // ---------------------------------------------------------------------
@@ -279,6 +292,20 @@
   function getTodayKey() {
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+
+  function updateNotesBadge() {
+    const badge = document.getElementById('notes-tab-badge');
+    if (!badge) return;
+    const todayKey = getTodayKey();
+    let stored = null;
+    try {
+      stored = JSON.parse(storageGet(STORAGE_KEYS.dailyAnswer) || 'null');
+    } catch (e) {
+      stored = null;
+    }
+    const answeredToday = stored && stored.date === todayKey;
+    badge.hidden = !!answeredToday;
   }
 
   function renderDailyQuestion() {
@@ -322,6 +349,7 @@
             navigator.vibrate(idx === question.correctIndex ? 25 : [40, 60, 40]);
           }
           renderDailyQuestion();
+          updateNotesBadge();
         });
       }
       optionsEl.appendChild(opt);
@@ -825,6 +853,52 @@
     viewEl.appendChild(node);
 
     document.getElementById('btn-retry').addEventListener('click', renderQuizIntro);
+    document.getElementById('btn-share-result').addEventListener('click', () => shareResult(data));
+
+    if (data.score === data.total) {
+      celebrateConfetti();
+      if (navigator.vibrate) navigator.vibrate([30, 40, 30, 40, 80]);
+    }
+  }
+
+  // Confeti simple con divs animados por CSS, para puntaje perfecto.
+  function celebrateConfetti() {
+    const container = document.createElement('div');
+    container.className = 'confetti-container';
+    const colors = ['var(--amber)', 'var(--green)', 'var(--teal)', 'var(--red)'];
+    for (let i = 0; i < 36; i++) {
+      const piece = document.createElement('span');
+      piece.className = 'confetti-piece';
+      piece.style.left = `${Math.random() * 100}%`;
+      piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+      piece.style.animationDelay = `${Math.random() * 0.4}s`;
+      piece.style.animationDuration = `${1.8 + Math.random() * 1.2}s`;
+      container.appendChild(piece);
+    }
+    document.body.appendChild(container);
+    setTimeout(() => container.remove(), 3200);
+  }
+
+  async function shareResult(data) {
+    const text = `Saqué ${data.score}/${data.total} (${data.percentage}%) en el cuestionario de Integración de Sistemas 🎯`;
+    const btn = document.getElementById('btn-share-result');
+    if (navigator.share) {
+      try {
+        await navigator.share({ text });
+      } catch (e) {
+        /* el usuario canceló el share nativo; no hacemos nada más */
+      }
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      btn.textContent = '✅ ¡Copiado!';
+    } catch (e) {
+      btn.textContent = '⚠️ No se pudo copiar';
+    }
+    setTimeout(() => {
+      btn.textContent = '📤 Compartir resultado';
+    }, 2200);
   }
 
   // ---------------------------------------------------------------------
@@ -1077,6 +1151,7 @@
   const savedTab = storageGet(STORAGE_KEYS.lastTab);
   const validTabs = ['notes', 'quiz', 'glossary', 'cases'];
   navigate(validTabs.includes(savedTab) ? savedTab : 'notes', false);
+  updateNotesBadge();
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {

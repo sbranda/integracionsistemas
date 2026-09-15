@@ -500,6 +500,23 @@ mark {
   line-height: 1.3;
 }
 
+.reset-progress-link {
+  display: block;
+  margin: 14px auto 0;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: calc(11px * var(--font-scale, 1));
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.reset-progress-link:hover {
+  color: var(--red);
+}
+
 .section-divider {
   border-top: 1px solid var(--line);
   margin: 28px 0 20px;
@@ -1090,6 +1107,12 @@ mark {
   gap: 8px;
 }
 
+.result__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .result__list li {
   display: flex;
   align-items: flex-start;
@@ -1155,6 +1178,24 @@ mark {
 }
 
 .tab__icon { width: 20px; height: 20px; }
+
+.tab__icon-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.tab__badge {
+  position: absolute;
+  top: -2px;
+  right: -3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--red);
+  border: 1.5px solid var(--surface);
+}
+
+.tab__badge[hidden] { display: none; }
 
 .tab[aria-current="page"] { color: var(--amber); }
 .tab:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; }
@@ -1259,4 +1300,30 @@ mark {
     color: #555555;
     font-weight: 400;
   }
+}
+
+/* Confeti para puntaje perfecto en el cuestionario */
+.confetti-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 90;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -12px;
+  width: 8px;
+  height: 14px;
+  opacity: 0.9;
+  border-radius: 2px;
+  animation-name: confetti-fall;
+  animation-timing-function: ease-in;
+  animation-fill-mode: forwards;
+}
+
+@keyframes confetti-fall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
 }

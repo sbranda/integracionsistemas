@@ -24,7 +24,7 @@ En el encabezado (visible en cualquier pestaña) hay tres botones:
 - **"🎨" Tema**: Oscuro / Claro / Alto contraste (negro y blanco puros con acentos muy saturados, pensado para máxima legibilidad). La primera vez que se abre la app, detecta automáticamente si el sistema operativo prefiere modo claro u oscuro; una vez que elegís uno manualmente, esa elección queda guardada y no vuelve a cambiar sola.
 - **"Aa" Tamaño de letra**: Chica / Normal / Grande / Muy grande, escala todo el texto de la app proporcionalmente.
 
-Estas preferencias se guardan en el dispositivo. Arriba de Apuntes hay una tarjeta de **"Tu progreso"** con tres datos: apuntes leídos, mejor puntaje del cuestionario, y casos vistos (se cuentan tanto los de la lista como el caso de la semana). La pregunta del día tiene una vibración sutil al responder (distinta si acertás o si fallás), en dispositivos que la soportan.
+Estas preferencias se guardan en el dispositivo. Arriba de Apuntes hay una tarjeta de **"Tu progreso"** con tres datos: apuntes leídos, mejor puntaje del cuestionario, y casos vistos (se cuentan tanto los de la lista como el caso de la semana), más un link para **reiniciar el progreso** (borra lo leído, el mejor puntaje, los casos vistos y la respuesta del día, con confirmación previa). La pestaña "Apuntes" muestra un punto rojo si todavía no respondiste la pregunta del día. La pregunta del día tiene una vibración sutil al responder (distinta si acertás o si fallás), en dispositivos que la soportan. Al sacar 10/10 en el cuestionario, aparece una animación de confeti, y hay un botón para **compartir tu resultado** (usa el menú nativo de compartir del celular, o copia el texto si el navegador no lo soporta).
 
 ## Estructura
 
