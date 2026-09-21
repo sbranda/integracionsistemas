@@ -94,6 +94,58 @@ const NOTES = [
     resource: { type: 'article', label: 'Artículo: ¿Qué es una PWA?', url: 'https://web.dev/explore/progressive-web-apps' }
   },
   {
+    id: 'n9',
+    title: 'Aplicaciones nativas',
+    body: `Una aplicación nativa es un programa hecho específicamente para un sistema operativo (Android
+    o iOS), usando las herramientas y el lenguaje que ese sistema operativo espera. Se descarga e
+    instala desde una tienda de aplicaciones, como Google Play o App Store.
+
+    La palabra "nativa" quiere decir que la app "nació" para ese sistema en particular: una app nativa de
+    Android está escrita pensando solo en Android (por ejemplo, con el lenguaje Kotlin), y una app nativa
+    de iOS está escrita pensando solo en iPhone (por ejemplo, con el lenguaje Swift). Por eso, si una
+    empresa quiere estar en los dos sistemas, en general tiene que programar dos apps distintas, una para
+    cada uno.
+
+    La gran ventaja de una app nativa es que puede aprovechar al máximo todo lo que ofrece el celular:
+    la cámara, el GPS, las notificaciones, los sensores, el micrófono, todo con el mejor rendimiento
+    posible, porque está hecha a medida para ese sistema operativo. Por eso, las apps que necesitan
+    mucha velocidad o usar mucho el hardware del celular (como juegos exigentes o apps de edición de
+    video) suelen ser nativas.
+
+    La desventaja es el costo: hay que armar y mantener dos versiones distintas de la misma app (una para
+    Android y otra para iOS), lo que implica más tiempo de trabajo y más gente dedicada al proyecto,
+    comparado con otras formas de desarrollar apps.`,
+    resource: { type: 'article', label: 'Artículo: apps nativas explicadas', url: 'https://www.ibm.com/es-es/topics/native-apps' }
+  },
+  {
+    id: 'n10',
+    title: 'Aplicaciones híbridas',
+    body: `Una aplicación híbrida es un punto intermedio entre una página web y una app nativa: se
+    programa una sola vez usando tecnologías web (HTML, CSS y JavaScript, las mismas que arman páginas
+    web), y después se "envuelve" con una herramienta especial para que se pueda instalar como una app
+    normal, tanto en Android como en iOS.
+
+    La palabra "híbrida" viene justamente de esa mezcla: por dentro funciona parecido a una página web,
+    pero por fuera se ve y se instala como una app nativa, con su ícono, su ventana propia y presencia en
+    las tiendas de aplicaciones. Algunas herramientas conocidas para armar apps híbridas son Cordova,
+    Ionic o React Native (aunque este último se acerca bastante a lo nativo en varios aspectos).
+
+    La gran ventaja de una app híbrida es que se escribe el código una sola vez y funciona en varios
+    sistemas operativos, lo que ahorra mucho tiempo y trabajo en comparación con hacer dos apps nativas
+    separadas. Esto la hace una opción atractiva para empresas chicas o para proyectos que necesitan
+    salir rápido a varias plataformas a la vez.
+
+    La desventaja es que, al no estar hecha 100% a medida de cada sistema operativo, puede rendir un poco
+    peor que una app nativa en tareas muy exigentes, y a veces tarda más en tener acceso a las funciones
+    más nuevas que sacan Android o iOS, porque depende de que la herramienta intermedia las incorpore
+    primero.
+
+    Comparándola con lo que ya vimos de PWA: una app híbrida se distribuye por las tiendas de
+    aplicaciones como cualquier app nativa, mientras que una PWA se instala directamente desde el
+    navegador, sin pasar por ninguna tienda.`,
+    resource: { type: 'article', label: 'Artículo: apps híbridas explicadas', url: 'https://www.ibm.com/es-es/topics/hybrid-app' }
+  },
+  {
     id: 'n5',
     title: 'Formatos de intercambio: JSON y XML',
     body: `Para que dos sistemas se entiendan, necesitan hablar el mismo "idioma" de datos. Los más
@@ -179,58 +231,6 @@ const NOTES = [
     alguien acceda a información que no debería ver, aunque el resto de los sistemas esté bien
     protegido.`,
     resource: { type: 'article', label: 'Artículo: seguridad en APIs', url: 'https://owasp.org/www-project-api-security/' }
-  },
-  {
-    id: 'n9',
-    title: 'Aplicaciones nativas',
-    body: `Una aplicación nativa es un programa hecho específicamente para un sistema operativo (Android
-    o iOS), usando las herramientas y el lenguaje que ese sistema operativo espera. Se descarga e
-    instala desde una tienda de aplicaciones, como Google Play o App Store.
-
-    La palabra "nativa" quiere decir que la app "nació" para ese sistema en particular: una app nativa de
-    Android está escrita pensando solo en Android (por ejemplo, con el lenguaje Kotlin), y una app nativa
-    de iOS está escrita pensando solo en iPhone (por ejemplo, con el lenguaje Swift). Por eso, si una
-    empresa quiere estar en los dos sistemas, en general tiene que programar dos apps distintas, una para
-    cada uno.
-
-    La gran ventaja de una app nativa es que puede aprovechar al máximo todo lo que ofrece el celular:
-    la cámara, el GPS, las notificaciones, los sensores, el micrófono, todo con el mejor rendimiento
-    posible, porque está hecha a medida para ese sistema operativo. Por eso, las apps que necesitan
-    mucha velocidad o usar mucho el hardware del celular (como juegos exigentes o apps de edición de
-    video) suelen ser nativas.
-
-    La desventaja es el costo: hay que armar y mantener dos versiones distintas de la misma app (una para
-    Android y otra para iOS), lo que implica más tiempo de trabajo y más gente dedicada al proyecto,
-    comparado con otras formas de desarrollar apps.`,
-    resource: { type: 'article', label: 'Artículo: apps nativas explicadas', url: 'https://www.ibm.com/es-es/topics/native-apps' }
-  },
-  {
-    id: 'n10',
-    title: 'Aplicaciones híbridas',
-    body: `Una aplicación híbrida es un punto intermedio entre una página web y una app nativa: se
-    programa una sola vez usando tecnologías web (HTML, CSS y JavaScript, las mismas que arman páginas
-    web), y después se "envuelve" con una herramienta especial para que se pueda instalar como una app
-    normal, tanto en Android como en iOS.
-
-    La palabra "híbrida" viene justamente de esa mezcla: por dentro funciona parecido a una página web,
-    pero por fuera se ve y se instala como una app nativa, con su ícono, su ventana propia y presencia en
-    las tiendas de aplicaciones. Algunas herramientas conocidas para armar apps híbridas son Cordova,
-    Ionic o React Native (aunque este último se acerca bastante a lo nativo en varios aspectos).
-
-    La gran ventaja de una app híbrida es que se escribe el código una sola vez y funciona en varios
-    sistemas operativos, lo que ahorra mucho tiempo y trabajo en comparación con hacer dos apps nativas
-    separadas. Esto la hace una opción atractiva para empresas chicas o para proyectos que necesitan
-    salir rápido a varias plataformas a la vez.
-
-    La desventaja es que, al no estar hecha 100% a medida de cada sistema operativo, puede rendir un poco
-    peor que una app nativa en tareas muy exigentes, y a veces tarda más en tener acceso a las funciones
-    más nuevas que sacan Android o iOS, porque depende de que la herramienta intermedia las incorpore
-    primero.
-
-    Comparándola con lo que ya vimos de PWA: una app híbrida se distribuye por las tiendas de
-    aplicaciones como cualquier app nativa, mientras que una PWA se instala directamente desde el
-    navegador, sin pasar por ninguna tienda.`,
-    resource: { type: 'article', label: 'Artículo: apps híbridas explicadas', url: 'https://www.ibm.com/es-es/topics/hybrid-app' }
   }
 ];
 
@@ -359,14 +359,16 @@ const GLOSSARY = [
 ];
 
 const QUESTIONS = [
+  { q: '¿Qué significa "integrar sistemas"?', options: ['Instalar un antivirus en todos los sistemas', 'Hacer que programas distintos trabajen juntos e intercambien información', 'Borrar los sistemas viejos y usar uno solo', 'Traducir un programa a otro idioma'], correct: 1 },
   { q: '¿Qué es una API?', options: ['Un tipo de base de datos', 'Una interfaz que permite que dos sistemas se comuniquen', 'Un lenguaje de programación', 'Un antivirus'], correct: 1 },
-  { q: '¿Qué significa PWA?', options: ['Programa Web Automático', 'Aplicación Web Progresiva', 'Protocolo Web Avanzado', 'Página Web Adaptable'], correct: 1 },
   { q: '¿Cuál es la principal diferencia entre front-end y back-end?', options: ['El front-end es la parte visual, el back-end procesa datos', 'Son exactamente lo mismo', 'El back-end es solo para celulares', 'El front-end nunca se conecta a una API'], correct: 0 },
+  { q: '¿Qué significa PWA?', options: ['Programa Web Automático', 'Aplicación Web Progresiva', 'Protocolo Web Avanzado', 'Página Web Adaptable'], correct: 1 },
+  { q: '¿Qué característica tiene una PWA que no tiene una web común?', options: ['Se puede instalar y funcionar parcialmente sin conexión', 'No necesita diseño', 'Solo funciona en una marca de celular', 'No usa HTML'], correct: 0 },
+  { q: '¿Qué es una aplicación nativa?', options: ['Una página web sin estilos', 'Una app hecha específicamente para un sistema operativo (Android o iOS)', 'Un tipo de base de datos', 'Una app que solo funciona sin internet'], correct: 1 },
+  { q: '¿Cuál es la principal ventaja de una aplicación híbrida frente a hacer dos apps nativas?', options: ['Se escribe una sola vez y funciona en varios sistemas operativos', 'Siempre es más rápida que una app nativa', 'No necesita conexión a internet nunca', 'No se puede publicar en las tiendas de aplicaciones'], correct: 0 },
   { q: '¿Para qué sirve el formato JSON?', options: ['Para diseñar pantallas', 'Para organizar e intercambiar datos entre sistemas', 'Para proteger contraseñas', 'Para acelerar internet'], correct: 1 },
   { q: '¿Qué hace un middleware?', options: ['Diseña la interfaz visual', 'Traduce y conecta la comunicación entre sistemas distintos', 'Guarda copias de seguridad', 'Vende licencias de software'], correct: 1 },
-  { q: '¿Qué característica tiene una PWA que no tiene una web común?', options: ['Se puede instalar y funcionar parcialmente sin conexión', 'No necesita diseño', 'Solo funciona en una marca de celular', 'No usa HTML'], correct: 0 },
   { q: '¿Qué es REST?', options: ['Un lenguaje de bases de datos', 'Un estilo para construir servicios web', 'Un tipo de antivirus', 'Un navegador'], correct: 1 },
   { q: '¿Qué significa HTTPS respecto de HTTP?', options: ['Es una versión más antigua', 'Es la versión segura y cifrada', 'No tiene relación', 'Es solo para videos'], correct: 1 },
-  { q: '¿Qué es un token en el contexto de integración de sistemas?', options: ['Un tipo de gráfico', 'Un código temporal que autoriza el acceso a un sistema', 'Un error del sistema', 'Un formato de imagen'], correct: 1 },
-  { q: '¿Qué es un endpoint?', options: ['El final de un cable de red', 'Una dirección específica de una API para hacer un pedido', 'Un tipo de base de datos', 'Un dispositivo IoT'], correct: 1 }
+  { q: '¿Qué es un token en el contexto de integración de sistemas?', options: ['Un tipo de gráfico', 'Un código temporal que autoriza el acceso a un sistema', 'Un error del sistema', 'Un formato de imagen'], correct: 1 }
 ];
