@@ -188,6 +188,59 @@ const NOTES = [
     resource: { type: 'article', label: 'Artículo: ¿Qué es un middleware?', url: 'https://www.ibm.com/es-es/topics/middleware' }
   },
   {
+    id: 'n11',
+    title: 'Arquitecturas de integración: SOA, ESB y microservicios',
+    body: `Además de conectar sistemas de a dos con un middleware simple, existen formas más grandes de
+    organizar toda la integración de una empresa. Tres de las más nombradas son SOA, ESB y
+    microservicios: se parecen entre sí, pero no son lo mismo.
+
+    SOA (Service-Oriented Architecture / Arquitectura Orientada a Servicios) es una idea general: en vez
+    de armar un sistema como un bloque gigante, se lo separa en "servicios" independientes, cada uno con
+    una función clara (por ejemplo, un servicio de facturación, otro de stock, otro de clientes). Esos
+    servicios se combinan entre sí para armar procesos más grandes, como "generar una venta completa".
+
+    El ESB (Enterprise Service Bus / Bus de Servicios Empresariales) es una forma concreta de poner en
+    práctica esa idea: es un tipo especial de middleware que actúa como un "canal central" único. En vez
+    de que cada servicio tenga que conectarse directamente con todos los demás (lo que se vuelve un
+    enredo cuando hay muchos), todos los servicios se conectan al ESB, y el ESB se encarga de llevar cada
+    mensaje a donde tiene que ir, traduciendo formatos si hace falta.
+
+    Los microservicios son una evolución más moderna de esta misma idea: en vez de tener servicios
+    grandes conectados por un bus central, se arman muchísimos servicios bien chiquitos, cada uno
+    encargado de una sola tarea muy específica, que se pueden actualizar o hacer crecer por separado sin
+    afectar a los demás. Es como pasar de tener pocos empleados con muchas responsabilidades cada uno, a
+    tener muchos empleados, cada uno experto en una sola cosa.
+
+    En la práctica, muchas empresas grandes usan una combinación de estas ideas: parte de su sistema
+    viejo puede seguir organizado con SOA y un ESB, mientras van armando partes nuevas con
+    microservicios, migrando de a poco en vez de cambiar todo de golpe.`,
+    resource: { type: 'article', label: 'Artículo: SOA, ESB y microservicios', url: 'https://www.redhat.com/es/topics/soa/what-is-soa' }
+  },
+  {
+    id: 'n12',
+    title: 'Comunicación sincrónica y asincrónica',
+    body: `Cuando dos sistemas se comunican, pueden hacerlo de dos maneras muy distintas: esperando la
+    respuesta antes de seguir (sincrónica), o siguiendo con otras cosas mientras la respuesta llega más
+    tarde (asincrónica). Elegir bien entre una y otra es una decisión importante al integrar sistemas.
+
+    La comunicación sincrónica es como una llamada telefónica: llamás, y te quedás esperando en la línea
+    hasta que la otra persona te responde, sin poder hacer otra cosa mientras tanto. En sistemas, esto
+    pasa por ejemplo cuando una app le pide a una API "decime si hay stock" y se queda "congelada"
+    esperando la respuesta antes de mostrarte algo en pantalla.
+
+    La comunicación asincrónica es más parecida a mandar un mensaje de texto: lo enviás y seguís con tu
+    vida, sin quedarte esperando pegado a la pantalla; cuando te responden, te enterás y seguís desde
+    ahí. En sistemas, esto se usa mucho para tareas que tardan (por ejemplo, generar un reporte grande o
+    procesar un pago): el sistema arranca la tarea, sigue haciendo otras cosas, y avisa cuando termina
+    (muchas veces con un webhook).
+
+    Ninguna de las dos es "mejor" en general: depende de la situación. Si necesitás la respuesta sí o sí
+    para poder continuar (como saber si hay stock antes de confirmar una compra), conviene sincrónica. Si
+    la tarea puede tardar y el usuario puede seguir haciendo otra cosa mientras tanto, conviene
+    asincrónica, porque no deja todo "trabado" esperando.`,
+    resource: { type: 'article', label: 'Artículo: sincrónico vs. asincrónico', url: 'https://aws.amazon.com/es/compare/the-difference-between-synchronous-and-asynchronous-communication/' }
+  },
+  {
     id: 'n7',
     title: 'Servicios web y REST',
     body: `Un servicio web es una forma de ofrecer funciones de un sistema a través de internet, para
@@ -231,6 +284,36 @@ const NOTES = [
     alguien acceda a información que no debería ver, aunque el resto de los sistemas esté bien
     protegido.`,
     resource: { type: 'article', label: 'Artículo: seguridad en APIs', url: 'https://owasp.org/www-project-api-security/' }
+  },
+  {
+    id: 'n13',
+    title: 'OAuth y API Gateway: control de acceso avanzado',
+    body: `Además de las claves y los tokens básicos, hay herramientas más avanzadas para manejar quién
+    puede acceder a qué, sobre todo cuando muchos sistemas y muchas APIs se conectan entre sí. Dos de las
+    más usadas son OAuth y el API Gateway.
+
+    OAuth (Open Authorization / Autorización Abierta) es un estándar que le permite a una app acceder a
+    datos de otra sin necesidad de que le des tu contraseña. Seguramente ya lo usaste sin darte cuenta:
+    cuando una página te ofrece "Iniciar sesión con Google" o "Iniciar sesión con Facebook", por atrás
+    está funcionando OAuth. Vos le das permiso a esa página para usar ciertos datos de tu cuenta de
+    Google (como tu nombre y tu email), pero la página nunca ve ni guarda tu contraseña de Google.
+
+    Esto es importante porque, sin OAuth, cada app nueva te pediría crear una contraseña distinta, y en
+    algún momento alguna de esas apps podría manejar mal esa contraseña. Con OAuth, la contraseña se la
+    das una sola vez al servicio de confianza (Google, Facebook, etc.), y el resto de las apps solo
+    reciben un permiso limitado, que además se puede revocar en cualquier momento.
+
+    El API Gateway (Puerta de enlace de API), por su parte, es un punto único por donde pasan todos los
+    pedidos hacia las APIs de una empresa, antes de llegar a los sistemas reales. Funciona como un
+    portero: revisa que cada pedido tenga los permisos correctos, controla que nadie mande demasiados
+    pedidos de golpe (para evitar sobrecargas), y a veces hasta traduce el pedido antes de mandarlo al
+    sistema correspondiente.
+
+    La ventaja de tener un API Gateway es que esas tareas de seguridad y control se resuelven en un solo
+    lugar, en vez de tener que repetir la misma lógica en cada API por separado. Esto hace que agregar
+    una API nueva sea mucho más simple: solo hay que conectarla al Gateway, que ya sabe cómo manejar la
+    seguridad para todas.`,
+    resource: { type: 'article', label: 'Artículo: ¿Qué es OAuth?', url: 'https://www.ibm.com/es-es/topics/oauth' }
   }
 ];
 
@@ -377,7 +460,12 @@ const QUESTIONS = [
   { q: '¿Cuál es la principal ventaja de una aplicación híbrida frente a hacer dos apps nativas?', options: ['Se escribe una sola vez y funciona en varios sistemas operativos', 'Siempre es más rápida que una app nativa', 'No necesita conexión a internet nunca', 'No se puede publicar en las tiendas de aplicaciones'], correct: 0 },
   { q: '¿Para qué sirve el formato JSON?', options: ['Para diseñar pantallas', 'Para organizar e intercambiar datos entre sistemas', 'Para proteger contraseñas', 'Para acelerar internet'], correct: 1 },
   { q: '¿Qué hace un middleware?', options: ['Diseña la interfaz visual', 'Traduce y conecta la comunicación entre sistemas distintos', 'Guarda copias de seguridad', 'Vende licencias de software'], correct: 1 },
+  { q: '¿Qué es un ESB (Enterprise Service Bus)?', options: ['Un tipo de base de datos', 'Un tipo de middleware que funciona como canal central entre muchos sistemas', 'Un lenguaje de programación', 'Un navegador web'], correct: 1 },
+  { q: '¿Cuál es la idea principal de los microservicios?', options: ['Usar un solo programa gigante para todo', 'Dividir un sistema grande en muchos servicios chicos e independientes', 'Eliminar la necesidad de bases de datos', 'Reemplazar todas las APIs por archivos XML'], correct: 1 },
+  { q: '¿Qué es la comunicación asincrónica entre sistemas?', options: ['Cuando un sistema espera la respuesta antes de seguir', 'Cuando un sistema sigue trabajando sin esperar la respuesta inmediata', 'Cuando dos sistemas nunca se comunican', 'Cuando la comunicación solo funciona sin internet'], correct: 1 },
   { q: '¿Qué es REST?', options: ['Un lenguaje de bases de datos', 'Un estilo para construir servicios web', 'Un tipo de antivirus', 'Un navegador'], correct: 1 },
   { q: '¿Qué significa HTTPS respecto de HTTP?', options: ['Es una versión más antigua', 'Es la versión segura y cifrada', 'No tiene relación', 'Es solo para videos'], correct: 1 },
-  { q: '¿Qué es un token en el contexto de integración de sistemas?', options: ['Un tipo de gráfico', 'Un código temporal que autoriza el acceso a un sistema', 'Un error del sistema', 'Un formato de imagen'], correct: 1 }
+  { q: '¿Qué es un token en el contexto de integración de sistemas?', options: ['Un tipo de gráfico', 'Un código temporal que autoriza el acceso a un sistema', 'Un error del sistema', 'Un formato de imagen'], correct: 1 },
+  { q: '¿Para qué sirve OAuth?', options: ['Para darle permiso a una app de acceder a datos de otra sin compartir la contraseña', 'Para acelerar la conexión a internet', 'Para traducir datos de JSON a XML', 'Para diseñar la interfaz visual de una app'], correct: 0 },
+  { q: '¿Qué función cumple un API Gateway?', options: ['Es el único punto por donde pasan los pedidos a las APIs, controlando seguridad y tráfico', 'Es un tipo de base de datos para guardar contraseñas', 'Es una app que reemplaza al front-end', 'Es un formato de intercambio de datos como JSON'], correct: 0 }
 ];
