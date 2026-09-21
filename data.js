@@ -70,12 +70,12 @@ const NOTES = [
 ];
 
 const MISCONCEPTIONS = [
-  { id: 'm1', text: 'Pensar que "integrar sistemas" es lo mismo que copiar y pegar datos a mano entre programas. En realidad, la integración busca automatizar ese intercambio.' },
-  { id: 'm2', text: 'Creer que una API es un programa completo. En realidad es solo la "puerta" que permite pedir o enviar información a un sistema.' },
-  { id: 'm3', text: 'Confundir front-end con "toda la app". El front-end es solo la parte visual; el back-end también es parte fundamental de la app.' },
-  { id: 'm4', text: 'Pensar que una PWA es exactamente igual a una app nativa de las tiendas de aplicaciones. Se parece mucho, pero técnicamente sigue siendo una página web.' },
-  { id: 'm5', text: 'Creer que JSON y XML son lenguajes de programación. En realidad son solo formatos para organizar datos, no para escribir lógica.' },
-  { id: 'm6', text: 'Pensar que integrar dos sistemas es solo un tema técnico. También hay que ponerse de acuerdo en reglas de negocio, permisos y responsabilidades entre los equipos.' }
+  { id: 'm1', title: '"Integrar" no es copiar y pegar', text: 'Pensar que "integrar sistemas" es lo mismo que copiar y pegar datos a mano entre programas. En realidad, la integración busca automatizar ese intercambio.' },
+  { id: 'm2', title: 'Una API no es un programa completo', text: 'Creer que una API es un programa completo. En realidad es solo la "puerta" que permite pedir o enviar información a un sistema.' },
+  { id: 'm3', title: 'El front-end no es "toda la app"', text: 'Confundir front-end con "toda la app". El front-end es solo la parte visual; el back-end también es parte fundamental de la app.' },
+  { id: 'm4', title: 'Una PWA no es igual a una app nativa', text: 'Pensar que una PWA es exactamente igual a una app nativa de las tiendas de aplicaciones. Se parece mucho, pero técnicamente sigue siendo una página web.' },
+  { id: 'm5', title: 'JSON y XML no son lenguajes de programación', text: 'Creer que JSON y XML son lenguajes de programación. En realidad son solo formatos para organizar datos, no para escribir lógica.' },
+  { id: 'm6', title: 'Integrar no es solo un tema técnico', text: 'Pensar que integrar dos sistemas es solo un tema técnico. También hay que ponerse de acuerdo en reglas de negocio, permisos y responsabilidades entre los equipos.' }
 ];
 
 const CASES = [

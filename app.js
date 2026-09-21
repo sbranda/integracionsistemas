@@ -213,6 +213,7 @@
     const miscList = document.getElementById('misconceptions-list');
     MISCONCEPTIONS.forEach(function (m) {
       const item = document.getElementById('tpl-misconception-item').content.cloneNode(true);
+      item.querySelector('.misconception-item__title').textContent = m.title || 'Error común';
       item.querySelector('.misconception-item__text').textContent = m.text;
       miscList.appendChild(item);
       wireAccordionItem(miscList.lastElementChild);
@@ -636,7 +637,7 @@
     });
     MISCONCEPTIONS.forEach(function (m) {
       if (m.text.toLowerCase().includes(t)) {
-        results.push({ tag: 'Error común', title: 'Error común', snippet: buildSnippet(m.text, term), action: function () { jumpToMisconception(m.id); } });
+        results.push({ tag: 'Error común', title: m.title || 'Error común', snippet: buildSnippet(m.text, term), action: function () { jumpToMisconception(m.id); } });
       }
     });
     CASES.forEach(function (c) {
