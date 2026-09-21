@@ -139,6 +139,24 @@
     });
   }
 
+  // Botón "Expandir todo / Contraer todo" para una lista de acordeones.
+  function wireToggleAll(listId, buttonId) {
+    const list = document.getElementById(listId);
+    const btn = document.getElementById(buttonId);
+    if (!list || !btn) return;
+    btn.addEventListener('click', function () {
+      const heads = list.querySelectorAll('.accordion__head');
+      const anyCollapsed = Array.from(heads).some(function (h) { return h.getAttribute('aria-expanded') !== 'true'; });
+      heads.forEach(function (h) {
+        const body = h.parentElement.querySelector('.accordion__body');
+        h.setAttribute('aria-expanded', String(anyCollapsed));
+        body.hidden = !anyCollapsed;
+      });
+      btn.textContent = anyCollapsed ? 'Contraer todo' : 'Expandir todo';
+      btn.setAttribute('aria-expanded', String(anyCollapsed));
+    });
+  }
+
   // ===== Progress tracking =====
   function getReadSet() {
     try { return new Set(JSON.parse(storageGet(STORAGE_KEYS.readNotes, '[]'))); }
@@ -238,6 +256,9 @@
       miscList.appendChild(item);
       wireAccordionItem(miscList.lastElementChild);
     });
+
+    wireToggleAll('notes-list', 'btn-toggle-notes');
+    wireToggleAll('misconceptions-list', 'btn-toggle-misconceptions');
   }
 
   function updateNotesBadge() {
@@ -349,6 +370,8 @@
         markCaseViewed(c.id);
       });
     });
+
+    wireToggleAll('cases-list', 'btn-toggle-cases');
 
     applyMode();
   }

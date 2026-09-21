@@ -111,8 +111,14 @@
     <a href="#" class="reset-progress-link" id="btn-reset-progress">Reiniciar progreso</a>
     <button type="button" class="btn btn--ghost btn--block" id="btn-export-notes-pdf">Exportar apuntes a PDF</button>
     <div id="daily-slot"></div>
+    <div class="accordion__toolbar">
+      <button type="button" class="toggle-all-btn" id="btn-toggle-notes" aria-expanded="false">Expandir todo</button>
+    </div>
     <div id="notes-list" class="accordion"></div>
     <h2 class="screen__subtitle">Errores comunes</h2>
+    <div class="accordion__toolbar">
+      <button type="button" class="toggle-all-btn" id="btn-toggle-misconceptions" aria-expanded="false">Expandir todo</button>
+    </div>
     <div id="misconceptions-list" class="accordion"></div>
   </section>
 </template>
@@ -159,6 +165,9 @@
       <button type="button" class="mode-toggle__btn" data-mode="teacher">Modo profesor</button>
     </div>
     <div id="weekly-case-slot"></div>
+    <div class="accordion__toolbar">
+      <button type="button" class="toggle-all-btn" id="btn-toggle-cases" aria-expanded="false">Expandir todo</button>
+    </div>
     <div id="cases-list" class="accordion"></div>
   </section>
 </template>
