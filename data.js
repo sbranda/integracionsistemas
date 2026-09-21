@@ -179,6 +179,58 @@ const NOTES = [
     alguien acceda a información que no debería ver, aunque el resto de los sistemas esté bien
     protegido.`,
     resource: { type: 'article', label: 'Artículo: seguridad en APIs', url: 'https://owasp.org/www-project-api-security/' }
+  },
+  {
+    id: 'n9',
+    title: 'Aplicaciones nativas',
+    body: `Una aplicación nativa es un programa hecho específicamente para un sistema operativo (Android
+    o iOS), usando las herramientas y el lenguaje que ese sistema operativo espera. Se descarga e
+    instala desde una tienda de aplicaciones, como Google Play o App Store.
+
+    La palabra "nativa" quiere decir que la app "nació" para ese sistema en particular: una app nativa de
+    Android está escrita pensando solo en Android (por ejemplo, con el lenguaje Kotlin), y una app nativa
+    de iOS está escrita pensando solo en iPhone (por ejemplo, con el lenguaje Swift). Por eso, si una
+    empresa quiere estar en los dos sistemas, en general tiene que programar dos apps distintas, una para
+    cada uno.
+
+    La gran ventaja de una app nativa es que puede aprovechar al máximo todo lo que ofrece el celular:
+    la cámara, el GPS, las notificaciones, los sensores, el micrófono, todo con el mejor rendimiento
+    posible, porque está hecha a medida para ese sistema operativo. Por eso, las apps que necesitan
+    mucha velocidad o usar mucho el hardware del celular (como juegos exigentes o apps de edición de
+    video) suelen ser nativas.
+
+    La desventaja es el costo: hay que armar y mantener dos versiones distintas de la misma app (una para
+    Android y otra para iOS), lo que implica más tiempo de trabajo y más gente dedicada al proyecto,
+    comparado con otras formas de desarrollar apps.`,
+    resource: { type: 'article', label: 'Artículo: apps nativas explicadas', url: 'https://www.ibm.com/es-es/topics/native-apps' }
+  },
+  {
+    id: 'n10',
+    title: 'Aplicaciones híbridas',
+    body: `Una aplicación híbrida es un punto intermedio entre una página web y una app nativa: se
+    programa una sola vez usando tecnologías web (HTML, CSS y JavaScript, las mismas que arman páginas
+    web), y después se "envuelve" con una herramienta especial para que se pueda instalar como una app
+    normal, tanto en Android como en iOS.
+
+    La palabra "híbrida" viene justamente de esa mezcla: por dentro funciona parecido a una página web,
+    pero por fuera se ve y se instala como una app nativa, con su ícono, su ventana propia y presencia en
+    las tiendas de aplicaciones. Algunas herramientas conocidas para armar apps híbridas son Cordova,
+    Ionic o React Native (aunque este último se acerca bastante a lo nativo en varios aspectos).
+
+    La gran ventaja de una app híbrida es que se escribe el código una sola vez y funciona en varios
+    sistemas operativos, lo que ahorra mucho tiempo y trabajo en comparación con hacer dos apps nativas
+    separadas. Esto la hace una opción atractiva para empresas chicas o para proyectos que necesitan
+    salir rápido a varias plataformas a la vez.
+
+    La desventaja es que, al no estar hecha 100% a medida de cada sistema operativo, puede rendir un poco
+    peor que una app nativa en tareas muy exigentes, y a veces tarda más en tener acceso a las funciones
+    más nuevas que sacan Android o iOS, porque depende de que la herramienta intermedia las incorpore
+    primero.
+
+    Comparándola con lo que ya vimos de PWA: una app híbrida se distribuye por las tiendas de
+    aplicaciones como cualquier app nativa, mientras que una PWA se instala directamente desde el
+    navegador, sin pasar por ninguna tienda.`,
+    resource: { type: 'article', label: 'Artículo: apps híbridas explicadas', url: 'https://www.ibm.com/es-es/topics/hybrid-app' }
   }
 ];
 
@@ -301,7 +353,9 @@ const GLOSSARY = [
   { term: 'Token (Ficha / Credencial temporal)', def: 'Código temporal que identifica y autoriza a un sistema o usuario a acceder a otro sistema.' },
   { term: 'Endpoint (Punto de acceso)', def: 'Dirección específica de una API a la que un sistema le hace un pedido concreto.' },
   { term: 'Middleware (Programa intermedio)', def: 'Software que conecta y traduce la comunicación entre dos sistemas distintos.' },
-  { term: 'Webhook (Aviso automático por web)', def: 'Aviso automático que un sistema le manda a otro apenas ocurre un evento, sin que nadie pregunte.' }
+  { term: 'Webhook (Aviso automático por web)', def: 'Aviso automático que un sistema le manda a otro apenas ocurre un evento, sin que nadie pregunte.' },
+  { term: 'Aplicación nativa (Native app)', def: 'App hecha específicamente para un sistema operativo (Android o iOS), con su propio lenguaje y máximo aprovechamiento del hardware.' },
+  { term: 'Aplicación híbrida (Hybrid app)', def: 'App hecha una sola vez con tecnologías web y empaquetada para instalarse en Android y iOS como si fuera nativa.' }
 ];
 
 const QUESTIONS = [
