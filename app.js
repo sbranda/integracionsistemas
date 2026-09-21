@@ -28,11 +28,26 @@
   }
 
   // ===== Splash screen =====
+  const SPLASH_TAGLINES = [
+    'Cada sistema que entendés hoy es una app menos que te va a sorprender mañana.',
+    'Integrar no es magia: es práctica. ¡Vamos con todo!',
+    'Un paso por vez: hoy un concepto, mañana un sistema completo.',
+    'Los mejores desarrolladores empezaron exactamente donde estás vos ahora.',
+    'Aprender a integrar sistemas es aprender a resolver problemas reales.',
+    'Repasá un poco hoy: tu yo del futuro te lo va a agradecer.',
+    'Cada API que entendés te acerca a construir algo más grande.',
+    '¡Vamos que se puede! Un concepto a la vez.'
+  ];
+
   function initSplash() {
     const splash = document.getElementById('splash');
     const bar = document.getElementById('splash-progress-bar');
+    const tagline = document.getElementById('splash-tagline');
     if (!splash) return;
     const DURATION = 5000;
+    if (tagline) {
+      tagline.textContent = SPLASH_TAGLINES[Math.floor(Math.random() * SPLASH_TAGLINES.length)];
+    }
     requestAnimationFrame(function () {
       if (bar) {
         bar.style.transition = 'width ' + DURATION + 'ms linear';
