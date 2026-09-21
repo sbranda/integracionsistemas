@@ -1,321 +1,205 @@
-// ---------------------------------------------------------------------------
-// Contenido de la app — Integración de Sistemas
-// Todo vive en el cliente (sin backend). Editá estos arreglos para
-// actualizar el contenido. Escrito en lenguaje simple, para que se entienda
-// sin necesidad de conocimientos previos.
-// ---------------------------------------------------------------------------
+// Contenido de la app: Integración de Sistemas
+// Para agregar preguntas nuevas sin tocar el resto del código, usá generador.html
 
 const NOTES = [
   {
     id: 'n1',
-    title: '¿Qué es la integración de sistemas?',
-    body: 'Es conectar programas o sistemas distintos para que trabajen juntos, como si fueran uno solo. Así comparten información entre ellos y ninguno queda funcionando solo, como una isla separada del resto.',
-    resource: { type: 'article', label: 'Artículo: Qué es la integración de sistemas informáticos', url: 'https://www.aurum-informatica.es/blog/que-es-la-integracion-de-sistemas-informaticos' },
+    title: '¿Qué es la Integración de Sistemas?',
+    body: `Integrar sistemas significa hacer que distintos programas, que fueron pensados por separado,
+    puedan trabajar juntos e intercambiar información. Por ejemplo: que el sistema de ventas de una
+    tienda le avise automáticamente al sistema de stock cuando se vende un producto, sin que una
+    persona tenga que copiar los datos a mano de un sistema a otro.`,
+    resource: { type: 'article', label: 'Artículo: ¿Qué es la integración de sistemas?', url: 'https://www.redhat.com/es/topics/integration/what-is-application-integration' }
   },
   {
     id: 'n2',
-    title: 'Acoplamiento fuerte vs. débil',
-    body: 'El acoplamiento mide cuánto depende un sistema de otro. Si es "fuerte", un cambio chico en un sistema puede romper al otro. Si es "débil", los sistemas se hablan a través de reglas claras (como una API), y pueden cambiar por dentro sin afectarse, mientras sigan respetando esas reglas.',
-    resource: { type: 'article', label: 'Wikipedia: Acoplamiento (informática)', url: 'https://es.wikipedia.org/wiki/Acoplamiento_(inform%C3%A1tica)' },
+    title: 'API: la puerta de entrada entre sistemas',
+    body: `Una API (Application Programming Interface / Interfaz de Programación de Aplicaciones) es
+    como un mostrador de atención: un sistema pide algo (por ejemplo, "dame los datos del cliente 123")
+    y otro sistema responde con esa información, siguiendo reglas claras y acordadas de antemano.`,
+    resource: { type: 'video', label: 'Video: APIs explicadas fácil', url: 'https://www.youtube.com/watch?v=s7wmiS2mSXY' }
   },
   {
     id: 'n3',
-    title: 'Formas de conectar sistemas',
-    body: 'Hay varias maneras de integrar sistemas: conectarlos de a uno directamente (simple, pero difícil de manejar si son muchos), usar un punto central que los conecta a todos, usar un "bus" que reparte los mensajes entre todos (ESB), o hacer que un sistema avise algo y otros lo reciban sin conocerse entre sí (publicación y suscripción).',
-    resource: { type: 'article', label: 'Microsoft Learn: Patrón de publicador-suscriptor', url: 'https://learn.microsoft.com/es-es/azure/architecture/patterns/publisher-subscriber' },
+    title: 'Front-end y back-end',
+    body: `El front-end es lo que ve y toca el usuario: botones, pantallas, formularios. El back-end es
+    la parte que no se ve, que procesa la información, guarda datos y aplica las reglas del negocio.
+    Front-end y back-end se comunican casi siempre a través de una API.`,
+    resource: { type: 'article', label: 'Artículo: diferencias entre front-end y back-end', url: 'https://developer.mozilla.org/es/docs/Learn/Front-end_web_developer' }
   },
   {
     id: 'n4',
-    title: 'Middleware y ESB',
-    body: 'El middleware es un programa intermedio que ayuda a que dos sistemas distintos se entiendan entre sí. Un ESB es un tipo de middleware pensado para conectar muchos sistemas de una empresa: recibe un mensaje, lo traduce al formato que el otro sistema necesita, y se lo entrega.',
-    resource: { type: 'video', label: 'Video: ESB, todo lo que debes saber en 3 minutos', url: 'https://www.youtube.com/watch?v=QQ-s0tIkJIE' },
+    title: '¿Qué es una PWA?',
+    body: `Una PWA (Progressive Web App / Aplicación Web Progresiva) es una página web que se puede
+    "instalar" en el celular o la computadora como si fuera una app normal, y que puede funcionar
+    parcialmente sin conexión a internet, gracias a que guarda una copia de sus archivos.`,
+    resource: { type: 'article', label: 'Artículo: ¿Qué es una PWA?', url: 'https://web.dev/explore/progressive-web-apps' }
   },
   {
     id: 'n5',
-    title: 'Mensajes que no necesitan respuesta inmediata',
-    body: 'En vez de que un sistema llame a otro y se quede esperando la respuesta ahí mismo, puede dejar el mensaje en una fila (una "cola") y seguir con lo suyo. El otro sistema lee ese mensaje cuando puede. Así, los dos sistemas no necesitan estar disponibles exactamente al mismo tiempo.',
-    resource: { type: 'article', label: 'Artículo: RabbitMQ explicado en 5 minutos o menos', url: 'https://geekflare.com/es/rabbitmq-explained/' },
+    title: 'Formatos de intercambio: JSON y XML',
+    body: `Para que dos sistemas se entiendan, necesitan hablar el mismo "idioma" de datos. Los más
+    comunes son JSON (más simple y liviano) y XML (más antiguo, más detallado). Ambos organizan la
+    información en una estructura ordenada que cualquier sistema puede leer.`,
+    resource: { type: 'article', label: 'Artículo: JSON vs XML', url: 'https://www.w3schools.com/js/js_json_xml.asp' }
   },
   {
     id: 'n6',
-    title: 'REST y SOAP: dos formas de comunicarse',
-    body: 'REST es una forma simple de conectar sistemas por internet, usando las mismas acciones básicas que usa un navegador (pedir, crear, cambiar, borrar), casi siempre con datos en un formato llamado JSON. SOAP es más formal y estricto, usa un formato llamado XML, y se usa mucho en sistemas donde el control y la seguridad son muy importantes, como en bancos.',
-    resource: { type: 'article', label: 'Artículo: REST vs. SOAP, ¿cuál es la diferencia?', url: 'https://www.arsys.es/blog/rest-vs-soap-cual-es-la-diferencia' },
+    title: 'Middleware: el traductor entre sistemas',
+    body: `A veces dos sistemas no pueden hablar directamente porque usan formatos o reglas distintas.
+    Ahí aparece el middleware: un programa intermedio que traduce y ordena la comunicación entre ellos,
+    como un intérprete entre dos personas que hablan idiomas distintos.`,
+    resource: { type: 'article', label: 'Artículo: ¿Qué es un middleware?', url: 'https://www.ibm.com/es-es/topics/middleware' }
   },
   {
     id: 'n7',
-    title: 'Formas de compartir datos: ETL, replicación y virtualización',
-    body: 'ETL significa sacar datos de un lugar, transformarlos, y llevarlos a otro lugar, normalmente en bloques (por ejemplo, una vez por noche). La replicación mantiene copias de los mismos datos actualizadas en varios sistemas al mismo tiempo. La virtualización de datos no copia nada: crea una especie de "ventana" que muestra los datos originales en el momento, sin duplicarlos en ningún lado.',
-    resource: { type: 'article', label: 'Artículo: ¿Qué es ETL?', url: 'https://cloud.google.com/learn/what-is-etl?hl=es' },
+    title: 'Servicios web y REST',
+    body: `Un servicio web es una forma de ofrecer funciones de un sistema a través de internet, para
+    que otros sistemas las usen. REST (Representational State Transfer) es un estilo muy popular para
+    construir estos servicios, basado en reglas simples sobre cómo pedir y enviar información.`,
+    resource: { type: 'video', label: 'Video: REST API explicada', url: 'https://www.youtube.com/watch?v=lsMQRaeKNDk' }
   },
   {
     id: 'n8',
-    title: 'Orquestación y coreografía',
-    body: 'En la orquestación hay un "jefe" (un sistema central) que decide qué pasa primero, qué sistema se usa y en qué momento. En la coreografía no hay jefe: cada sistema sabe qué hacer cuando ve cierto aviso, y así el proceso avanza solo, sin que nadie lo dirija desde el centro.',
-    resource: { type: 'video', label: 'Video: Orquestación o coreografía, con Marcia Villalba', url: 'https://www.youtube.com/watch?v=oZlvabdqYDs' },
-  },
+    title: 'Seguridad básica al integrar sistemas',
+    body: `Cuando dos sistemas se conectan, hay que cuidar que solo puedan acceder quienes tienen
+    permiso. Para eso se usan claves de acceso, tokens (códigos temporales) y conexiones cifradas
+    (HTTPS), que protegen la información mientras viaja de un sistema a otro.`,
+    resource: { type: 'article', label: 'Artículo: seguridad en APIs', url: 'https://owasp.org/www-project-api-security/' }
+  }
 ];
 
-const GLOSSARY = [
-  { term: 'Acoplamiento', def: 'Cuánto depende un sistema de otro. Si dependen mucho entre sí, un cambio chico puede romper todo.' },
-  { term: 'API (Application Programming Interface / Interfaz de Programación de Aplicaciones)', def: 'Una forma en que un programa deja que otro use sus funciones o datos, sin tener que mostrarle cómo funciona por dentro.' },
-  { term: 'Back-end', def: 'La parte de un sistema que no se ve: se encarga de la lógica, los datos y las reglas de negocio, y responde a lo que le pide el front-end.' },
-  { term: 'Broker de mensajes', def: 'Un programa que recibe mensajes de un sistema y se encarga de entregárselos a otro, guardándolos mientras tanto si hace falta.' },
-  { term: 'Coreografía', def: 'Forma de organizar sistemas donde cada uno reacciona solo ante ciertos avisos, sin que nadie los dirija desde un punto central.' },
-  { term: 'Diseño UI (User Interface / Interfaz de Usuario)', def: 'Diseño de Interfaz de Usuario: cómo se ven y se acomodan los elementos de una pantalla (colores, botones, textos), para que sea clara y agradable de usar.' },
-  { term: 'Diseño UX (User Experience / Experiencia de Usuario)', def: 'Diseño de Experiencia de Usuario: cómo se siente usar una aplicación de principio a fin, pensando en que sea fácil de entender y resuelva lo que la persona necesita.' },
-  { term: 'Endpoint', def: 'La dirección donde un sistema pone algo a disposición para que otros lo usen.' },
-  { term: 'ESB (Enterprise Service Bus / Bus de Servicios Empresariales)', def: 'Un programa central que ayuda a que muchos sistemas se comuniquen entre sí, ordenando y traduciendo los mensajes que se envían.' },
-  { term: 'ETL (Extract, Transform, Load / Extracción, Transformación y Carga)', def: 'Sacar datos de un lugar, cambiarlos de formato, y guardarlos en otro lugar.' },
-  { term: 'Front-end', def: 'La parte de una aplicación con la que interactúa directamente quien la usa: lo que ve y toca en la pantalla (botones, textos, imágenes).' },
-  { term: 'Full stack', def: 'Un desarrollo (o una persona) que abarca tanto el front-end como el back-end de una aplicación, es decir, todas las capas necesarias para que funcione de punta a punta.' },
-  { term: 'Idempotencia', def: 'Que una acción dé el mismo resultado aunque se repita varias veces por error.' },
-  { term: 'Latencia', def: 'El tiempo que tarda un mensaje en llegar de un lugar a otro.' },
-  { term: 'Mensajería asíncrona', def: 'Enviar un mensaje sin quedarse esperando la respuesta al instante: el otro sistema lo lee cuando puede.' },
-  { term: 'Middleware', def: 'Un programa que ayuda a que dos sistemas distintos se entiendan entre sí.' },
-  { term: 'Orquestación', def: 'Forma de organizar sistemas donde uno central decide el orden en que pasan las cosas.' },
-  { term: 'Payload', def: 'La parte importante de un mensaje, sin contar los datos extra que lo acompañan.' },
-  { term: 'Pub/Sub (Publish/Subscribe / Publicación/Suscripción)', def: 'Un sistema avisa que pasó algo, y todos los que están "anotados" para recibir ese aviso lo reciben, sin conocerse entre sí.' },
-  { term: 'REST (Representational State Transfer / Transferencia de Estado Representacional)', def: 'Una forma simple de comunicar sistemas por internet, usando acciones básicas como pedir, crear, cambiar o borrar datos.' },
-  { term: 'SOAP (Simple Object Access Protocol / Protocolo Simple de Acceso a Objetos)', def: 'Una forma más formal y estricta de comunicar sistemas, usando un formato de mensajes llamado XML.' },
-  { term: 'Webhook', def: 'Cuando un sistema le avisa automáticamente a otro apenas pasa algo, en vez de que el otro tenga que estar preguntando todo el tiempo.' },
+const MISCONCEPTIONS = [
+  { id: 'm1', text: 'Pensar que "integrar sistemas" es lo mismo que copiar y pegar datos a mano entre programas. En realidad, la integración busca automatizar ese intercambio.' },
+  { id: 'm2', text: 'Creer que una API es un programa completo. En realidad es solo la "puerta" que permite pedir o enviar información a un sistema.' },
+  { id: 'm3', text: 'Confundir front-end con "toda la app". El front-end es solo la parte visual; el back-end también es parte fundamental de la app.' },
+  { id: 'm4', text: 'Pensar que una PWA es exactamente igual a una app nativa de las tiendas de aplicaciones. Se parece mucho, pero técnicamente sigue siendo una página web.' },
+  { id: 'm5', text: 'Creer que JSON y XML son lenguajes de programación. En realidad son solo formatos para organizar datos, no para escribir lógica.' },
+  { id: 'm6', text: 'Pensar que integrar dos sistemas es solo un tema técnico. También hay que ponerse de acuerdo en reglas de negocio, permisos y responsabilidades entre los equipos.' }
 ];
 
-// Casos de estudio para debatir en clase (sin respuesta única correcta;
-// pensados para que el grupo discuta y proponga una solución). La respuesta
-// sugerida queda oculta en la app hasta que el usuario la despliega.
 const CASES = [
   {
     id: 'c1',
-    title: 'La asistencia y las notas no se hablan',
-    scenario: 'En una escuela, un sistema registra la asistencia de los alumnos y otro, totalmente separado, registra las notas. Si un profesor quiere ver junto quién faltó mucho y cómo le fue en los exámenes, tiene que buscar en los dos sistemas por separado y cruzar los datos a mano.',
-    questions: [
-      '¿Cómo conectarían estos dos sistemas para que la información se vea junta, sin cruzarla a mano?',
-      '¿Cuál de los dos sistemas debería "avisarle" al otro cuando hay un dato nuevo?',
-      '¿Qué pasaría si un alumno cambia de curso y eso no se actualiza en los dos sistemas?',
-    ],
-    answer: 'Lo más simple sería que uno de los sistemas (por ejemplo, el de asistencia) tenga una forma de compartir sus datos, como una API, para que el otro los pueda leer y cruzar automáticamente. No hace falta unificar todo en un solo sistema: alcanza con que se "entiendan" a través de esa conexión. Si un dato como el curso de un alumno cambia, conviene que ese cambio se avise automáticamente al otro sistema, para que no queden datos desactualizados en ninguno de los dos.',
+    title: 'La cafetería y la app de pedidos',
+    scenario: `Una cafetería tiene una caja registradora vieja y ahora suma una app para pedidos por
+    celular. Los pedidos de la app no aparecen en la pantalla de la cocina: el mozo tiene que anotarlos
+    a mano cuando llegan. ¿Qué está faltando para que esto funcione mejor?`,
+    answer: `Falta integrar la app de pedidos con el sistema de la cocina (o de la caja), para que los
+    pedidos aparezcan automáticamente sin que alguien los transcriba a mano.`,
     tips: [
-      '¿A alguien le pasó algo parecido con el boletín o el campus virtual del colegio? Es un buen punto de partida.',
-      'Si el grupo se traba, preguntá: "¿cuál de los dos sistemas debería avisarle al otro primero?"',
-      'Buen momento para nombrar el concepto de acoplamiento débil si ya lo vieron en Apuntes.',
-    ],
+      'Preguntá primero: ¿qué información tiene que viajar de un sistema al otro? (el pedido, la mesa, el horario)',
+      'Pedí que identifiquen quién sería el "front-end" y quién el "back-end" en este caso.',
+      'Guiá la charla hacia los riesgos de no integrar: errores humanos, demoras, pedidos perdidos.'
+    ]
   },
   {
     id: 'c2',
-    title: 'Pedidos que llegan por dos caminos distintos',
-    scenario: 'Un local de comida recibe pedidos por WhatsApp y también por su página web. Cada canal tiene su propia lista de pedidos, y a veces la cocina prepara primero un pedido que llegó después, porque no ve todo junto en un solo lugar.',
-    questions: [
-      '¿Cómo juntarían los pedidos de los dos canales en un solo lugar para la cocina?',
-      '¿Qué dato mínimo necesitaría cada pedido para que la cocina sepa el orden correcto?',
-      '¿Qué pasa si justo cuando llega un pedido se corta la conexión a internet?',
-    ],
-    answer: 'Conviene que los dos canales (WhatsApp y la web) manden cada pedido a un mismo lugar central apenas se genera, en vez de guardarse cada uno por su lado. Cada pedido debería llevar la hora exacta en que llegó, así ese lugar central puede ordenarlos bien sin importar de qué canal vinieron. Si se corta la conexión un momento, conviene que los pedidos que no se pudieron enviar queden guardados y se manden apenas vuelva la conexión, en vez de perderse.',
+    title: 'El gimnasio y las reservas de clases',
+    scenario: `Un gimnasio usa una app para que los socios reserven turnos de clases, pero la lista de
+    socios activos está en otro sistema, el de pagos. A veces alguien que no pagó la cuota igual puede
+    reservar clase. ¿Cómo se soluciona esto con integración de sistemas?`,
+    answer: `El sistema de reservas debería consultar en tiempo real al sistema de pagos si el socio
+    está al día, antes de confirmar la reserva. Eso se puede hacer con una API entre ambos sistemas.`,
     tips: [
-      'Pedí ejemplos de apps de delivery que ya usan — seguro reconocen enseguida el mismo problema.',
-      'Si nadie menciona la hora exacta del pedido, guialos con: "¿cómo sabrían cuál llegó primero?"',
-      'Es un buen caso para introducir la idea de timestamp si todavía no salió en la clase.',
-    ],
+      'Pedí a los alumnos que digan qué pregunta le haría un sistema al otro (ejemplo: "¿este socio está al día?").',
+      'Charlen sobre qué pasa si el sistema de pagos está caído en ese momento.',
+      'Relacionen esto con el concepto de API como intercambio de preguntas y respuestas entre sistemas.'
+    ]
   },
   {
     id: 'c3',
-    title: 'El libro que "está" pero no está',
-    scenario: 'Una biblioteca tiene un catálogo online, donde cualquiera puede ver qué libros hay, y un sistema aparte donde el bibliotecario anota los préstamos. Un día, alguien ve en el catálogo que un libro "está disponible", va a buscarlo, y resulta que ya lo habían prestado esa misma mañana.',
-    questions: [
-      '¿Por qué pasa este error si los dos sistemas guardan información sobre lo mismo (los libros)?',
-      '¿Qué cambiarían para que el catálogo online siempre muestre la disponibilidad real?',
-      '¿Conviene que sigan siendo dos sistemas separados, o unirlos en uno solo? ¿Por qué?',
-    ],
-    answer: 'El problema es que hay dos copias de la misma información (qué libros están disponibles) y una se actualiza sin avisarle a la otra. Para solucionarlo, cada vez que el bibliotecario registra un préstamo, ese sistema debería avisarle automáticamente al catálogo online que ese libro ya no está disponible, en vez de que cada uno mantenga su propia lista por separado. Unificar todo en un solo sistema también sería una solución, pero no siempre es práctico si los dos ya existen y funcionan bien en lo suyo: muchas veces es más fácil conectarlos que reemplazarlos.',
+    title: 'La librería con dos sistemas de stock',
+    scenario: `Una librería vende en su local y también por una página web, pero cada canal tiene su
+    propio conteo de stock por separado. Un día venden el mismo libro (el último que quedaba) por los
+    dos canales al mismo tiempo. ¿Qué salió mal?`,
+    answer: `Los dos sistemas de stock no están integrados: no comparten la información en tiempo real,
+    por eso ninguno "sabe" lo que pasa en el otro canal.`,
     tips: [
-      'Arrancá preguntando: "¿les pasó comprar algo online que después no había en el local?" — mismo problema, otro rubro.',
-      'Si el debate deriva en "unificar todo en un sistema", aprovechá para hablar de costos y riesgos de migrar sistemas que ya funcionan bien.',
-    ],
+      'Preguntá qué pasaría si hubiera un solo sistema de stock compartido por ambos canales.',
+      'Hablen sobre la diferencia entre actualizar el stock "cada tanto" versus "al instante".',
+      'Conecten esto con la idea de tener una única fuente de verdad para un mismo dato.'
+    ]
   },
   {
     id: 'c4',
-    title: 'Registrarse dos veces en el mismo club',
-    scenario: 'Un club de fútbol tiene una app para socios y otra, distinta, para comprar entradas a los partidos. Para usar las dos, cada persona tiene que cargar su nombre, DNI y datos de contacto por separado, como si fueran clubes distintos.',
-    questions: [
-      '¿Cómo evitarían que la gente tenga que cargar los mismos datos dos veces?',
-      '¿Qué sistema debería guardar los datos "originales" de cada socio, y por qué?',
-      '¿Qué pasaría si alguien cambia su número de teléfono en una de las dos apps?',
-    ],
-    answer: 'La solución típica es que un solo sistema guarde los datos personales de cada socio (por ejemplo, la app de socios), y que la app de entradas, en vez de pedir los datos de nuevo, se conecte a ese sistema para usarlos (por ejemplo, con un botón de "iniciar sesión con tu cuenta de socio"). Si alguien cambia su teléfono, ese cambio debería hacerse en un solo lugar y reflejarse automáticamente en el otro, en vez de actualizarlo dos veces por separado.',
+    title: 'El colectivo y la tarjeta de transporte',
+    scenario: `Cuando pasás la tarjeta en el colectivo, en segundos el sistema sabe si tenés saldo, te
+    cobra el pasaje y te avisa el saldo restante. ¿Qué sistemas creés que están hablando entre sí en
+    ese momento?`,
+    answer: `El lector de la tarjeta (front-end del colectivo) se comunica con un sistema central que
+    guarda el saldo de cada tarjeta, valida el cobro y actualiza el saldo, todo en segundos.`,
     tips: [
-      'Preguntá cuántas veces cargaron los mismos datos en dos apps distintas — genera enganche rápido.',
-      'Si no aparece sola, guialos hacia la idea de "iniciar sesión con una sola cuenta" (como Google o Apple ID).',
-    ],
+      'Pedí que imaginen qué pasaría si esa comunicación tardara 10 segundos en vez de 1.',
+      'Hablen sobre la importancia de la velocidad de respuesta en sistemas integrados.',
+      'Relacionen con el concepto de "en tiempo real" versus procesos que se hacen más tarde.'
+    ]
   },
   {
     id: 'c5',
-    title: 'El stock que no coincide',
-    scenario: 'Una tienda de ropa vende tanto en su local físico como en su página web. Una remera se vende en el local, pero la página web sigue mostrando que hay stock disponible, así que alguien la compra por internet sin saber que ya no queda ninguna.',
-    questions: [
-      '¿Qué tendría que pasar apenas se vende algo en el local, para que la web se entere?',
-      '¿Conviene que el local y la web consulten el mismo lugar para saber el stock, o que cada uno tenga su propia lista?',
-      '¿Qué harían con el pedido de la persona que compró por la web una remera que ya no había?',
-    ],
-    answer: 'Lo ideal es que exista un único lugar donde se guarda el stock real, y que tanto el local como la web lo consulten y lo actualicen ahí mismo, en vez de que cada uno tenga su propia lista separada. Así, apenas se vende algo en el local, la web ve el stock actualizado al instante. Como ningún sistema es perfecto, también conviene tener un plan para cuando igual pasa un error: por ejemplo, avisarle rápido al cliente y ofrecerle un cambio o la devolución del dinero.',
+    title: 'El consultorio médico y las recetas digitales',
+    scenario: `Un médico carga una receta en su sistema, y esa receta debería aparecer automáticamente
+    disponible en cualquier farmacia. Pero una farmacia dice que no la encuentra en su sistema. ¿Qué
+    puede estar fallando?`,
+    answer: `Puede que el sistema del consultorio y el sistema de la farmacia no estén correctamente
+    integrados (por ejemplo, una API que no funciona bien, o formatos de datos distintos que no se
+    entienden entre sí).`,
     tips: [
-      'Preguntá si alguien compró algo que "estaba" pero después le avisaron que no había stock.',
-      'Empujá el debate hacia quién debería ser el "dueño" del dato de stock: ¿el local, la web, o un tercero?',
-      'Cerrá señalando que ningún sistema es perfecto: siempre conviene un plan B para cuando falla la sincronización.',
-    ],
+      'Pedí ejemplos de qué información mínima necesitaría viajar en una receta digital.',
+      'Charlen sobre por qué es importante que los datos tengan siempre el mismo formato.',
+      'Mencioná que en estos casos la seguridad de los datos (información médica) es clave.'
+    ]
   },
   {
     id: 'c6',
-    title: 'El turno sin pagar',
-    scenario: 'Un gimnasio usa una app para que la gente reserve turnos de clases, y otra completamente distinta para pagar la cuota mensual. Alguien puede reservar un turno sin haber pagado, porque las dos apps no se comunican entre sí.',
-    questions: [
-      '¿Cómo harían para que la app de turnos sepa si alguien pagó o no antes de dejarlo reservar?',
-      '¿Qué pasaría si el pago se acredita recién unos minutos después de intentar pagar?',
-      '¿Es un problema grave que alguien reserve sin pagar, o depende del gimnasio? ¿Por qué?',
-    ],
-    answer: 'La app de turnos necesitaría poder preguntarle a la app de pagos, a través de una conexión entre las dos, si esa persona está al día antes de confirmarle el turno. El problema es que los pagos a veces tardan unos minutos en confirmarse, así que conviene decidir qué hacer en ese margen: por ejemplo, dejar reservar igual pero avisar que el turno se cancela si el pago no se confirma en un tiempo determinado. La gravedad del problema depende del gimnasio: si hay pocos lugares por clase, dejar reservar sin pagar puede hacer que alguien que sí pagó se quede sin lugar.',
+    title: 'La app del clima que no carga sin internet',
+    scenario: `Juan instaló una app del clima como PWA en su celular. Cuando tiene internet, ve el
+    pronóstico actualizado. Cuando no tiene señal, la app abre igual y muestra el último pronóstico que
+    había cargado, aunque esté un poco desactualizado. ¿Por qué pasa esto?`,
+    answer: `Porque las PWA pueden guardar una copia (caché) de la información y de la app en el
+    dispositivo, para poder abrir igual sin conexión, aunque los datos no se actualicen en ese momento.`,
     tips: [
-      'Preguntá qué pasaría si esto fuera con dinero real en una app de banco, para subir la temperatura del debate.',
-      'Si nadie lo menciona, introducí la palabra "idempotencia" y pregunten juntos por qué importa acá.',
-      'Buen cierre: pedirles que decidan una regla concreta ("dejamos reservar X minutos igual, después se cancela").',
-    ],
-  },
+      'Pedí que piensen en otras apps donde vieron este mismo comportamiento (sin conexión).',
+      'Hablen sobre la diferencia entre "no tener datos" y "tener datos viejos".',
+      'Conecten con el concepto de service worker como el que guarda esa copia local.'
+    ]
+  }
 ];
 
-// Cuestionario de opción única
+const GLOSSARY = [
+  { term: 'API (Application Programming Interface / Interfaz de Programación de Aplicaciones)', def: 'Conjunto de reglas que permite que dos sistemas se pidan información o funciones entre sí.' },
+  { term: 'PWA (Progressive Web App / Aplicación Web Progresiva)', def: 'Página web que se puede instalar como app y funcionar parcialmente sin conexión.' },
+  { term: 'JSON (JavaScript Object Notation / Notación de Objetos de JavaScript)', def: 'Formato simple y liviano para organizar datos, muy usado para el intercambio entre sistemas.' },
+  { term: 'XML (Extensible Markup Language / Lenguaje de Marcado Extensible)', def: 'Formato para organizar datos usando etiquetas, más detallado que JSON.' },
+  { term: 'REST (Representational State Transfer / Transferencia de Estado Representacional)', def: 'Estilo de diseño para construir servicios web simples, basado en reglas claras.' },
+  { term: 'HTTP (HyperText Transfer Protocol / Protocolo de Transferencia de Hipertexto)', def: 'Reglas que usan los sistemas para comunicarse a través de internet.' },
+  { term: 'HTTPS (HyperText Transfer Protocol Secure / Protocolo de Transferencia de Hipertexto Seguro)', def: 'Versión segura y cifrada del HTTP, que protege los datos mientras viajan.' },
+  { term: 'SDK (Software Development Kit / Kit de Desarrollo de Software)', def: 'Conjunto de herramientas listas para usar que ayudan a crear programas más rápido.' },
+  { term: 'UI (User Interface / Interfaz de Usuario)', def: 'La parte visual con la que interactúa la persona: botones, pantallas, menús.' },
+  { term: 'UX (User Experience / Experiencia de Usuario)', def: 'Qué tan fácil, agradable y clara le resulta a la persona usar un sistema o app.' },
+  { term: 'CRUD (Create, Read, Update, Delete / Crear, Leer, Actualizar, Eliminar)', def: 'Las cuatro operaciones básicas que se hacen sobre los datos de un sistema.' },
+  { term: 'SQL (Structured Query Language / Lenguaje de Consulta Estructurado)', def: 'Lenguaje usado para pedir, guardar o modificar datos en una base de datos.' },
+  { term: 'ERP (Enterprise Resource Planning / Planificación de Recursos Empresariales)', def: 'Sistema que integra distintas áreas de una empresa (ventas, stock, finanzas) en un solo lugar.' },
+  { term: 'CRM (Customer Relationship Management / Gestión de la Relación con el Cliente)', def: 'Sistema para organizar y seguir la relación de una empresa con sus clientes.' },
+  { term: 'IoT (Internet of Things / Internet de las Cosas)', def: 'Dispositivos cotidianos (heladeras, luces, sensores) conectados a internet e integrados entre sí.' },
+  { term: 'B2B (Business to Business / Negocio a Negocio)', def: 'Integración o intercambio de información entre sistemas de dos empresas distintas.' },
+  { term: 'EDI (Electronic Data Interchange / Intercambio Electrónico de Datos)', def: 'Forma estandarizada y antigua de intercambiar documentos comerciales entre sistemas.' },
+  { term: 'SaaS (Software as a Service / Software como Servicio)', def: 'Programa que se usa desde internet, sin instalarlo, pagando normalmente una suscripción.' },
+  { term: 'Token (Ficha / Credencial temporal)', def: 'Código temporal que identifica y autoriza a un sistema o usuario a acceder a otro sistema.' },
+  { term: 'Endpoint (Punto de acceso)', def: 'Dirección específica de una API a la que un sistema le hace un pedido concreto.' },
+  { term: 'Middleware (Programa intermedio)', def: 'Software que conecta y traduce la comunicación entre dos sistemas distintos.' },
+  { term: 'Webhook (Aviso automático por web)', def: 'Aviso automático que un sistema le manda a otro apenas ocurre un evento, sin que nadie pregunte.' }
+];
+
 const QUESTIONS = [
-  {
-    id: 'q1',
-    text: '¿Qué significa "integrar sistemas"?',
-    options: [
-      'Instalar el mismo sistema operativo en todos los equipos',
-      'Hacer que programas o sistemas distintos se conecten y compartan información entre sí',
-      'Migrar toda la infraestructura a la nube',
-      'Comprar todo el software a un único proveedor',
-    ],
-    correctIndex: 1,
-  },
-  {
-    id: 'q2',
-    text: '¿Cuál de estas opciones es un ejemplo de middleware para conectar sistemas?',
-    options: [
-      'Un Enterprise Service Bus (ESB)',
-      'Un editor de texto',
-      'Un sistema operativo',
-      'Una hoja de cálculo',
-    ],
-    correctIndex: 0,
-  },
-  {
-    id: 'q3',
-    text: '¿Qué quiere decir que dos sistemas tengan "acoplamiento débil"?',
-    options: [
-      'Que comparten la misma base de datos directamente',
-      'Que dependen lo menos posible entre sí, y se comunican mediante reglas claras',
-      'Que se ejecutan en el mismo servidor físico',
-      'Que no pueden comunicarse entre sí',
-    ],
-    correctIndex: 1,
-  },
-  {
-    id: 'q4',
-    text: '¿Qué forma de conectar sistemas usa una fila de mensajes, para que el que envía y el que recibe no tengan que estar disponibles al mismo tiempo?',
-    options: [
-      'Conexión directa por sockets',
-      'Mensajería asíncrona (cola de mensajes)',
-      'Acceso compartido a archivos planos',
-      'Copia manual de datos',
-    ],
-    correctIndex: 1,
-  },
-  {
-    id: 'q5',
-    text: '¿Cuál es la diferencia principal entre orquestación y coreografía?',
-    options: [
-      'No hay ninguna diferencia, son lo mismo',
-      'La orquestación usa una base de datos y la coreografía no',
-      'En la orquestación, un sistema central dirige todo; en la coreografía, cada sistema reacciona solo, sin un director central',
-      'La coreografía solo se usa con archivos por FTP',
-    ],
-    correctIndex: 2,
-  },
-  {
-    id: 'q6',
-    text: '¿Qué forma de comunicación usa las acciones básicas de internet (pedir, crear, cambiar, borrar) sobre una dirección web?',
-    options: ['SOAP', 'REST', 'FTP', 'SNMP'],
-    correctIndex: 1,
-  },
-  {
-    id: 'q7',
-    text: '¿Qué es un ESB (Enterprise Service Bus)?',
-    options: [
-      'Un método para cifrar datos',
-      'Un programa central que ordena, traduce y entrega mensajes entre varios sistemas',
-      'Un tipo de base de datos',
-      'Un lenguaje de programación',
-    ],
-    correctIndex: 1,
-  },
-  {
-    id: 'q8',
-    text: '¿Cuál de las siguientes NO es una forma de compartir datos entre sistemas?',
-    options: [
-      'ETL (sacar, transformar y cargar datos)',
-      'Replicación de bases de datos',
-      'Virtualización de datos',
-      'Reinstalar el sistema operativo del servidor',
-    ],
-    correctIndex: 3,
-  },
-  {
-    id: 'q9',
-    text: '¿Qué ventaja tiene usar una API en vez de entrar directamente a la base de datos de otro sistema?',
-    options: [
-      'Ninguna, son igual de riesgosas',
-      'La API ofrece una forma estable y controlada de acceder, sin depender de cómo el otro sistema guarda sus datos por dentro',
-      'Siempre es más rápida en todos los casos',
-      'Elimina la necesidad de pedir permiso para usarla',
-    ],
-    correctIndex: 1,
-  },
-  {
-    id: 'q10',
-    text: '¿Qué formato de datos se usa más para enviar información en las APIs modernas?',
-    options: ['JSON', 'COBOL copybook', 'EBCDIC', 'Postscript'],
-    correctIndex: 0,
-  },
-];
-
-// Errores comunes: malentendidos típicos sobre integración de sistemas,
-// aclarados en pocas líneas. Se muestran dentro de la pestaña Apuntes.
-const MISCONCEPTIONS = [
-  {
-    id: 'm1',
-    title: 'Integrar sistemas es lo mismo que exportar un Excel y subirlo a otro lado',
-    body: 'Pasar datos a mano de un sistema a otro (por ejemplo, exportar un Excel y cargarlo en otro programa) no es integración de verdad: es un parche manual, propenso a errores, que alguien tiene que acordarse de hacer cada vez. Una integración real conecta los sistemas para que el intercambio de datos sea automático, sin que una persona tenga que mover archivos de un lado a otro.',
-  },
-  {
-    id: 'm2',
-    title: 'Cuanta más tecnología (ESB, microservicios, colas) se use, mejor integración',
-    body: 'No todas las integraciones necesitan la misma complejidad. Conectar dos sistemas simples con una llamada directa (point-to-point) puede ser perfectamente razonable. Meter un ESB o una arquitectura de microservicios para un caso chico agrega complejidad innecesaria, más cosas que mantener, y más lugares donde algo puede salir mal.',
-  },
-  {
-    id: 'm3',
-    title: "Si un sistema tiene una API, ya está \"integrado\" con los demás",
-    body: 'Tener una API disponible no significa que los sistemas se estén comunicando de verdad. La API es solo la puerta: alguien tiene que construir la conexión que realmente la use, manejar los errores, y mantenerla funcionando con el tiempo. Publicar una API es el primer paso, no la integración en sí.',
-  },
-  {
-    id: 'm4',
-    title: 'Una vez que la integración está hecha, ya no hay que tocarla más',
-    body: 'Los sistemas cambian: se actualizan versiones, cambian formatos de datos, se agregan funciones nuevas. Una integración que funciona hoy puede romperse si uno de los dos sistemas cambia su forma de exponer los datos. Por eso las integraciones necesitan mantenimiento, igual que cualquier otro software.',
-  },
-  {
-    id: 'm5',
-    title: 'Acoplamiento débil significa que los sistemas no dependen de nada',
-    body: 'Acoplamiento débil no es depender de cero: siempre hay alguna dependencia, al menos respetar el formato de los mensajes o el contrato de una API. Lo que busca el acoplamiento débil es que esa dependencia sea mínima y esté bien definida, para que un cambio interno en un sistema no obligue a cambiar también al otro.',
-  },
-  {
-    id: 'm6',
-    title: 'REST siempre es mejor que SOAP, porque es más moderno',
-    body: "REST es más simple y liviano, pero eso no lo hace automáticamente \"mejor\" para cualquier caso. SOAP sigue siendo una opción válida cuando se necesita un contrato muy formal, validaciones estrictas o mecanismos de seguridad específicos, como en algunos sistemas bancarios o gubernamentales. La elección depende del contexto, no de cuál salió después.",
-  },
+  { q: '¿Qué es una API?', options: ['Un tipo de base de datos', 'Una interfaz que permite que dos sistemas se comuniquen', 'Un lenguaje de programación', 'Un antivirus'], correct: 1 },
+  { q: '¿Qué significa PWA?', options: ['Programa Web Automático', 'Aplicación Web Progresiva', 'Protocolo Web Avanzado', 'Página Web Adaptable'], correct: 1 },
+  { q: '¿Cuál es la principal diferencia entre front-end y back-end?', options: ['El front-end es la parte visual, el back-end procesa datos', 'Son exactamente lo mismo', 'El back-end es solo para celulares', 'El front-end nunca se conecta a una API'], correct: 0 },
+  { q: '¿Para qué sirve el formato JSON?', options: ['Para diseñar pantallas', 'Para organizar e intercambiar datos entre sistemas', 'Para proteger contraseñas', 'Para acelerar internet'], correct: 1 },
+  { q: '¿Qué hace un middleware?', options: ['Diseña la interfaz visual', 'Traduce y conecta la comunicación entre sistemas distintos', 'Guarda copias de seguridad', 'Vende licencias de software'], correct: 1 },
+  { q: '¿Qué característica tiene una PWA que no tiene una web común?', options: ['Se puede instalar y funcionar parcialmente sin conexión', 'No necesita diseño', 'Solo funciona en una marca de celular', 'No usa HTML'], correct: 0 },
+  { q: '¿Qué es REST?', options: ['Un lenguaje de bases de datos', 'Un estilo para construir servicios web', 'Un tipo de antivirus', 'Un navegador'], correct: 1 },
+  { q: '¿Qué significa HTTPS respecto de HTTP?', options: ['Es una versión más antigua', 'Es la versión segura y cifrada', 'No tiene relación', 'Es solo para videos'], correct: 1 },
+  { q: '¿Qué es un token en el contexto de integración de sistemas?', options: ['Un tipo de gráfico', 'Un código temporal que autoriza el acceso a un sistema', 'Un error del sistema', 'Un formato de imagen'], correct: 1 },
+  { q: '¿Qué es un endpoint?', options: ['El final de un cable de red', 'Una dirección específica de una API para hacer un pedido', 'Un tipo de base de datos', 'Un dispositivo IoT'], correct: 1 }
 ];

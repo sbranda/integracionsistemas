@@ -2,356 +2,93 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Generador de preguntas — Integración de Sistemas</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="robots" content="noindex, nofollow" />
-
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="style.css" />
-
+<title>Generador de preguntas · Integración de Sistemas</title>
 <style>
-  /* Estilos propios de esta herramienta (no afectan a la app de alumnos) */
-  .gen-shell {
-    max-width: 640px;
-    margin: 0 auto;
-    min-height: 100vh;
-    padding: 24px 20px calc(24px + env(safe-area-inset-bottom));
-  }
-
-  .gen-field {
-    margin-bottom: 18px;
-  }
-
-  .gen-label {
-    display: block;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--amber);
-    letter-spacing: 0.04em;
-    margin-bottom: 6px;
-  }
-
-  .gen-input,
-  .gen-textarea {
-    width: 100%;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    color: var(--text);
-    font-family: var(--font-body);
-    font-size: 14px;
-    padding: 12px 14px;
-  }
-
-  .gen-textarea {
-    min-height: 64px;
-    resize: vertical;
-  }
-
-  .gen-input:focus,
-  .gen-textarea:focus {
-    outline: 2px solid var(--amber);
-    outline-offset: 1px;
-  }
-
-  .gen-option-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-  }
-
-  .gen-option-row .gen-input { flex: 1; margin: 0; }
-
-  .gen-correct-label {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    flex-shrink: 0;
-    font-family: var(--font-mono);
-    font-size: 9px;
-    color: var(--muted);
-    cursor: pointer;
-  }
-
-  .gen-correct-label input { accent-color: var(--green); width: 18px; height: 18px; }
-
-  .gen-actions {
-    display: flex;
-    gap: 10px;
-    margin: 22px 0;
-  }
-
-  .gen-actions .btn { flex: 1; }
-
-  .gen-output-wrap {
-    display: none;
-    margin-top: 8px;
-  }
-
-  .gen-output-wrap.visible { display: block; }
-
-  .gen-output {
-    width: 100%;
-    min-height: 220px;
-    background: var(--surface);
-    border: 1px solid var(--amber);
-    border-radius: 10px;
-    color: var(--text);
-    font-family: var(--font-mono);
-    font-size: 12.5px;
-    line-height: 1.6;
-    padding: 14px;
-    white-space: pre;
-    overflow-x: auto;
-  }
-
-  .gen-copy-btn {
-    margin-top: 10px;
-    width: 100%;
-  }
-
-  .gen-error {
-    color: var(--red);
-    font-size: 12.5px;
-    margin: -10px 0 16px;
-    display: none;
-  }
-
-  .gen-error.visible { display: block; }
-
-  .gen-instructions {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 14px 16px;
-    margin-top: 24px;
-    font-size: 13px;
-    color: var(--muted);
-    line-height: 1.6;
-  }
-
-  .gen-instructions ol { margin: 8px 0 0; padding-left: 18px; }
-  .gen-instructions li { margin-bottom: 4px; }
-  .gen-instructions code {
-    background: var(--surface-2);
-    padding: 1px 5px;
-    border-radius: 4px;
-    font-size: 12px;
-  }
+  body { font-family: system-ui, sans-serif; max-width: 640px; margin: 30px auto; padding: 0 16px; background: #0f1720; color: #eef2f6; }
+  h1 { font-size: 20px; }
+  label { display: block; margin-top: 14px; font-size: 14px; color: #9fb0bf; }
+  input, textarea { width: 100%; padding: 10px; margin-top: 6px; border-radius: 8px; border: 1px solid #2a3a4a; background: #182430; color: #eef2f6; box-sizing: border-box; }
+  button { margin-top: 18px; padding: 12px 18px; border-radius: 8px; border: none; background: #f5a623; color: #1a1200; font-weight: 700; cursor: pointer; }
+  pre { background: #182430; padding: 14px; border-radius: 8px; white-space: pre-wrap; word-break: break-word; margin-top: 18px; border: 1px solid #2a3a4a; }
+  .hint { font-size: 13px; color: #9fb0bf; margin-top: 24px; line-height: 1.5; }
 </style>
 </head>
 <body>
+  <h1>Generador de preguntas para el cuestionario</h1>
+  <p class="hint">Completá el formulario y copiá el bloque generado dentro del arreglo <code>QUESTIONS</code> en <code>data.js</code> (antes del corchete final <code>]</code>).</p>
 
-<div class="gen-shell">
-  <p class="panel__eyebrow mono">HERRAMIENTA PARA EL PROFESOR</p>
-  <h1 class="panel__title">Generador de preguntas</h1>
-  <p class="panel__lead panel__lead--left">
-    Completá el formulario y generá el bloque de texto listo para pegar en <code>data.js</code>, sin escribir código a mano. Esta página no aparece en la app de los alumnos.
+  <label>Pregunta</label>
+  <input type="text" id="q" placeholder="¿Qué es una API?" />
+
+  <label>Opción correcta</label>
+  <input type="text" id="correct" placeholder="Una interfaz que permite..." />
+
+  <label>Opción incorrecta 1</label>
+  <input type="text" id="wrong1" />
+
+  <label>Opción incorrecta 2</label>
+  <input type="text" id="wrong2" />
+
+  <label>Opción incorrecta 3</label>
+  <input type="text" id="wrong3" />
+
+  <button id="btn-generate">Generar bloque</button>
+
+  <pre id="output" hidden></pre>
+  <button id="btn-copy" hidden>Copiar al portapapeles</button>
+
+  <p class="hint">
+    Instrucciones para agregarla:<br>
+    1. Abrí <code>data.js</code> en GitHub (lápiz de editar).<br>
+    2. Buscá el arreglo <code>const QUESTIONS = [ ... ]</code>.<br>
+    3. Pegá el bloque generado justo antes del <code>]</code> final, agregando una coma después del último elemento existente.<br>
+    4. Guardá los cambios (commit).
   </p>
 
-  <form id="question-form">
-    <div class="gen-field">
-      <label class="gen-label" for="q-id">ID DE LA PREGUNTA (único, sin espacios — ej: q11)</label>
-      <input class="gen-input" id="q-id" type="text" placeholder="q11" autocomplete="off" />
-    </div>
+  <script>
+    document.getElementById('btn-generate').addEventListener('click', function () {
+      const q = document.getElementById('q').value.trim();
+      const correct = document.getElementById('correct').value.trim();
+      const wrongs = [
+        document.getElementById('wrong1').value.trim(),
+        document.getElementById('wrong2').value.trim(),
+        document.getElementById('wrong3').value.trim()
+      ].filter(Boolean);
 
-    <div class="gen-field">
-      <label class="gen-label" for="q-text">TEXTO DE LA PREGUNTA</label>
-      <textarea class="gen-textarea" id="q-text" placeholder="¿Qué es...?"></textarea>
-    </div>
+      if (!q || !correct || wrongs.length < 1) {
+        alert('Completá al menos la pregunta, la respuesta correcta y una opción incorrecta.');
+        return;
+      }
 
-    <div class="gen-field">
-      <label class="gen-label">OPCIONES (marcá cuál es la correcta)</label>
-      <div id="options-container">
-        <div class="gen-option-row">
-          <input class="gen-input" type="text" placeholder="Opción 1" data-option />
-          <label class="gen-correct-label"><input type="radio" name="correct" value="0" checked />Correcta</label>
-        </div>
-        <div class="gen-option-row">
-          <input class="gen-input" type="text" placeholder="Opción 2" data-option />
-          <label class="gen-correct-label"><input type="radio" name="correct" value="1" />Correcta</label>
-        </div>
-        <div class="gen-option-row">
-          <input class="gen-input" type="text" placeholder="Opción 3" data-option />
-          <label class="gen-correct-label"><input type="radio" name="correct" value="2" />Correcta</label>
-        </div>
-        <div class="gen-option-row">
-          <input class="gen-input" type="text" placeholder="Opción 4" data-option />
-          <label class="gen-correct-label"><input type="radio" name="correct" value="3" />Correcta</label>
-        </div>
-      </div>
-      <button type="button" id="btn-add-option" class="btn-toggle-all mono">+ Agregar otra opción</button>
-    </div>
+      const options = [correct].concat(wrongs);
+      // mezclamos para no tener siempre la correcta primero en el código fuente
+      for (let i = options.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [options[i], options[j]] = [options[j], options[i]];
+      }
+      const correctIndex = options.indexOf(correct);
 
-    <p class="gen-error" id="gen-error"></p>
+      function esc(s) { return s.replace(/'/g, "\\'"); }
 
-    <div class="gen-actions">
-      <button type="button" id="btn-generate" class="btn btn--primary">Generar bloque</button>
-      <button type="button" id="btn-clear" class="btn btn--ghost">Limpiar</button>
-    </div>
-  </form>
+      const block =
+        "  { q: '" + esc(q) + "', options: [" +
+        options.map(function (o) { return "'" + esc(o) + "'"; }).join(', ') +
+        "], correct: " + correctIndex + " },";
 
-  <div class="gen-output-wrap" id="output-wrap">
-    <label class="gen-label">BLOQUE GENERADO — copialo y pegalo en data.js</label>
-    <pre class="gen-output" id="gen-output"></pre>
-    <button type="button" id="btn-copy" class="btn btn--primary gen-copy-btn">📋 Copiar al portapapeles</button>
-  </div>
+      const out = document.getElementById('output');
+      out.textContent = block;
+      out.hidden = false;
+      document.getElementById('btn-copy').hidden = false;
+    });
 
-  <div class="gen-instructions">
-    <strong>¿Cómo lo agrego a la app?</strong>
-    <ol>
-      <li>Generá el bloque de arriba y tocá "Copiar al portapapeles".</li>
-      <li>Abrí el archivo <code>data.js</code> del proyecto (en GitHub o en tu computadora).</li>
-      <li>Buscá <code>const QUESTIONS = [</code> y bajá hasta encontrar el <code>];</code> que cierra ese arreglo específico (ojo: más abajo en el archivo hay más contenido, como <code>MISCONCEPTIONS</code> — asegurate de pegar dentro de <code>QUESTIONS</code>, no después).</li>
-      <li>Pegá el bloque copiado justo antes de ese <code>];</code> (después de la coma del último bloque existente).</li>
-      <li>Guardá el archivo y subilo a GitHub (Add file → Upload files → Commit changes).</li>
-    </ol>
-  </div>
-</div>
-
-<script>
-(() => {
-  const idInput = document.getElementById('q-id');
-  const textInput = document.getElementById('q-text');
-  const optionsContainer = document.getElementById('options-container');
-  const btnAddOption = document.getElementById('btn-add-option');
-  const btnGenerate = document.getElementById('btn-generate');
-  const btnClear = document.getElementById('btn-clear');
-  const btnCopy = document.getElementById('btn-copy');
-  const errorEl = document.getElementById('gen-error');
-  const outputWrap = document.getElementById('output-wrap');
-  const outputEl = document.getElementById('gen-output');
-
-  const MAX_OPTIONS = 6;
-
-  function escapeForJs(str) {
-    return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-  }
-
-  function slugifyId(str) {
-    return str
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '');
-  }
-
-  function addOptionRow() {
-    const rows = optionsContainer.querySelectorAll('.gen-option-row');
-    if (rows.length >= MAX_OPTIONS) return;
-    const index = rows.length;
-    const row = document.createElement('div');
-    row.className = 'gen-option-row';
-    row.innerHTML = `
-      <input class="gen-input" type="text" placeholder="Opción ${index + 1}" data-option />
-      <label class="gen-correct-label"><input type="radio" name="correct" value="${index}" />Correcta</label>
-    `;
-    optionsContainer.appendChild(row);
-    if (optionsContainer.querySelectorAll('.gen-option-row').length >= MAX_OPTIONS) {
-      btnAddOption.disabled = true;
-      btnAddOption.textContent = 'Máximo de opciones alcanzado';
-    }
-  }
-
-  btnAddOption.addEventListener('click', addOptionRow);
-
-  function showError(msg) {
-    errorEl.textContent = msg;
-    errorEl.classList.add('visible');
-    outputWrap.classList.remove('visible');
-  }
-
-  function clearError() {
-    errorEl.classList.remove('visible');
-  }
-
-  function generate() {
-    clearError();
-
-    const rawId = idInput.value.trim();
-    const text = textInput.value.trim();
-    const optionInputs = [...optionsContainer.querySelectorAll('[data-option]')];
-    const options = optionInputs.map((el) => el.value.trim());
-    const correctRadio = optionsContainer.querySelector('input[name="correct"]:checked');
-
-    if (!rawId) {
-      showError('Falta el ID de la pregunta (ej: q11).');
-      return;
-    }
-    if (!/^[a-zA-Z0-9_-]+$/.test(rawId)) {
-      showError('El ID solo puede tener letras, números, guiones y guiones bajos, sin espacios.');
-      return;
-    }
-    if (!text) {
-      showError('Falta el texto de la pregunta.');
-      return;
-    }
-    if (options.some((o) => !o)) {
-      showError('Completá el texto de todas las opciones (o borrá las que no vayas a usar).');
-      return;
-    }
-    if (options.length < 2) {
-      showError('Necesitás al menos 2 opciones.');
-      return;
-    }
-    if (!correctRadio) {
-      showError('Marcá cuál opción es la correcta.');
-      return;
-    }
-
-    const correctIndex = parseInt(correctRadio.value, 10);
-    const id = slugifyId(rawId) || rawId;
-
-    const optionsBlock = options.map((o) => `      '${escapeForJs(o)}',`).join('\n');
-
-    const block =
-      `  {\n` +
-      `    id: '${escapeForJs(id)}',\n` +
-      `    text: '${escapeForJs(text)}',\n` +
-      `    options: [\n${optionsBlock}\n    ],\n` +
-      `    correctIndex: ${correctIndex},\n` +
-      `  },`;
-
-    outputEl.textContent = block;
-    outputWrap.classList.add('visible');
-    if (outputWrap.scrollIntoView) outputWrap.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-  }
-
-  btnGenerate.addEventListener('click', generate);
-
-  btnClear.addEventListener('click', () => {
-    idInput.value = '';
-    textInput.value = '';
-    optionsContainer.querySelectorAll('[data-option]').forEach((el) => (el.value = ''));
-    const firstRadio = optionsContainer.querySelector('input[name="correct"]');
-    if (firstRadio) firstRadio.checked = true;
-    clearError();
-    outputWrap.classList.remove('visible');
-    idInput.focus();
-  });
-
-  btnCopy.addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText(outputEl.textContent);
-      btnCopy.textContent = '✅ ¡Copiado!';
-    } catch (e) {
-      // Si el navegador bloquea el portapapeles, seleccionamos el texto para copiar manual
-      const range = document.createRange();
-      range.selectNodeContents(outputEl);
-      const sel = window.getSelection();
-      sel.removeAllRanges();
-      sel.addRange(range);
-      btnCopy.textContent = '⚠️ Seleccioná y copiá con Ctrl+C';
-    }
-    setTimeout(() => {
-      btnCopy.textContent = '📋 Copiar al portapapeles';
-    }, 2200);
-  });
-})();
-</script>
+    document.getElementById('btn-copy').addEventListener('click', function () {
+      const text = document.getElementById('output').textContent;
+      navigator.clipboard.writeText(text).then(function () {
+        alert('Copiado al portapapeles.');
+      });
+    });
+  </script>
 </body>
 </html>

@@ -1,1238 +1,842 @@
-(() => {
-  const viewEl = document.getElementById('view');
-  const tabs = [...document.querySelectorAll('.tab')];
+(function () {
+  'use strict';
 
-  const templates = {
-    notes: document.getElementById('tpl-notes'),
-    quizIntro: document.getElementById('tpl-quiz-intro'),
-    question: document.getElementById('tpl-question'),
-    result: document.getElementById('tpl-result'),
-    glossary: document.getElementById('tpl-glossary'),
-    glossaryList: document.getElementById('tpl-glossary-list'),
-    glossaryCards: document.getElementById('tpl-glossary-cards'),
-    noteItem: document.getElementById('tpl-note-item'),
-    glossaryItem: document.getElementById('tpl-glossary-item'),
-    option: document.getElementById('tpl-option'),
-    cases: document.getElementById('tpl-cases'),
-    caseItem: document.getElementById('tpl-case-item'),
-    dailyQuestion: document.getElementById('tpl-daily-question'),
-    weeklyCase: document.getElementById('tpl-weekly-case'),
-    misconceptionItem: document.getElementById('tpl-misconception-item'),
+  // ===== Storage helpers =====
+  const STORAGE_KEYS = {
+    lastTab: 'is_last_tab',
+    theme: 'is_theme',
+    themeAuto: 'is_theme_auto_done',
+    fontScale: 'is_font_scale',
+    readNotes: 'is_read_notes',
+    casesViewed: 'is_cases_viewed',
+    bestScorePractice: 'is_best_score_practice',
+    bestScoreExam: 'is_best_score_exam',
+    dailyAnswered: 'is_daily_answered_',
+    installDismissed: 'is_install_dismissed',
+    teacherMode: 'is_teacher_mode',
+    glossaryMode: 'is_glossary_mode'
   };
 
-  // ---------------------------------------------------------------------
-  // Almacenamiento local (mejor puntaje + última pestaña visitada).
-  // Todo envuelto en try/catch por si el navegador bloquea localStorage.
-  // ---------------------------------------------------------------------
-  const STORAGE_KEYS = { lastTab: 'is-app:last-tab', bestScore: 'is-app:best-score', dailyAnswer: 'is-app:daily-answer', notesRead: 'is-app:notes-read', fontScale: 'is-app:font-scale', theme: 'is-app:theme', casesViewed: 'is-app:cases-viewed' };
-
-  function storageGet(key) {
+  function storageGet(key, fallback) {
     try {
-      return localStorage.getItem(key);
-    } catch (e) {
-      return null;
-    }
+      const v = localStorage.getItem(key);
+      return v === null ? fallback : v;
+    } catch (e) { return fallback; }
   }
-
   function storageSet(key, value) {
-    try {
-      localStorage.setItem(key, value);
-    } catch (e) {
-      /* silencioso: la app funciona igual sin persistencia */
-    }
+    try { localStorage.setItem(key, value); } catch (e) { /* ignore */ }
   }
 
-  // ---------------------------------------------------------------------
-  // Router simple entre pestañas
-  // ---------------------------------------------------------------------
-  function setActiveTab(name) {
-    tabs.forEach((t) => {
-      const active = t.dataset.view === name;
-      t.setAttribute('aria-current', active ? 'page' : 'false');
+  // ===== Splash screen =====
+  function initSplash() {
+    const splash = document.getElementById('splash');
+    const bar = document.getElementById('splash-progress-bar');
+    if (!splash) return;
+    const DURATION = 5000;
+    requestAnimationFrame(function () {
+      if (bar) {
+        bar.style.transition = 'width ' + DURATION + 'ms linear';
+        bar.style.width = '100%';
+      }
     });
+    setTimeout(function () {
+      splash.classList.add('is-hidden');
+      setTimeout(function () { splash.remove(); }, 550);
+    }, DURATION);
   }
 
-  function navigate(name, remember = true) {
-    stopTimer();
-    setActiveTab(name);
-    viewEl.innerHTML = '';
-    viewEl.scrollTop = 0;
-    if (btnScrollTop) btnScrollTop.hidden = true;
-    if (remember) storageSet(STORAGE_KEYS.lastTab, name);
-
-    if (name === 'notes') renderNotes();
-    else if (name === 'quiz') renderQuizIntro();
-    else if (name === 'glossary') renderGlossary();
-    else if (name === 'cases') renderCases();
-
-    const heading = viewEl.querySelector('h1');
-    if (heading) {
-      heading.setAttribute('tabindex', '-1');
-      heading.focus({ preventScroll: true });
-    }
-  }
-
-  tabs.forEach((t) => t.addEventListener('click', () => navigate(t.dataset.view)));
-
-  // ---------------------------------------------------------------------
-  // Botón flotante "volver arriba", visible en cualquier pestaña cuando
-  // hay suficiente scroll dentro del contenido.
-  // ---------------------------------------------------------------------
-  const btnScrollTop = document.getElementById('btn-scroll-top');
-  const SCROLL_TOP_THRESHOLD = 300;
-
-  viewEl.addEventListener('scroll', () => {
-    btnScrollTop.hidden = viewEl.scrollTop < SCROLL_TOP_THRESHOLD;
-  });
-
-  btnScrollTop.addEventListener('click', () => {
-    if (viewEl.scrollTo) viewEl.scrollTo({ top: 0, behavior: 'smooth' });
-    else viewEl.scrollTop = 0;
-  });
-
-  // ---------------------------------------------------------------------
-  // Utilidad: resaltar coincidencias de búsqueda dentro de un texto
-  // ---------------------------------------------------------------------
+  // ===== Utilities =====
   function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-  }
-
-  function highlight(text, query) {
-    if (!query) return escapeHtml(text);
-    const safeText = escapeHtml(text);
-    const safeQuery = escapeHtml(query).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    return safeText.replace(new RegExp(`(${safeQuery})`, 'ig'), '<mark>$1</mark>');
-  }
-
-  // ---------------------------------------------------------------------
-  // Acordeones con soporte de "expandir/colapsar todo"
-  // ---------------------------------------------------------------------
-  function wireToggleAll(container, button) {
-    function setAll(expand) {
-      container
-        .querySelectorAll('.accordion__head[aria-expanded], .accordion__toggle[aria-expanded]')
-        .forEach((el) => {
-          el.setAttribute('aria-expanded', String(expand));
-          const item = el.closest('.accordion__item');
-          const body = item ? item.querySelector('.accordion__body') : null;
-          if (body) body.hidden = !expand;
-        });
-      button.textContent = expand ? 'Colapsar todo' : 'Expandir todo';
-      button.dataset.expanded = String(expand);
-    }
-
-    button.dataset.expanded = 'false';
-    button.addEventListener('click', () => {
-      setAll(button.dataset.expanded !== 'true');
+    return String(str).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
-
-  // ---------------------------------------------------------------------
-  // Apuntes (acordeón)
-  // ---------------------------------------------------------------------
-  function getReadSet() {
-    try {
-      const raw = JSON.parse(storageGet(STORAGE_KEYS.notesRead) || '[]');
-      return new Set(Array.isArray(raw) ? raw : []);
-    } catch (e) {
-      return new Set();
-    }
+  function highlight(text, term) {
+    if (!term) return escapeHtml(text);
+    const escaped = escapeHtml(text);
+    const safeTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return escaped.replace(new RegExp('(' + safeTerm + ')', 'ig'), '<mark>$1</mark>');
   }
-
-  function saveReadSet(set) {
-    storageSet(STORAGE_KEYS.notesRead, JSON.stringify([...set]));
-  }
-
-  function getCasesViewedSet() {
-    try {
-      const raw = JSON.parse(storageGet(STORAGE_KEYS.casesViewed) || '[]');
-      return new Set(Array.isArray(raw) ? raw : []);
-    } catch (e) {
-      return new Set();
-    }
-  }
-
-  function markCaseViewed(id) {
-    const set = getCasesViewedSet();
-    if (!set.has(id)) {
-      set.add(id);
-      storageSet(STORAGE_KEYS.casesViewed, JSON.stringify([...set]));
-    }
-  }
-
-  function updateNotesProgress(readSet) {
-    const el = document.getElementById('stat-notes-read');
-    if (el) el.textContent = `${readSet.size}/${NOTES.length}`;
-  }
-
-  function updateProgressSummary() {
-    updateNotesProgress(getReadSet());
-    const bestEl = document.getElementById('stat-best-score');
-    if (bestEl) {
-      const best = getBestScore();
-      bestEl.textContent = best === null ? '—' : `${best}/${QUESTIONS.length}`;
-    }
-    const casesEl = document.getElementById('stat-cases-viewed');
-    if (casesEl) casesEl.textContent = `${getCasesViewedSet().size}/${CASES.length}`;
-  }
-
-  function renderNotes() {
-    viewEl.innerHTML = '';
-    const node = templates.notes.content.cloneNode(true);
-    const list = node.querySelector('#notes-list');
-    const readSet = getReadSet();
-
-    NOTES.forEach((note) => {
-      const item = templates.noteItem.content.cloneNode(true);
-      const li = item.querySelector('.accordion__item');
-      li.dataset.id = note.id;
-      const check = item.querySelector('.note-check');
-      const toggle = item.querySelector('.accordion__toggle');
-      const title = item.querySelector('.accordion__title');
-      const body = item.querySelector('.accordion__body');
-      const p = item.querySelector('.accordion__body p');
-      const resourceLink = item.querySelector('.note-resource');
-
-      title.textContent = note.title;
-      p.textContent = note.body;
-
-      if (note.resource) {
-        const icon = note.resource.type === 'video' ? '🎥' : '📄';
-        resourceLink.href = note.resource.url;
-        resourceLink.textContent = `${icon} ${note.resource.label}`;
-        resourceLink.hidden = false;
-      }
-
-      const isRead = readSet.has(note.id);
-      check.setAttribute('aria-checked', String(isRead));
-      li.classList.toggle('accordion__item--read', isRead);
-
-      check.addEventListener('click', () => {
-        const currentlyRead = check.getAttribute('aria-checked') === 'true';
-        const nextRead = !currentlyRead;
-        check.setAttribute('aria-checked', String(nextRead));
-        li.classList.toggle('accordion__item--read', nextRead);
-
-        const set = getReadSet();
-        if (nextRead) set.add(note.id);
-        else set.delete(note.id);
-        saveReadSet(set);
-        updateNotesProgress(set);
-      });
-
-      toggle.addEventListener('click', () => {
-        const expanded = toggle.getAttribute('aria-expanded') === 'true';
-        toggle.setAttribute('aria-expanded', String(!expanded));
-        body.hidden = expanded;
-      });
-
-      list.appendChild(item);
-    });
-
-    const misconceptionsList = node.querySelector('#misconceptions-list');
-    MISCONCEPTIONS.forEach((m) => {
-      const item = templates.misconceptionItem.content.cloneNode(true);
-      const li = item.querySelector('.accordion__item');
-      li.dataset.id = m.id;
-      const head = item.querySelector('.accordion__head');
-      const title = item.querySelector('.accordion__title');
-      const body = item.querySelector('.accordion__body');
-      const p = item.querySelector('.accordion__body p');
-
-      title.textContent = m.title;
-      p.textContent = m.body;
-
-      head.addEventListener('click', () => {
-        const expanded = head.getAttribute('aria-expanded') === 'true';
-        head.setAttribute('aria-expanded', String(!expanded));
-        body.hidden = expanded;
-      });
-
-      misconceptionsList.appendChild(item);
-    });
-
-    viewEl.appendChild(node);
-    updateProgressSummary();
-    wireToggleAll(document.querySelector('#view .panel'), document.querySelector('#view .btn-toggle-all'));
-    renderDailyQuestion();
-
-    document.querySelector('#view .btn-print').addEventListener('click', () => {
-      window.print();
-    });
-
-    document.getElementById('btn-reset-progress').addEventListener('click', () => {
-      const confirmed = window.confirm(
-        '¿Reiniciar tu progreso? Se van a borrar los apuntes marcados como leídos, tu mejor puntaje del cuestionario, los casos vistos y la respuesta de la pregunta del día. Esta acción no se puede deshacer.'
-      );
-      if (!confirmed) return;
-      storageSet(STORAGE_KEYS.notesRead, '[]');
-      storageSet(STORAGE_KEYS.casesViewed, '[]');
-      storageSet(STORAGE_KEYS.bestScore, '');
-      storageSet(STORAGE_KEYS.dailyAnswer, '');
-      renderNotes();
-      updateNotesBadge();
-    });
-  }
-
-  // ---------------------------------------------------------------------
-  // Pregunta del día: se elige a partir de la fecha, así es la misma
-  // durante todo el día en este dispositivo, y cambia al día siguiente.
-  // ---------------------------------------------------------------------
-  function hashString(str) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      hash = (hash << 5) - hash + str.charCodeAt(i);
-      hash |= 0;
-    }
-    return Math.abs(hash);
-  }
-
-  function getTodayKey() {
-    const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-  }
-
-  function updateNotesBadge() {
-    const badge = document.getElementById('notes-tab-badge');
-    if (!badge) return;
-    const todayKey = getTodayKey();
-    let stored = null;
-    try {
-      stored = JSON.parse(storageGet(STORAGE_KEYS.dailyAnswer) || 'null');
-    } catch (e) {
-      stored = null;
-    }
-    const answeredToday = stored && stored.date === todayKey;
-    badge.hidden = !!answeredToday;
-  }
-
-  function renderDailyQuestion() {
-    const slot = document.getElementById('daily-slot');
-    if (!slot) return;
-    slot.innerHTML = '';
-
-    const todayKey = getTodayKey();
-    const qIndex = hashString(todayKey) % QUESTIONS.length;
-    const question = QUESTIONS[qIndex];
-
-    const node = templates.dailyQuestion.content.cloneNode(true);
-    slot.appendChild(node);
-
-    const textEl = slot.querySelector('.daily__text');
-    const optionsEl = slot.querySelector('.daily__options');
-    const feedbackEl = slot.querySelector('.daily__feedback');
-    textEl.textContent = question.text;
-
-    let stored = null;
-    try {
-      stored = JSON.parse(storageGet(STORAGE_KEYS.dailyAnswer) || 'null');
-    } catch (e) {
-      stored = null;
-    }
-    const alreadyAnswered = stored && stored.date === todayKey;
-
-    question.options.forEach((optText, idx) => {
-      const opt = templates.option.content.cloneNode(true);
-      const li = opt.querySelector('.option');
-      li.querySelector('.option__label').textContent = optText;
-
-      if (alreadyAnswered) {
-        li.classList.add('option--disabled');
-        if (idx === question.correctIndex) li.classList.add('option--correct');
-        if (idx === stored.chosenIndex && idx !== question.correctIndex) li.classList.add('option--incorrect');
-      } else {
-        li.addEventListener('click', () => {
-          storageSet(STORAGE_KEYS.dailyAnswer, JSON.stringify({ date: todayKey, chosenIndex: idx }));
-          if (navigator.vibrate) {
-            navigator.vibrate(idx === question.correctIndex ? 25 : [40, 60, 40]);
-          }
-          renderDailyQuestion();
-          updateNotesBadge();
-        });
-      }
-      optionsEl.appendChild(opt);
-    });
-
-    if (alreadyAnswered) {
-      const isCorrect = stored.chosenIndex === question.correctIndex;
-      feedbackEl.hidden = false;
-      feedbackEl.textContent = isCorrect
-        ? 'Ya la respondiste hoy — ¡acertaste!'
-        : 'Ya la respondiste hoy — la correcta era otra opción.';
-      feedbackEl.classList.add(isCorrect ? 'is-correct' : 'is-incorrect');
-    }
-  }
-
-  // ---------------------------------------------------------------------
-  // Casos para debatir en clase
-  // ---------------------------------------------------------------------
-  let casesMode = 'student';
-  const CASES_MODE_KEY = 'is-app:cases-mode';
-
-  function renderCases() {
-    const node = templates.cases.content.cloneNode(true);
-    const list = node.querySelector('#cases-list');
-
-    CASES.forEach((c) => {
-      const item = templates.caseItem.content.cloneNode(true);
-      const liCase = item.querySelector('.accordion__item');
-      liCase.dataset.id = c.id;
-      const head = item.querySelector('.accordion__head');
-      const title = item.querySelector('.accordion__title');
-      const body = item.querySelector('.accordion__body');
-      const scenario = item.querySelector('.case__scenario');
-      const questionsList = item.querySelector('.case__questions');
-      const answerToggle = item.querySelector('.case__answer-toggle');
-      const answerBox = item.querySelector('.case__answer');
-      const answerText = item.querySelector('.case__answer-text');
-      const tipsList = item.querySelector('.case__tips-list');
-
-      title.textContent = c.title;
-      scenario.textContent = c.scenario;
-      c.questions.forEach((q) => {
-        const li = document.createElement('li');
-        li.textContent = q;
-        questionsList.appendChild(li);
-      });
-      answerText.textContent = c.answer;
-      (c.tips || []).forEach((t) => {
-        const li = document.createElement('li');
-        li.textContent = t;
-        tipsList.appendChild(li);
-      });
-
-      head.addEventListener('click', () => {
-        const expanded = head.getAttribute('aria-expanded') === 'true';
-        head.setAttribute('aria-expanded', String(!expanded));
-        body.hidden = expanded;
-        if (!expanded) markCaseViewed(c.id);
-      });
-
-      answerToggle.addEventListener('click', () => {
-        const shown = answerToggle.getAttribute('aria-expanded') === 'true';
-        answerToggle.setAttribute('aria-expanded', String(!shown));
-        answerBox.hidden = shown;
-        answerToggle.textContent = shown ? 'Ver respuesta sugerida' : 'Ocultar respuesta sugerida';
-      });
-
-      list.appendChild(item);
-    });
-
-    viewEl.appendChild(node);
-    wireToggleAll(document.getElementById('cases-list'), document.querySelector('#view .btn-toggle-all'));
-    renderWeeklyCase();
-
-    const savedMode = storageGet(CASES_MODE_KEY);
-    casesMode = savedMode === 'teacher' ? 'teacher' : 'student';
-    const modeBtns = [...document.querySelectorAll('#view .mode-toggle__btn')];
-    modeBtns.forEach((b) => {
-      b.addEventListener('click', () => {
-        casesMode = b.dataset.mode;
-        storageSet(CASES_MODE_KEY, casesMode);
-        applyCasesMode(modeBtns);
-      });
-    });
-    applyCasesMode(modeBtns);
-  }
-
-  function applyCasesMode(modeBtns) {
-    modeBtns.forEach((b) => b.setAttribute('aria-selected', String(b.dataset.mode === casesMode)));
-    document.querySelectorAll('#view .case__tips').forEach((el) => {
-      el.hidden = casesMode !== 'teacher';
-    });
-  }
-
-  // ---------------------------------------------------------------------
-  // Caso de la semana: se elige según la semana actual (cambia cada lunes),
-  // usando el mismo esquema de hash que la pregunta del día.
-  // ---------------------------------------------------------------------
-  function getWeekKey() {
-    const d = new Date();
-    const dayIndex = (d.getDay() + 6) % 7; // 0 = lunes
-    const monday = new Date(d);
-    monday.setDate(d.getDate() - dayIndex);
-    return `${monday.getFullYear()}-${String(monday.getMonth() + 1).padStart(2, '0')}-${String(monday.getDate()).padStart(2, '0')}`;
-  }
-
-  function renderWeeklyCase() {
-    const slot = document.getElementById('weekly-case-slot');
-    if (!slot) return;
-    slot.innerHTML = '';
-
-    const weekKey = getWeekKey();
-    const cIndex = hashString(`week-${weekKey}`) % CASES.length;
-    const c = CASES[cIndex];
-
-    const node = templates.weeklyCase.content.cloneNode(true);
-    slot.appendChild(node);
-    markCaseViewed(c.id);
-
-    slot.querySelector('.weekly-case__title').textContent = c.title;
-    slot.querySelector('.weekly-case__scenario').textContent = c.scenario;
-
-    const questionsList = slot.querySelector('.case__questions');
-    c.questions.forEach((q) => {
-      const li = document.createElement('li');
-      li.textContent = q;
-      questionsList.appendChild(li);
-    });
-
-    const answerToggle = slot.querySelector('.case__answer-toggle');
-    const answerBox = slot.querySelector('.case__answer');
-    slot.querySelector('.case__answer-text').textContent = c.answer;
-
-    const tipsList = slot.querySelector('.case__tips-list');
-    (c.tips || []).forEach((t) => {
-      const li = document.createElement('li');
-      li.textContent = t;
-      tipsList.appendChild(li);
-    });
-
-    answerToggle.addEventListener('click', () => {
-      const shown = answerToggle.getAttribute('aria-expanded') === 'true';
-      answerToggle.setAttribute('aria-expanded', String(!shown));
-      answerBox.hidden = shown;
-      answerToggle.textContent = shown ? 'Ver respuesta sugerida' : 'Ocultar respuesta sugerida';
-    });
-
-    slot.querySelector('.case__tips').hidden = casesMode !== 'teacher';
-  }
-
-  // ---------------------------------------------------------------------
-  // Glosario: modo lista (con búsqueda) y modo tarjetas (flashcards)
-  // ---------------------------------------------------------------------
-  const GLOSSARY_MODE_KEY = 'is-app:glossary-mode';
-
-  function renderGlossary() {
-    const node = templates.glossary.content.cloneNode(true);
-    viewEl.appendChild(node);
-
-    const savedMode = storageGet(GLOSSARY_MODE_KEY);
-    let mode = savedMode === 'cards' ? 'cards' : 'list';
-
-    const toggleBtns = [...document.querySelectorAll('.mode-toggle__btn')];
-
-    function setMode(newMode) {
-      mode = newMode;
-      storageSet(GLOSSARY_MODE_KEY, mode);
-      toggleBtns.forEach((b) => b.setAttribute('aria-selected', String(b.dataset.mode === mode)));
-      const body = document.getElementById('glossary-body');
-      body.innerHTML = '';
-      if (mode === 'list') renderGlossaryList(body);
-      else renderGlossaryCards(body);
-    }
-
-    toggleBtns.forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode)));
-    setMode(mode);
-
-    document.querySelector('#view .btn-print').addEventListener('click', () => {
-      if (mode !== 'list') setMode('list');
-      window.print();
-    });
-  }
-
-  function renderGlossaryList(container) {
-    const node = templates.glossaryList.content.cloneNode(true);
-    container.appendChild(node);
-
-    const search = document.getElementById('glossary-search');
-    const list = document.getElementById('glossary-list');
-
-    function paint(filter) {
-      list.innerHTML = '';
-      const q = filter.trim();
-      const qLower = q.toLowerCase();
-      const filtered = GLOSSARY.filter(
-        (g) => g.term.toLowerCase().includes(qLower) || g.def.toLowerCase().includes(qLower)
-      );
-
-      if (filtered.length === 0) {
-        const empty = document.createElement('p');
-        empty.className = 'glossary-empty';
-        empty.textContent = 'No se encontraron términos.';
-        list.appendChild(empty);
-        return;
-      }
-
-      filtered.forEach((g) => {
-        const item = templates.glossaryItem.content.cloneNode(true);
-        item.querySelector('.glossary-item__term').innerHTML = highlight(g.term, q);
-        item.querySelector('.glossary-item__def').innerHTML = highlight(g.def, q);
-        list.appendChild(item);
-      });
-    }
-
-    search.addEventListener('input', () => paint(search.value));
-    paint('');
-  }
-
-  let flashOrder = GLOSSARY.map((_, i) => i);
-  let flashIndex = 0;
-
-  function renderGlossaryCards(container) {
-    const node = templates.glossaryCards.content.cloneNode(true);
-    container.appendChild(node);
-
-    if (flashIndex >= flashOrder.length) flashIndex = 0;
-
-    function paintCard() {
-      const term = GLOSSARY[flashOrder[flashIndex]];
-      const card = document.getElementById('flash-card');
-      card.classList.remove('is-flipped');
-      document.querySelector('.flash-card__term').textContent = term.term;
-      document.querySelector('.flash-card__def').textContent = term.def;
-      document.querySelector('.flash-index').textContent = flashIndex + 1;
-      document.querySelector('.flash-total').textContent = flashOrder.length;
-    }
-
-    function flip() {
-      document.getElementById('flash-card').classList.toggle('is-flipped');
-    }
-
-    document.getElementById('flash-card').addEventListener('click', flip);
-    document.getElementById('flash-card').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        flip();
-      }
-    });
-
-    document.getElementById('flash-prev').addEventListener('click', () => {
-      flashIndex = (flashIndex - 1 + flashOrder.length) % flashOrder.length;
-      paintCard();
-    });
-
-    document.getElementById('flash-next').addEventListener('click', () => {
-      flashIndex = (flashIndex + 1) % flashOrder.length;
-      paintCard();
-    });
-
-    document.getElementById('flash-shuffle').addEventListener('click', () => {
-      flashOrder = shuffledIndexes(GLOSSARY.length);
-      flashIndex = 0;
-      paintCard();
-    });
-
-    paintCard();
-  }
-
-  // ---------------------------------------------------------------------
-  // Cuestionario (con modo práctica y modo examen)
-  // ---------------------------------------------------------------------
-  let current = 0;
-  const answers = {};
-  let optionOrder = {};
-  let examMode = false;
-  let timeLeft = 0;
-  let timerInterval = null;
-  let timedOut = false;
-  const EXAM_SECONDS = 8 * 60; // 8 minutos
-
-  function getBestScore() {
-    const raw = storageGet(STORAGE_KEYS.bestScore);
-    return raw ? parseInt(raw, 10) : null;
-  }
-
-  // Fisher-Yates: devuelve un nuevo arreglo con los índices mezclados
-  function shuffledIndexes(length) {
-    const arr = Array.from({ length }, (_, i) => i);
+  function shuffledIndexes(n) {
+    const arr = [];
+    for (let i = 0; i < n; i++) arr.push(i);
     for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [arr[i], arr[j]] = [arr[j], arr[i]];
     }
     return arr;
   }
+  function hashString(str) {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) {
+      h = (h << 5) - h + str.charCodeAt(i);
+      h |= 0;
+    }
+    return Math.abs(h);
+  }
+  function getTodayKey() {
+    const d = new Date();
+    return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+  }
+  function getWeekKey() {
+    const d = new Date();
+    const onejan = new Date(d.getFullYear(), 0, 1);
+    const week = Math.ceil((((d - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+    return d.getFullYear() + '-w' + week;
+  }
 
-  function stopTimer() {
-    if (timerInterval) {
-      clearInterval(timerInterval);
-      timerInterval = null;
+  // ===== Elements =====
+  const viewEl = document.getElementById('view');
+  const tabs = document.querySelectorAll('.tab');
+  const btnScrollTop = document.getElementById('btn-scroll-top');
+
+  // ===== Router =====
+  function setActiveTab(name) {
+    tabs.forEach(function (t) {
+      t.classList.toggle('is-active', t.dataset.tab === name);
+    });
+  }
+
+  function navigate(name, remember) {
+    if (remember !== false) storageSet(STORAGE_KEYS.lastTab, name);
+    setActiveTab(name);
+    btnScrollTop.hidden = true;
+    viewEl.scrollTop = 0;
+    if (name === 'notes') renderNotes();
+    else if (name === 'quiz') renderQuizIntro();
+    else if (name === 'cases') renderCases();
+    else if (name === 'glossary') renderGlossary();
+    viewEl.focus({ preventScroll: true });
+  }
+
+  tabs.forEach(function (t) {
+    t.addEventListener('click', function () { navigate(t.dataset.tab); });
+  });
+
+  // ===== Accordion toggle helper =====
+  function wireAccordionItem(itemEl) {
+    const head = itemEl.querySelector('.accordion__head');
+    const body = itemEl.querySelector('.accordion__body');
+    head.addEventListener('click', function () {
+      const expanded = head.getAttribute('aria-expanded') === 'true';
+      head.setAttribute('aria-expanded', String(!expanded));
+      body.hidden = expanded;
+    });
+  }
+
+  // ===== Progress tracking =====
+  function getReadSet() {
+    try { return new Set(JSON.parse(storageGet(STORAGE_KEYS.readNotes, '[]'))); }
+    catch (e) { return new Set(); }
+  }
+  function saveReadSet(set) { storageSet(STORAGE_KEYS.readNotes, JSON.stringify(Array.from(set))); }
+  function getCasesViewedSet() {
+    try { return new Set(JSON.parse(storageGet(STORAGE_KEYS.casesViewed, '[]'))); }
+    catch (e) { return new Set(); }
+  }
+  function markCaseViewed(id) {
+    const set = getCasesViewedSet();
+    set.add(id);
+    storageSet(STORAGE_KEYS.casesViewed, JSON.stringify(Array.from(set)));
+    updateProgressSummary();
+  }
+  function updateProgressSummary() {
+    const statNotes = document.getElementById('stat-notes-read');
+    const statScore = document.getElementById('stat-best-score');
+    const statCases = document.getElementById('stat-cases-viewed');
+    if (statNotes) statNotes.textContent = getReadSet().size + '/' + NOTES.length;
+    if (statCases) statCases.textContent = getCasesViewedSet().size + '/' + CASES.length;
+    if (statScore) {
+      const p = storageGet(STORAGE_KEYS.bestScorePractice, null);
+      const e = storageGet(STORAGE_KEYS.bestScoreExam, null);
+      let best = null;
+      if (p !== null) best = Number(p);
+      if (e !== null) best = best === null ? Number(e) : Math.max(best, Number(e));
+      statScore.textContent = best === null ? '—' : best + '/' + QUESTIONS.length;
     }
   }
 
-  function formatTime(seconds) {
-    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-    const s = Math.floor(seconds % 60).toString().padStart(2, '0');
-    return `${m}:${s}`;
+  // ===== Notes tab =====
+  function renderNotes() {
+    viewEl.innerHTML = '';
+    const tpl = document.getElementById('tpl-notes');
+    viewEl.appendChild(tpl.content.cloneNode(true));
+    updateProgressSummary();
+
+    document.getElementById('btn-reset-progress').addEventListener('click', function (ev) {
+      ev.preventDefault();
+      if (window.confirm('¿Reiniciar todo tu progreso guardado (apuntes leídos, casos vistos y mejor puntaje)?')) {
+        storageSet(STORAGE_KEYS.readNotes, '[]');
+        storageSet(STORAGE_KEYS.casesViewed, '[]');
+        storageSet(STORAGE_KEYS.bestScorePractice, '');
+        storageSet(STORAGE_KEYS.bestScoreExam, '');
+        updateProgressSummary();
+      }
+    });
+
+    document.getElementById('btn-export-notes-pdf').addEventListener('click', function () {
+      document.querySelectorAll('#notes-list .accordion__body, #misconceptions-list .accordion__body').forEach(function (b) { b.hidden = false; });
+      window.print();
+    });
+
+    renderDailyQuestion();
+
+    const readSet = getReadSet();
+    const list = document.getElementById('notes-list');
+    NOTES.forEach(function (note) {
+      const item = document.getElementById('tpl-note-item').content.cloneNode(true);
+      const article = item.querySelector('.accordion__item');
+      item.querySelector('.note-item__title').textContent = note.title;
+      item.querySelector('.note-item__body').textContent = note.body;
+      const readBadge = item.querySelector('.note-item__read-badge');
+      const checkbox = item.querySelector('.note-item__checkbox');
+      const isRead = readSet.has(note.id);
+      readBadge.hidden = !isRead;
+      checkbox.checked = isRead;
+      if (note.resource) {
+        const link = item.querySelector('.note-resource');
+        link.hidden = false;
+        link.href = note.resource.url;
+        link.textContent = (note.resource.type === 'video' ? '▶ ' : '📄 ') + note.resource.label;
+      }
+      checkbox.addEventListener('change', function () {
+        const set = getReadSet();
+        if (checkbox.checked) set.add(note.id); else set.delete(note.id);
+        saveReadSet(set);
+        readBadge.hidden = !checkbox.checked;
+        updateProgressSummary();
+      });
+      list.appendChild(item);
+      wireAccordionItem(list.lastElementChild);
+    });
+
+    const miscList = document.getElementById('misconceptions-list');
+    MISCONCEPTIONS.forEach(function (m) {
+      const item = document.getElementById('tpl-misconception-item').content.cloneNode(true);
+      item.querySelector('.misconception-item__text').textContent = m.text;
+      miscList.appendChild(item);
+      wireAccordionItem(miscList.lastElementChild);
+    });
+  }
+
+  function updateNotesBadge() {
+    const badge = document.getElementById('notes-tab-badge');
+    if (!badge) return;
+    const todayKey = getTodayKey();
+    const answered = storageGet(STORAGE_KEYS.dailyAnswered + todayKey, null);
+    badge.hidden = !!answered;
+  }
+
+  function renderDailyQuestion() {
+    const slot = document.getElementById('daily-slot');
+    if (!slot) return;
+    const todayKey = getTodayKey();
+    const idx = hashString(todayKey) % QUESTIONS.length;
+    const question = QUESTIONS[idx];
+    const answeredKey = STORAGE_KEYS.dailyAnswered + todayKey;
+    const alreadyAnswered = storageGet(answeredKey, null);
+
+    const tpl = document.getElementById('tpl-daily-question').content.cloneNode(true);
+    tpl.querySelector('.daily-card__question').textContent = question.q;
+    const optsWrap = tpl.querySelector('.daily-card__options');
+    const feedback = tpl.querySelector('.daily-card__feedback');
+    const order = shuffledIndexes(question.options.length);
+
+    order.forEach(function (optIdx) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'quiz-option';
+      btn.textContent = question.options[optIdx];
+      if (alreadyAnswered !== null) {
+        btn.disabled = true;
+        if (optIdx === question.correct) btn.classList.add('is-correct');
+        if (String(optIdx) === alreadyAnswered && optIdx !== question.correct) btn.classList.add('is-wrong');
+      }
+      btn.addEventListener('click', function () {
+        storageSet(answeredKey, String(optIdx));
+        updateNotesBadge();
+        Array.from(optsWrap.children).forEach(function (b) { b.disabled = true; });
+        if (optIdx === question.correct) {
+          btn.classList.add('is-correct');
+          feedback.textContent = '¡Correcto!';
+        } else {
+          btn.classList.add('is-wrong');
+          const correctBtn = Array.from(optsWrap.children).find(function (b) { return b.textContent === question.options[question.correct]; });
+          if (correctBtn) correctBtn.classList.add('is-correct');
+          feedback.textContent = 'La respuesta correcta era: ' + question.options[question.correct];
+        }
+        feedback.hidden = false;
+        if (navigator.vibrate) navigator.vibrate(optIdx === question.correct ? 40 : [30, 40, 30]);
+      });
+      optsWrap.appendChild(btn);
+    });
+
+    if (alreadyAnswered !== null) {
+      feedback.hidden = false;
+      const wasCorrect = Number(alreadyAnswered) === question.correct;
+      feedback.textContent = wasCorrect ? '¡Ya respondiste correctamente hoy!' : 'Ya respondiste hoy. La correcta era: ' + question.options[question.correct];
+    }
+
+    slot.appendChild(tpl);
+  }
+
+  // ===== Cases tab =====
+  function renderCases() {
+    viewEl.innerHTML = '';
+    const tpl = document.getElementById('tpl-cases');
+    viewEl.appendChild(tpl.content.cloneNode(true));
+
+    let teacherMode = storageGet(STORAGE_KEYS.teacherMode, 'false') === 'true';
+    const modeBtns = viewEl.querySelectorAll('.mode-toggle__btn');
+    function applyMode() {
+      modeBtns.forEach(function (b) { b.classList.toggle('is-active', b.dataset.mode === (teacherMode ? 'teacher' : 'student')); });
+      viewEl.querySelectorAll('.case__tips').forEach(function (t) { t.hidden = !teacherMode; });
+    }
+    modeBtns.forEach(function (b) {
+      b.addEventListener('click', function () {
+        teacherMode = b.dataset.mode === 'teacher';
+        storageSet(STORAGE_KEYS.teacherMode, String(teacherMode));
+        applyMode();
+      });
+    });
+
+    renderWeeklyCase();
+
+    const list = document.getElementById('cases-list');
+    CASES.forEach(function (c) {
+      const item = document.getElementById('tpl-case-item').content.cloneNode(true);
+      item.querySelector('.case-item__title').textContent = c.title;
+      item.querySelector('.case-item__scenario').textContent = c.scenario;
+      const answerToggle = item.querySelector('.case__answer-toggle');
+      const answerBox = item.querySelector('.case__answer');
+      answerBox.querySelector('p').textContent = c.answer;
+      const tipsBox = item.querySelector('.case__tips');
+      const tipsUl = tipsBox.querySelector('ul');
+      c.tips.forEach(function (tip) {
+        const li = document.createElement('li');
+        li.textContent = tip;
+        tipsUl.appendChild(li);
+      });
+      answerToggle.addEventListener('click', function () {
+        answerBox.hidden = !answerBox.hidden;
+        answerToggle.textContent = answerBox.hidden ? 'Ver respuesta sugerida' : 'Ocultar respuesta';
+      });
+      list.appendChild(item);
+      const articleEl = list.lastElementChild;
+      wireAccordionItem(articleEl);
+      articleEl.querySelector('.accordion__head').addEventListener('click', function () {
+        markCaseViewed(c.id);
+      });
+    });
+
+    applyMode();
+  }
+
+  function renderWeeklyCase() {
+    const slot = document.getElementById('weekly-case-slot');
+    if (!slot) return;
+    const weekKey = getWeekKey();
+    const idx = hashString(weekKey) % CASES.length;
+    const c = CASES[idx];
+    const tpl = document.getElementById('tpl-weekly-case').content.cloneNode(true);
+    tpl.querySelector('.weekly-card__title').textContent = c.title;
+    slot.appendChild(tpl);
+  }
+
+  // ===== Glossary tab =====
+  let flashIndex = 0;
+  let flashOrder = [];
+
+  function renderGlossary() {
+    viewEl.innerHTML = '';
+    const tpl = document.getElementById('tpl-glossary');
+    viewEl.appendChild(tpl.content.cloneNode(true));
+
+    let mode = storageGet(STORAGE_KEYS.glossaryMode, 'list');
+    const modeBtns = viewEl.querySelectorAll('.mode-toggle__btn');
+    const listView = document.getElementById('glossary-list-view');
+    const cardsView = document.getElementById('glossary-cards-view');
+    const searchInput = document.getElementById('glossary-search');
+
+    function applyMode() {
+      modeBtns.forEach(function (b) { b.classList.toggle('is-active', b.dataset.mode === mode); });
+      listView.hidden = mode !== 'list';
+      cardsView.hidden = mode !== 'cards';
+      if (mode === 'list') paintGlossaryList(searchInput.value);
+      else paintGlossaryCards();
+    }
+    modeBtns.forEach(function (b) {
+      b.addEventListener('click', function () {
+        mode = b.dataset.mode;
+        storageSet(STORAGE_KEYS.glossaryMode, mode);
+        applyMode();
+      });
+    });
+
+    searchInput.addEventListener('input', function () {
+      if (mode === 'list') paintGlossaryList(searchInput.value);
+    });
+
+    document.getElementById('btn-export-glossary-pdf').addEventListener('click', function () {
+      mode = 'list';
+      applyMode();
+      window.print();
+    });
+
+    function paintGlossaryList(filter) {
+      listView.innerHTML = '';
+      const ul = document.getElementById('tpl-glossary-list').content.cloneNode(true).querySelector('ul');
+      const term = (filter || '').trim().toLowerCase();
+      GLOSSARY.filter(function (g) {
+        return !term || g.term.toLowerCase().includes(term) || g.def.toLowerCase().includes(term);
+      }).forEach(function (g) {
+        const li = document.getElementById('tpl-glossary-item').content.cloneNode(true);
+        li.querySelector('.glossary-list__term').innerHTML = highlight(g.term, filter);
+        li.querySelector('.glossary-list__def').innerHTML = highlight(g.def, filter);
+        ul.appendChild(li);
+      });
+      listView.appendChild(ul);
+    }
+
+    function paintGlossaryCards() {
+      cardsView.innerHTML = '';
+      cardsView.appendChild(document.getElementById('tpl-glossary-cards').content.cloneNode(true));
+      if (flashOrder.length !== GLOSSARY.length) flashOrder = shuffledIndexes(GLOSSARY.length);
+      flashIndex = 0;
+      showFlashcard();
+
+      document.getElementById('flashcard').addEventListener('click', flipFlashcard);
+      document.getElementById('btn-flash-flip').addEventListener('click', flipFlashcard);
+      document.getElementById('btn-flash-prev').addEventListener('click', function () {
+        flashIndex = (flashIndex - 1 + flashOrder.length) % flashOrder.length;
+        showFlashcard();
+      });
+      document.getElementById('btn-flash-next').addEventListener('click', function () {
+        flashIndex = (flashIndex + 1) % flashOrder.length;
+        showFlashcard();
+      });
+      document.getElementById('btn-flash-shuffle').addEventListener('click', function () {
+        flashOrder = shuffledIndexes(GLOSSARY.length);
+        flashIndex = 0;
+        showFlashcard();
+      });
+    }
+
+    function showFlashcard() {
+      const g = GLOSSARY[flashOrder[flashIndex]];
+      const front = document.querySelector('.flashcard__front');
+      const back = document.querySelector('.flashcard__back');
+      if (!front) return;
+      front.textContent = g.term;
+      back.textContent = g.def;
+      front.hidden = false;
+      back.hidden = true;
+      document.getElementById('flashcard-counter').textContent = (flashIndex + 1) + ' / ' + flashOrder.length;
+    }
+    function flipFlashcard() {
+      const front = document.querySelector('.flashcard__front');
+      const back = document.querySelector('.flashcard__back');
+      if (!front) return;
+      front.hidden = !front.hidden;
+      back.hidden = !back.hidden;
+    }
+
+    applyMode();
+  }
+
+  // ===== Quiz =====
+  const EXAM_SECONDS = 8 * 60;
+  let quizState = null;
+  let timerInterval = null;
+
+  function renderQuizIntro() {
+    viewEl.innerHTML = '';
+    const tpl = document.getElementById('tpl-quiz-intro');
+    viewEl.appendChild(tpl.content.cloneNode(true));
+    const p = storageGet(STORAGE_KEYS.bestScorePractice, null);
+    const e = storageGet(STORAGE_KEYS.bestScoreExam, null);
+    let best = null;
+    if (p !== null && p !== '') best = Number(p);
+    if (e !== null && e !== '') best = best === null ? Number(e) : Math.max(best, Number(e));
+    document.getElementById('best-score').textContent = best === null ? '—' : best + '/' + QUESTIONS.length;
+
+    document.getElementById('btn-start-practice').addEventListener('click', function () { startQuiz(false); });
+    document.getElementById('btn-start-exam').addEventListener('click', function () { startQuiz(true); });
+  }
+
+  function startQuiz(isExam) {
+    const order = shuffledIndexes(QUESTIONS.length);
+    quizState = {
+      isExam: isExam,
+      order: order,
+      current: 0,
+      answers: [],
+      optionOrder: {},
+      secondsLeft: EXAM_SECONDS
+    };
+    order.forEach(function (qIdx) {
+      quizState.optionOrder[qIdx] = shuffledIndexes(QUESTIONS[qIdx].options.length);
+    });
+    renderQuestion();
+    if (isExam) startTimer();
+  }
+
+  function formatTime(s) {
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
   }
 
   function updateTimerDisplay() {
     const el = document.getElementById('quiz-timer');
-    if (!el) return;
-    el.textContent = formatTime(Math.max(timeLeft, 0));
-    el.classList.toggle('quiz-timer--warning', timeLeft <= 60);
+    if (el) el.textContent = '⏱ ' + formatTime(quizState.secondsLeft);
   }
 
   function startTimer() {
     stopTimer();
-    updateTimerDisplay();
-    timerInterval = setInterval(() => {
-      timeLeft -= 1;
+    timerInterval = setInterval(function () {
+      quizState.secondsLeft--;
       updateTimerDisplay();
-      if (timeLeft <= 0) {
+      if (quizState.secondsLeft <= 0) {
         stopTimer();
-        timedOut = true;
-        renderResult(gradeQuiz());
+        gradeQuiz();
       }
     }, 1000);
   }
-
-  function renderQuizIntro() {
-    stopTimer();
-    Object.keys(answers).forEach((k) => delete answers[k]);
-    current = 0;
-    examMode = false;
-    timedOut = false;
-
-    viewEl.innerHTML = '';
-    const node = templates.quizIntro.content.cloneNode(true);
-    viewEl.appendChild(node);
-
-    const best = getBestScore();
-    const bestEl = document.getElementById('best-score');
-    if (best !== null) {
-      bestEl.innerHTML = `Tu mejor puntaje: <strong>${best} / ${QUESTIONS.length}</strong>`;
-      bestEl.hidden = false;
-    }
-
-    document.getElementById('btn-start-practice').addEventListener('click', () => startQuiz(false));
-    document.getElementById('btn-start-exam').addEventListener('click', () => startQuiz(true));
-  }
-
-  function startQuiz(isExam) {
-    examMode = isExam;
-    current = 0;
-    Object.keys(answers).forEach((k) => delete answers[k]);
-    optionOrder = {};
-    QUESTIONS.forEach((q) => {
-      optionOrder[q.id] = shuffledIndexes(q.options.length);
-    });
-    if (examMode) {
-      timeLeft = EXAM_SECONDS;
-    }
-    renderQuestion();
-    if (examMode) startTimer();
+  function stopTimer() {
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
   }
 
   function renderQuestion() {
-    const q = QUESTIONS[current];
-    const node = templates.question.content.cloneNode(true);
-
-    node.querySelector('.q-index').textContent = String(current + 1).padStart(2, '0');
-    node.querySelector('.q-total').textContent = String(QUESTIONS.length).padStart(2, '0');
-    node.querySelector('.question__text').textContent = q.text;
-
-    const list = node.querySelector('.options');
-    const order = optionOrder[q.id] || q.options.map((_, i) => i);
-    order.forEach((idx) => {
-      const optText = q.options[idx];
-      const opt = templates.option.content.cloneNode(true);
-      const li = opt.querySelector('.option');
-      li.querySelector('.option__label').textContent = optText;
-      const isSelected = answers[q.id] === idx;
-      li.setAttribute('aria-selected', String(isSelected));
-
-      const select = () => {
-        answers[q.id] = idx;
-        renderQuestion();
-      };
-      li.addEventListener('click', select);
-      li.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          select();
-        }
-      });
-
-      list.appendChild(opt);
-    });
-
     viewEl.innerHTML = '';
-    viewEl.appendChild(node);
+    const tpl = document.getElementById('tpl-question');
+    viewEl.appendChild(tpl.content.cloneNode(true));
 
-    const btnPrev = document.getElementById('btn-prev');
-    const btnNext = document.getElementById('btn-next');
-    const fill = document.getElementById('progress-fill');
+    const qIdx = quizState.order[quizState.current];
+    const question = QUESTIONS[qIdx];
+    document.getElementById('quiz-question-counter').textContent = 'Pregunta ' + (quizState.current + 1) + ' de ' + QUESTIONS.length;
+    document.getElementById('quiz-question-text').textContent = question.q;
+    document.getElementById('quiz-progress-bar').style.width = ((quizState.current) / QUESTIONS.length * 100) + '%';
+
     const timerEl = document.getElementById('quiz-timer');
+    if (quizState.isExam) { timerEl.hidden = false; updateTimerDisplay(); }
 
-    if (examMode) {
-      timerEl.hidden = false;
-      updateTimerDisplay();
-      btnPrev.hidden = true;
-    } else {
-      timerEl.hidden = true;
-      btnPrev.hidden = false;
-      btnPrev.disabled = current === 0;
+    const optsWrap = document.getElementById('quiz-options');
+    const order = quizState.optionOrder[qIdx];
+    order.forEach(function (optIdx) {
+      const btn = document.getElementById('tpl-option').content.cloneNode(true).querySelector('button');
+      btn.textContent = question.options[optIdx];
+      btn.addEventListener('click', function () { selectAnswer(qIdx, optIdx, btn, optsWrap, question); });
+      optsWrap.appendChild(btn);
+    });
+  }
+
+  function selectAnswer(qIdx, optIdx, btn, optsWrap, question) {
+    Array.from(optsWrap.children).forEach(function (b) { b.disabled = true; });
+    const isCorrect = optIdx === question.correct;
+    btn.classList.add(isCorrect ? 'is-correct' : 'is-wrong');
+    if (!isCorrect) {
+      const correctBtn = Array.from(optsWrap.children).find(function (b) { return b.textContent === question.options[question.correct]; });
+      if (correctBtn) correctBtn.classList.add('is-correct');
     }
-
-    btnNext.textContent = current === QUESTIONS.length - 1 ? 'Finalizar' : 'Siguiente';
-    btnNext.disabled = answers[q.id] === undefined;
-    fill.style.width = `${Math.round((Object.keys(answers).length / QUESTIONS.length) * 100)}%`;
-
-    btnPrev.addEventListener('click', () => {
-      if (current > 0) {
-        current -= 1;
-        renderQuestion();
-      }
-    });
-
-    btnNext.addEventListener('click', () => {
-      if (current < QUESTIONS.length - 1) {
-        current += 1;
-        renderQuestion();
-      } else {
+    quizState.answers[qIdx] = isCorrect;
+    if (navigator.vibrate) navigator.vibrate(isCorrect ? 40 : [30, 40, 30]);
+    setTimeout(function () {
+      quizState.current++;
+      if (quizState.current >= QUESTIONS.length) {
         stopTimer();
-        renderResult(gradeQuiz());
+        gradeQuiz();
+      } else {
+        renderQuestion();
       }
-    });
+    }, quizState.isExam ? 400 : 900);
   }
 
   function gradeQuiz() {
-    let score = 0;
-    const results = QUESTIONS.map((q) => {
-      const chosenIdx = answers[q.id];
-      const isCorrect = chosenIdx === q.correctIndex;
-      if (isCorrect) score += 1;
-      return {
-        text: q.text,
-        isCorrect,
-        chosenText: chosenIdx !== undefined ? q.options[chosenIdx] : null,
-        correctText: q.options[q.correctIndex],
-      };
-    });
-    const total = QUESTIONS.length;
-
-    const prevBest = getBestScore();
-    if (prevBest === null || score > prevBest) {
-      storageSet(STORAGE_KEYS.bestScore, String(score));
-    }
-
-    return { score, total, percentage: Math.round((score / total) * 100), results };
+    const score = Object.values(quizState.answers).filter(Boolean).length;
+    const key = quizState.isExam ? STORAGE_KEYS.bestScoreExam : STORAGE_KEYS.bestScorePractice;
+    const prev = storageGet(key, null);
+    if (prev === null || prev === '' || score > Number(prev)) storageSet(key, String(score));
+    renderResult({ score: score, total: QUESTIONS.length, isExam: quizState.isExam });
   }
 
   function renderResult(data) {
-    const node = templates.result.content.cloneNode(true);
-    node.querySelector('.result__score-num').textContent = data.score;
-    node.querySelector('.result__score-den').textContent = `/${data.total}`;
-    node.querySelector('.result__pct').textContent = `${data.percentage}% de aciertos`;
-
-    if (timedOut) {
-      node.querySelector('#result-timeout-note').hidden = false;
-    }
-
-    const list = node.querySelector('.result__list');
-    data.results.forEach((r, i) => {
-      const li = document.createElement('li');
-
-      const row = document.createElement('div');
-      row.className = 'tag-row';
-      const tag = document.createElement('span');
-      tag.className = `tag ${r.isCorrect ? 'tag--ok' : 'tag--no'}`;
-      tag.textContent = r.isCorrect ? 'CORRECTA' : 'INCORRECTA';
-      const label = document.createElement('span');
-      label.textContent = `Pregunta ${i + 1}`;
-      row.appendChild(tag);
-      row.appendChild(label);
-      li.appendChild(row);
-
-      if (!r.isCorrect) {
-        const detail = document.createElement('span');
-        detail.className = 'review-answer';
-        detail.innerHTML =
-          `Tu respuesta: <span class="is-wrong">${escapeHtml(r.chosenText ?? '(sin responder)')}</span><br>` +
-          `Respuesta correcta: <span class="is-right">${escapeHtml(r.correctText)}</span>`;
-        li.appendChild(detail);
-      }
-
-      list.appendChild(li);
-    });
-
     viewEl.innerHTML = '';
-    viewEl.appendChild(node);
-
-    document.getElementById('btn-retry').addEventListener('click', renderQuizIntro);
-    document.getElementById('btn-share-result').addEventListener('click', () => shareResult(data));
+    const tpl = document.getElementById('tpl-result');
+    viewEl.appendChild(tpl.content.cloneNode(true));
+    document.getElementById('result-score').textContent = data.score + ' / ' + data.total;
+    document.getElementById('result-detail').textContent = data.isExam ? 'Modo examen' : 'Modo práctica';
+    document.getElementById('result-title').textContent = data.score === data.total ? '¡Puntaje perfecto! 🎉' : '¡Listo!';
 
     if (data.score === data.total) {
       celebrateConfetti();
-      if (navigator.vibrate) navigator.vibrate([30, 40, 30, 40, 80]);
+      if (navigator.vibrate) navigator.vibrate([40, 60, 40, 60, 80]);
     }
+
+    document.getElementById('btn-retry').addEventListener('click', renderQuizIntro);
+    document.getElementById('btn-share-result').addEventListener('click', function () { shareResult(data); });
   }
 
-  // Confeti simple con divs animados por CSS, para puntaje perfecto.
   function celebrateConfetti() {
+    const colors = ['#f5a623', '#3ecf8e', '#e5484d', '#4a90d9', '#fff'];
     const container = document.createElement('div');
     container.className = 'confetti-container';
-    const colors = ['var(--amber)', 'var(--green)', 'var(--teal)', 'var(--red)'];
-    for (let i = 0; i < 36; i++) {
-      const piece = document.createElement('span');
+    for (let i = 0; i < 60; i++) {
+      const piece = document.createElement('div');
       piece.className = 'confetti-piece';
-      piece.style.left = `${Math.random() * 100}%`;
+      piece.style.left = Math.random() * 100 + 'vw';
       piece.style.background = colors[Math.floor(Math.random() * colors.length)];
-      piece.style.animationDelay = `${Math.random() * 0.4}s`;
-      piece.style.animationDuration = `${1.8 + Math.random() * 1.2}s`;
+      piece.style.animationDelay = (Math.random() * 0.6) + 's';
       container.appendChild(piece);
     }
     document.body.appendChild(container);
-    setTimeout(() => container.remove(), 3200);
+    setTimeout(function () { container.remove(); }, 3200);
   }
 
-  async function shareResult(data) {
-    const text = `Saqué ${data.score}/${data.total} (${data.percentage}%) en el cuestionario de Integración de Sistemas 🎯`;
-    const btn = document.getElementById('btn-share-result');
+  function shareResult(data) {
+    const text = 'Saqué ' + data.score + '/' + data.total + ' en el cuestionario de Integración de Sistemas' + (data.isExam ? ' (modo examen)' : '') + '. ¿Te animás?';
     if (navigator.share) {
-      try {
-        await navigator.share({ text });
-      } catch (e) {
-        /* el usuario canceló el share nativo; no hacemos nada más */
-      }
-      return;
-    }
-    try {
-      await navigator.clipboard.writeText(text);
-      btn.textContent = '✅ ¡Copiado!';
-    } catch (e) {
-      btn.textContent = '⚠️ No se pudo copiar';
-    }
-    setTimeout(() => {
-      btn.textContent = '📤 Compartir resultado';
-    }, 2200);
-  }
-
-  // ---------------------------------------------------------------------
-  // Selector de tema (Oscuro / Claro / Alto contraste) y de tamaño de
-  // letra. Ambos afectan a toda la app vía atributos/variables en <html>.
-  // ---------------------------------------------------------------------
-  const btnTheme = document.getElementById('btn-theme');
-  const themePanel = document.getElementById('theme-panel');
-  const themeBtns = [...themePanel.querySelectorAll('.settings-panel__btn')];
-
-  const btnFontSize = document.getElementById('btn-font-size');
-  const fontSizePanel = document.getElementById('font-size-panel');
-  const fontSizeBtns = [...fontSizePanel.querySelectorAll('.settings-panel__btn')];
-
-  function closePanel(btn, panel) {
-    panel.hidden = true;
-    btn.setAttribute('aria-expanded', 'false');
-  }
-
-  function togglePanel(btn, panel, otherBtn, otherPanel) {
-    const isOpen = btn.getAttribute('aria-expanded') === 'true';
-    closePanel(otherBtn, otherPanel);
-    if (isOpen) {
-      closePanel(btn, panel);
+      navigator.share({ text: text }).catch(function () {});
     } else {
-      panel.hidden = false;
-      btn.setAttribute('aria-expanded', 'true');
+      navigator.clipboard && navigator.clipboard.writeText(text);
+      window.alert('Resultado copiado al portapapeles.');
     }
   }
 
-  function applyTheme(theme) {
-    document.documentElement.setAttribute('data-theme', theme);
-    themeBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.theme === theme)));
-  }
-
-  function applyFontScale(scale) {
-    document.documentElement.style.setProperty('--font-scale', scale);
-    fontSizeBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.scale === String(scale))));
-  }
-
-  const storedTheme = storageGet(STORAGE_KEYS.theme);
-  let initialTheme = storedTheme;
-  if (!initialTheme) {
-    const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
-    initialTheme = prefersLight ? 'light' : 'dark';
-  }
-  applyTheme(initialTheme);
-  applyFontScale(storageGet(STORAGE_KEYS.fontScale) || '1');
-
-  btnTheme.addEventListener('click', () => togglePanel(btnTheme, themePanel, btnFontSize, fontSizePanel));
-  btnFontSize.addEventListener('click', () => togglePanel(btnFontSize, fontSizePanel, btnTheme, themePanel));
-
-  themeBtns.forEach((b) => {
-    b.addEventListener('click', () => {
-      applyTheme(b.dataset.theme);
-      storageSet(STORAGE_KEYS.theme, b.dataset.theme);
-      closePanel(btnTheme, themePanel);
-    });
-  });
-
-  fontSizeBtns.forEach((b) => {
-    b.addEventListener('click', () => {
-      applyFontScale(b.dataset.scale);
-      storageSet(STORAGE_KEYS.fontScale, b.dataset.scale);
-      closePanel(btnFontSize, fontSizePanel);
-    });
-  });
-
-  // ---------------------------------------------------------------------
-  // Buscador global: busca en Apuntes, Casos y Cuestionario a la vez.
-  // ---------------------------------------------------------------------
-  const btnSearch = document.getElementById('btn-search');
-  const searchOverlay = document.getElementById('search-overlay');
-  const searchInput = document.getElementById('global-search-input');
-  const searchResults = document.getElementById('global-search-results');
-  const btnSearchClose = document.getElementById('btn-search-close');
-
-  function buildSnippet(text, query, maxLen = 110) {
-    const lower = text.toLowerCase();
-    const qLower = query.toLowerCase();
-    const idx = lower.indexOf(qLower);
-    if (idx === -1) {
-      return escapeHtml(text.length > maxLen ? text.slice(0, maxLen) + '…' : text);
-    }
-    const start = Math.max(0, idx - 45);
-    const end = Math.min(text.length, idx + qLower.length + 65);
-    let snippet = text.slice(start, end);
-    if (start > 0) snippet = '…' + snippet;
-    if (end < text.length) snippet += '…';
-    return highlight(snippet, query);
-  }
+  // ===== Global search =====
+  const searchPanel = document.getElementById('search-panel');
+  const searchInputGlobal = document.getElementById('search-input');
+  const searchResults = document.getElementById('search-results');
 
   function openSearch() {
-    closePanel(btnTheme, themePanel);
-    closePanel(btnFontSize, fontSizePanel);
-    searchOverlay.hidden = false;
-    btnSearch.setAttribute('aria-expanded', 'true');
-    searchInput.value = '';
-    paintSearchResults('');
-    searchInput.focus();
+    searchPanel.hidden = false;
+    searchInputGlobal.value = '';
+    searchResults.innerHTML = '';
+    searchInputGlobal.focus();
+  }
+  function closeSearch() { searchPanel.hidden = true; }
+
+  function buildSnippet(text, term) {
+    const idx = text.toLowerCase().indexOf(term.toLowerCase());
+    if (idx === -1) return highlight(text.slice(0, 90), term);
+    const start = Math.max(0, idx - 40);
+    return (start > 0 ? '…' : '') + highlight(text.slice(start, start + 120), term) + '…';
   }
 
-  function closeSearch() {
-    searchOverlay.hidden = true;
-    btnSearch.setAttribute('aria-expanded', 'false');
+  function paintSearchResults(term) {
+    searchResults.innerHTML = '';
+    if (!term || term.length < 2) return;
+    const t = term.toLowerCase();
+    const results = [];
+
+    NOTES.forEach(function (n) {
+      if (n.title.toLowerCase().includes(t) || n.body.toLowerCase().includes(t)) {
+        results.push({ tag: 'Apunte', title: n.title, snippet: buildSnippet(n.body, term), action: function () { jumpToNote(n.id); } });
+      }
+    });
+    MISCONCEPTIONS.forEach(function (m) {
+      if (m.text.toLowerCase().includes(t)) {
+        results.push({ tag: 'Error común', title: 'Error común', snippet: buildSnippet(m.text, term), action: function () { jumpToMisconception(m.id); } });
+      }
+    });
+    CASES.forEach(function (c) {
+      if (c.title.toLowerCase().includes(t) || c.scenario.toLowerCase().includes(t)) {
+        results.push({ tag: 'Caso', title: c.title, snippet: buildSnippet(c.scenario, term), action: function () { jumpToCase(c.id); } });
+      }
+    });
+    QUESTIONS.forEach(function (q, i) {
+      if (q.q.toLowerCase().includes(t)) {
+        results.push({ tag: 'Pregunta', title: q.q, snippet: '', action: function () { jumpToQuiz(); } });
+      }
+    });
+    GLOSSARY.forEach(function (g) {
+      if (g.term.toLowerCase().includes(t) || g.def.toLowerCase().includes(t)) {
+        results.push({ tag: 'Glosario', title: g.term, snippet: buildSnippet(g.def, term), action: function () { navigate('glossary'); closeSearch(); } });
+      }
+    });
+
+    if (!results.length) {
+      searchResults.innerHTML = '<p style="color:var(--text-dim);padding:10px;">Sin resultados.</p>';
+      return;
+    }
+    results.forEach(function (r) {
+      const div = document.createElement('div');
+      div.className = 'search-result';
+      div.innerHTML = '<div class="search-result__tag">' + r.tag + '</div><div>' + highlight(r.title, term) + '</div>' +
+        (r.snippet ? '<div style="font-size:12px;color:var(--text-dim);margin-top:4px;">' + r.snippet + '</div>' : '');
+      div.addEventListener('click', r.action);
+      searchResults.appendChild(div);
+    });
   }
 
   function jumpToNote(id) {
-    closeSearch();
-    navigate('notes');
-    const li = document.querySelector(`#notes-list [data-id="${id}"]`);
-    if (!li) return;
-    const toggle = li.querySelector('.accordion__toggle');
-    const body = li.querySelector('.accordion__body');
-    toggle.setAttribute('aria-expanded', 'true');
-    body.hidden = false;
-    if (li.scrollIntoView) li.scrollIntoView({ block: 'center' });
-    toggle.focus({ preventScroll: true });
+    navigate('notes'); closeSearch();
+    setTimeout(function () {
+      const items = document.querySelectorAll('#notes-list .accordion__item');
+      const idx = NOTES.findIndex(function (n) { return n.id === id; });
+      if (items[idx]) {
+        items[idx].querySelector('.accordion__head').click();
+        items[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 50);
   }
-
   function jumpToMisconception(id) {
-    closeSearch();
-    navigate('notes');
-    const li = document.querySelector(`#misconceptions-list [data-id="${id}"]`);
-    if (!li) return;
-    const head = li.querySelector('.accordion__head');
-    const body = li.querySelector('.accordion__body');
-    head.setAttribute('aria-expanded', 'true');
-    body.hidden = false;
-    if (li.scrollIntoView) li.scrollIntoView({ block: 'center' });
-    head.focus({ preventScroll: true });
+    navigate('notes'); closeSearch();
+    setTimeout(function () {
+      const items = document.querySelectorAll('#misconceptions-list .accordion__item');
+      const idx = MISCONCEPTIONS.findIndex(function (m) { return m.id === id; });
+      if (items[idx]) {
+        items[idx].querySelector('.accordion__head').click();
+        items[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 50);
   }
-
   function jumpToCase(id) {
-    closeSearch();
-    navigate('cases');
-    const li = document.querySelector(`#cases-list [data-id="${id}"]`);
-    if (!li) return;
-    const head = li.querySelector('.accordion__head');
-    const body = li.querySelector('.accordion__body');
-    head.setAttribute('aria-expanded', 'true');
-    body.hidden = false;
-    if (li.scrollIntoView) li.scrollIntoView({ block: 'center' });
-    head.focus({ preventScroll: true });
+    navigate('cases'); closeSearch();
+    setTimeout(function () {
+      const items = document.querySelectorAll('#cases-list .accordion__item');
+      const idx = CASES.findIndex(function (c) { return c.id === id; });
+      if (items[idx]) {
+        items[idx].querySelector('.accordion__head').click();
+        items[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 50);
+  }
+  function jumpToQuiz() { navigate('quiz'); closeSearch(); }
+
+  document.getElementById('btn-search').addEventListener('click', openSearch);
+  document.getElementById('btn-search-close').addEventListener('click', closeSearch);
+  searchInputGlobal.addEventListener('input', function () { paintSearchResults(searchInputGlobal.value); });
+
+  // ===== Theme / font panels =====
+  const themePanel = document.getElementById('theme-panel');
+  const fontPanel = document.getElementById('font-panel');
+
+  function closePanel(panel) { panel.hidden = true; }
+  function togglePanel(panel, others) {
+    const wasHidden = panel.hidden;
+    others.forEach(closePanel);
+    panel.hidden = !wasHidden ? true : false;
+    panel.hidden = wasHidden ? false : true;
   }
 
-  function jumpToQuiz() {
-    closeSearch();
-    navigate('quiz');
-  }
-
-  function paintSearchResults(query) {
-    searchResults.innerHTML = '';
-    const q = query.trim();
-
-    if (!q) {
-      const hint = document.createElement('p');
-      hint.className = 'search-hint';
-      hint.textContent = 'Escribí para buscar en apuntes, casos y preguntas del cuestionario.';
-      searchResults.appendChild(hint);
-      return;
-    }
-
-    const qLower = q.toLowerCase();
-    const noteMatches = NOTES.filter(
-      (n) => n.title.toLowerCase().includes(qLower) || n.body.toLowerCase().includes(qLower)
-    );
-    const misconceptionMatches = MISCONCEPTIONS.filter(
-      (m) => m.title.toLowerCase().includes(qLower) || m.body.toLowerCase().includes(qLower)
-    );
-    const caseMatches = CASES.filter(
-      (c) =>
-        c.title.toLowerCase().includes(qLower) ||
-        c.scenario.toLowerCase().includes(qLower) ||
-        c.questions.some((qq) => qq.toLowerCase().includes(qLower))
-    );
-    const questionMatches = QUESTIONS.filter(
-      (qs) => qs.text.toLowerCase().includes(qLower) || qs.options.some((o) => o.toLowerCase().includes(qLower))
-    );
-
-    if (
-      noteMatches.length === 0 &&
-      misconceptionMatches.length === 0 &&
-      caseMatches.length === 0 &&
-      questionMatches.length === 0
-    ) {
-      const empty = document.createElement('p');
-      empty.className = 'search-empty';
-      empty.textContent = 'No se encontraron resultados.';
-      searchResults.appendChild(empty);
-      return;
-    }
-
-    function addGroup(label, items, buildResult) {
-      if (items.length === 0) return;
-      const groupLabel = document.createElement('p');
-      groupLabel.className = 'search-group__label mono';
-      groupLabel.textContent = `${label} (${items.length})`;
-      searchResults.appendChild(groupLabel);
-      items.forEach((item) => searchResults.appendChild(buildResult(item)));
-    }
-
-    addGroup('APUNTES', noteMatches, (n) => {
-      const btn = document.createElement('button');
-      btn.className = 'search-result';
-      btn.type = 'button';
-      btn.innerHTML = `<p class="search-result__title">${highlight(n.title, q)}</p><p class="search-result__snippet">${buildSnippet(n.body, q)}</p>`;
-      btn.addEventListener('click', () => jumpToNote(n.id));
-      return btn;
-    });
-
-    addGroup('ERRORES COMUNES', misconceptionMatches, (m) => {
-      const btn = document.createElement('button');
-      btn.className = 'search-result';
-      btn.type = 'button';
-      btn.innerHTML = `<p class="search-result__title">${highlight(m.title, q)}</p><p class="search-result__snippet">${buildSnippet(m.body, q)}</p>`;
-      btn.addEventListener('click', () => jumpToMisconception(m.id));
-      return btn;
-    });
-
-    addGroup('CASOS', caseMatches, (c) => {
-      const btn = document.createElement('button');
-      btn.className = 'search-result';
-      btn.type = 'button';
-      btn.innerHTML = `<p class="search-result__title">${highlight(c.title, q)}</p><p class="search-result__snippet">${buildSnippet(c.scenario, q)}</p>`;
-      btn.addEventListener('click', () => jumpToCase(c.id));
-      return btn;
-    });
-
-    addGroup('CUESTIONARIO', questionMatches, (qs) => {
-      const btn = document.createElement('button');
-      btn.className = 'search-result';
-      btn.type = 'button';
-      btn.innerHTML = `<p class="search-result__title">${highlight(qs.text, q)}</p><p class="search-result__snippet">Tocá para ir al cuestionario</p>`;
-      btn.addEventListener('click', jumpToQuiz);
-      return btn;
-    });
-  }
-
-  btnSearch.addEventListener('click', openSearch);
-  btnSearchClose.addEventListener('click', closeSearch);
-  searchInput.addEventListener('input', () => paintSearchResults(searchInput.value));
-  searchOverlay.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeSearch();
+  document.getElementById('btn-theme').addEventListener('click', function () {
+    fontPanel.hidden = true;
+    themePanel.hidden = !themePanel.hidden;
+  });
+  document.getElementById('btn-font').addEventListener('click', function () {
+    themePanel.hidden = true;
+    fontPanel.hidden = !fontPanel.hidden;
   });
 
-  // ---------------------------------------------------------------------
-  // Banner de instalación de la PWA.
-  // - Android/Chrome/Edge: capturamos el aviso nativo (beforeinstallprompt)
-  //   y lo mostramos con nuestro propio diseño.
-  // - iPhone/iPad (Safari): no existe esa API, así que mostramos
-  //   instrucciones manuales.
-  // ---------------------------------------------------------------------
-  const INSTALL_DISMISSED_KEY = 'is-app:install-dismissed';
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    storageSet(STORAGE_KEYS.theme, theme);
+    themePanel.querySelectorAll('.settings-panel__btn').forEach(function (b) {
+      b.classList.toggle('is-active', b.dataset.themeChoice === theme);
+    });
+  }
+  themePanel.querySelectorAll('.settings-panel__btn').forEach(function (b) {
+    b.addEventListener('click', function () { applyTheme(b.dataset.themeChoice); });
+  });
+
+  function applyFontScale(scale) {
+    document.documentElement.style.setProperty('--font-scale', scale);
+    storageSet(STORAGE_KEYS.fontScale, scale);
+    fontPanel.querySelectorAll('.settings-panel__btn').forEach(function (b) {
+      b.classList.toggle('is-active', b.dataset.fontChoice === String(scale));
+    });
+  }
+  fontPanel.querySelectorAll('.settings-panel__btn').forEach(function (b) {
+    b.addEventListener('click', function () { applyFontScale(b.dataset.fontChoice); });
+  });
+
+  // ===== Install banner =====
+  let deferredPrompt = null;
   const installBanner = document.getElementById('install-banner');
   const installBannerText = document.getElementById('install-banner-text');
   const btnInstall = document.getElementById('btn-install');
   const btnInstallDismiss = document.getElementById('btn-install-dismiss');
 
-  let deferredInstallPrompt = null;
-
   function isStandaloneDisplay() {
-    return (
-      (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
-      window.navigator.standalone === true
-    );
+    return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
   }
-
-  function isIosDevice() {
-    return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
-  }
-
-  function isSafariBrowser() {
-    return /^((?!chrome|android|crios|fxios).)*safari/i.test(window.navigator.userAgent);
-  }
+  function isIosDevice() { return /iphone|ipad|ipod/i.test(navigator.userAgent); }
+  function isSafariBrowser() { return /^((?!chrome|android).)*safari/i.test(navigator.userAgent); }
 
   function dismissInstallBanner() {
     installBanner.hidden = true;
-    storageSet(INSTALL_DISMISSED_KEY, '1');
+    storageSet(STORAGE_KEYS.installDismissed, getTodayKey());
   }
 
   function showInstallBanner(mode) {
-    if (isStandaloneDisplay() || storageGet(INSTALL_DISMISSED_KEY)) return;
-    if (mode === 'native') {
-      installBannerText.textContent = 'Instalá esta app en tu dispositivo para usarla sin conexión, como una app normal.';
-      btnInstall.hidden = false;
-    } else {
-      installBannerText.textContent = 'Para instalar: tocá el ícono de compartir (⬆️) y elegí "Agregar a pantalla de inicio".';
+    if (isStandaloneDisplay()) return;
+    if (storageGet(STORAGE_KEYS.installDismissed, '') === getTodayKey()) return;
+    if (mode === 'ios') {
+      installBannerText.textContent = 'Para instalar: tocá compartir (⬆️) y elegí "Agregar a inicio".';
       btnInstall.hidden = true;
+    } else {
+      installBannerText.textContent = 'Instalá esta app en tu celular o compu para acceder más rápido.';
+      btnInstall.hidden = false;
     }
     installBanner.hidden = false;
   }
 
-  window.addEventListener('beforeinstallprompt', (e) => {
+  window.addEventListener('beforeinstallprompt', function (e) {
     e.preventDefault();
-    deferredInstallPrompt = e;
-    showInstallBanner('native');
+    deferredPrompt = e;
+    showInstallBanner('android');
   });
+  window.addEventListener('appinstalled', function () { installBanner.hidden = true; });
 
-  window.addEventListener('appinstalled', () => {
+  btnInstall.addEventListener('click', function () {
     installBanner.hidden = true;
-    deferredInstallPrompt = null;
-    storageSet(INSTALL_DISMISSED_KEY, '1');
+    if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; }
   });
-
-  btnInstall.addEventListener('click', async () => {
-    if (!deferredInstallPrompt) return;
-    deferredInstallPrompt.prompt();
-    const choice = await deferredInstallPrompt.userChoice;
-    deferredInstallPrompt = null;
-    installBanner.hidden = true;
-    if (choice.outcome === 'accepted') {
-      storageSet(INSTALL_DISMISSED_KEY, '1');
-    }
-  });
-
   btnInstallDismiss.addEventListener('click', dismissInstallBanner);
 
   if (isIosDevice() && isSafariBrowser() && !isStandaloneDisplay()) {
-    showInstallBanner('ios');
+    setTimeout(function () { showInstallBanner('ios'); }, 1500);
   }
 
-  // ---------------------------------------------------------------------
-  // Arranque: recuerda la última pestaña visitada
-  // ---------------------------------------------------------------------
-  const savedTab = storageGet(STORAGE_KEYS.lastTab);
-  const validTabs = ['notes', 'quiz', 'glossary', 'cases'];
-  navigate(validTabs.includes(savedTab) ? savedTab : 'notes', false);
-  updateNotesBadge();
+  // ===== Scroll to top =====
+  const SCROLL_TOP_THRESHOLD = 300;
+  viewEl.addEventListener('scroll', function () {
+    btnScrollTop.hidden = viewEl.scrollTop < SCROLL_TOP_THRESHOLD;
+  });
+  btnScrollTop.addEventListener('click', function () {
+    viewEl.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      const swUrl = new URL('service-worker.js', document.baseURI);
-      navigator.serviceWorker.register(swUrl, { scope: './' }).catch(() => {});
-    });
+  // ===== Startup =====
+  function init() {
+    initSplash();
+
+    const savedTheme = storageGet(STORAGE_KEYS.theme, null);
+    if (savedTheme) {
+      applyTheme(savedTheme);
+    } else if (storageGet(STORAGE_KEYS.themeAuto, null) === null) {
+      const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+      applyTheme(prefersLight ? 'light' : 'dark');
+      storageSet(STORAGE_KEYS.themeAuto, 'true');
+    } else {
+      applyTheme('dark');
+    }
+
+    const savedScale = storageGet(STORAGE_KEYS.fontScale, '1');
+    applyFontScale(savedScale);
+
+    updateNotesBadge();
+
+    const lastTab = storageGet(STORAGE_KEYS.lastTab, 'notes');
+    navigate(lastTab, false);
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('service-worker.js').catch(function () {});
+      });
+    }
   }
+
+  init();
 })();
