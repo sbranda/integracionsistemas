@@ -405,6 +405,8 @@ mark { background: var(--amber); color: #000; border-radius: 3px; }
 .accordion__head[aria-expanded="true"] .accordion__chevron { transform: rotate(180deg); }
 .accordion__body[hidden] { display: none; }
 .accordion__body { padding: 0 14px 14px; color: var(--text-dim); line-height: 1.5; }
+.note-item__body p { margin: 0 0 12px; }
+.note-item__body p:last-child { margin-bottom: 0; }
 .note-item__read-badge[hidden] { display: none; }
 .note-item__read-badge { font-size: 11px; color: var(--success); white-space: nowrap; }
 .note-resource[hidden] { display: none; }

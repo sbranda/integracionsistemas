@@ -8,7 +8,21 @@ const NOTES = [
     body: `Integrar sistemas significa hacer que distintos programas, que fueron pensados por separado,
     puedan trabajar juntos e intercambiar información. Por ejemplo: que el sistema de ventas de una
     tienda le avise automáticamente al sistema de stock cuando se vende un producto, sin que una
-    persona tenga que copiar los datos a mano de un sistema a otro.`,
+    persona tenga que copiar los datos a mano de un sistema a otro.
+
+    Esto pasa todo el tiempo en las empresas: casi ninguna usa un solo programa gigante que hace todo.
+    Usan varios sistemas más chicos, cada uno especializado en algo (ventas, contabilidad, recursos
+    humanos, atención al cliente), y esos sistemas necesitan "hablarse" entre sí para que la información
+    esté siempre actualizada en todos lados.
+
+    Cuando los sistemas NO están integrados, aparecen problemas típicos: hay que cargar el mismo dato
+    dos o tres veces en lugares distintos, se cometen errores al tipear a mano, y la información queda
+    desactualizada porque nadie se acuerda de avisarle al otro sistema. Integrar bien evita todo eso:
+    ahorra tiempo, reduce errores y hace que las decisiones se tomen con datos actualizados.
+
+    Hay distintos niveles de integración: puede ser tan simple como que un sistema le mande un archivo
+    al otro una vez por día, o tan avanzado como que se comuniquen en tiempo real cada vez que pasa
+    algo importante (una venta, un pago, un envío).`,
     resource: { type: 'article', label: 'Artículo: ¿Qué es la integración de sistemas?', url: 'https://www.redhat.com/es/topics/integration/what-is-application-integration' }
   },
   {
@@ -16,7 +30,22 @@ const NOTES = [
     title: 'API: la puerta de entrada entre sistemas',
     body: `Una API (Application Programming Interface / Interfaz de Programación de Aplicaciones) es
     como un mostrador de atención: un sistema pide algo (por ejemplo, "dame los datos del cliente 123")
-    y otro sistema responde con esa información, siguiendo reglas claras y acordadas de antemano.`,
+    y otro sistema responde con esa información, siguiendo reglas claras y acordadas de antemano.
+
+    Pensalo como el menú de un restaurante: el menú te dice exactamente qué platos podés pedir, cómo
+    pedirlos y qué vas a recibir a cambio. No podés entrar a la cocina y buscar lo que quieras: le pedís
+    al mozo (la API) algo que está en el menú, y él te lo trae. La API funciona igual: define qué
+    pedidos son válidos y qué respuesta vas a obtener por cada uno.
+
+    Una API puede ofrecer distintas acciones: consultar datos ("dame la lista de productos"), crear
+    algo nuevo ("registrá este pedido"), modificar información ("actualizá el stock") o eliminar algo
+    ("cancelá esta reserva). Cada una de esas acciones suele tener su propia "dirección" dentro de la
+    API, llamada endpoint.
+
+    Las APIs son la base de casi toda la tecnología moderna: cuando una app de delivery te muestra el
+    mapa con tu pedido en camino, en realidad le está preguntando constantemente a la API de un servicio
+    de mapas "¿dónde está este vehículo ahora?". Sin APIs, cada empresa tendría que programar todo desde
+    cero, sin poder aprovechar servicios que ya existen.`,
     resource: { type: 'video', label: 'Video: APIs explicadas fácil', url: 'https://www.youtube.com/watch?v=s7wmiS2mSXY' }
   },
   {
@@ -24,7 +53,22 @@ const NOTES = [
     title: 'Front-end y back-end',
     body: `El front-end es lo que ve y toca el usuario: botones, pantallas, formularios. El back-end es
     la parte que no se ve, que procesa la información, guarda datos y aplica las reglas del negocio.
-    Front-end y back-end se comunican casi siempre a través de una API.`,
+    Front-end y back-end se comunican casi siempre a través de una API.
+
+    Un buen ejemplo es un cajero automático. El front-end es la pantalla táctil, los botones y la
+    ranura donde metés la tarjeta: todo lo que vos tocás y ves. El back-end es el sistema del banco que,
+    detrás de escena, revisa si tenés saldo, descuenta el dinero y registra la operación. Vos nunca ves
+    esa parte, pero es la que realmente hace el trabajo importante.
+
+    Esta separación tiene una ventaja grande: el mismo back-end puede atender a varios front-ends
+    distintos al mismo tiempo. Por ejemplo, un banco puede tener una app de celular, una página web y
+    los cajeros automáticos, y los tres "front-ends" distintos se conectan al mismo back-end para hacer
+    las mismas operaciones.
+
+    Por eso, cuando algo "no funciona" en una app, puede fallar en cualquiera de los dos lados: puede
+    ser un problema visual del front-end (un botón que no responde) o un problema del back-end (el
+    sistema que procesa el pedido está caído). Distinguir estas dos partes ayuda mucho a la hora de
+    diagnosticar un error.`,
     resource: { type: 'article', label: 'Artículo: diferencias entre front-end y back-end', url: 'https://developer.mozilla.org/es/docs/Learn/Front-end_web_developer' }
   },
   {
@@ -32,7 +76,21 @@ const NOTES = [
     title: '¿Qué es una PWA?',
     body: `Una PWA (Progressive Web App / Aplicación Web Progresiva) es una página web que se puede
     "instalar" en el celular o la computadora como si fuera una app normal, y que puede funcionar
-    parcialmente sin conexión a internet, gracias a que guarda una copia de sus archivos.`,
+    parcialmente sin conexión a internet, gracias a que guarda una copia de sus archivos.
+
+    La diferencia con una página web común es que una PWA se "porta" como una app: le aparece un ícono
+    en la pantalla de inicio, se abre en su propia ventana (sin la barra del navegador), y puede seguir
+    funcionando aunque el celular se quede sin señal por un rato, mostrando la última información que
+    había guardado.
+
+    Esto se logra con una pieza especial llamada service worker: es un programa que corre "de fondo" en
+    el navegador y que intercepta los pedidos de la app a internet. Cuando hay conexión, guarda una
+    copia de los archivos importantes; cuando no hay conexión, usa esa copia guardada en vez de fallar.
+
+    Las PWA se volvieron populares porque combinan lo mejor de dos mundos: no hay que subirlas a una
+    tienda de aplicaciones (como Google Play o App Store) para que la gente las use, pero igual se
+    sienten como una app instalada. Esta misma app de estudio de Integración de Sistemas es una PWA:
+    por eso te aparece la opción de instalarla en tu celular.`,
     resource: { type: 'article', label: 'Artículo: ¿Qué es una PWA?', url: 'https://web.dev/explore/progressive-web-apps' }
   },
   {
@@ -40,7 +98,20 @@ const NOTES = [
     title: 'Formatos de intercambio: JSON y XML',
     body: `Para que dos sistemas se entiendan, necesitan hablar el mismo "idioma" de datos. Los más
     comunes son JSON (más simple y liviano) y XML (más antiguo, más detallado). Ambos organizan la
-    información en una estructura ordenada que cualquier sistema puede leer.`,
+    información en una estructura ordenada que cualquier sistema puede leer.
+
+    JSON organiza los datos en pares de "nombre" y "valor", parecido a una ficha: por ejemplo,
+    "nombre": "Ana", "edad": 28. Es liviano, fácil de leer para una persona y muy usado en las APIs
+    modernas, sobre todo en aplicaciones web y celulares.
+
+    XML organiza la información con etiquetas, de forma parecida al HTML de una página web, por ejemplo
+    <cliente><nombre>Ana</nombre><edad>28</edad></cliente>. Es más largo de escribir que JSON, pero
+    permite describir reglas más detalladas sobre cómo tiene que ser esa información, algo que todavía
+    se usa mucho en sistemas más antiguos o corporativos.
+
+    Lo importante no es memorizar la sintaxis exacta, sino entender la idea de fondo: sin un formato
+    compartido, cada sistema podría organizar sus datos como quisiera, y sería imposible que se
+    entiendan entre sí. El formato es como el "alfabeto" común que hace posible la integración.`,
     resource: { type: 'article', label: 'Artículo: JSON vs XML', url: 'https://www.w3schools.com/js/js_json_xml.asp' }
   },
   {
@@ -48,7 +119,20 @@ const NOTES = [
     title: 'Middleware: el traductor entre sistemas',
     body: `A veces dos sistemas no pueden hablar directamente porque usan formatos o reglas distintas.
     Ahí aparece el middleware: un programa intermedio que traduce y ordena la comunicación entre ellos,
-    como un intérprete entre dos personas que hablan idiomas distintos.`,
+    como un intérprete entre dos personas que hablan idiomas distintos.
+
+    Un caso típico: una empresa tiene un sistema viejo (de hace 15 años) que solo entiende XML, y quiere
+    conectarlo con una app nueva que solo trabaja con JSON. En vez de reescribir el sistema viejo desde
+    cero (algo caro y arriesgado), se pone un middleware en el medio que recibe los datos en un formato,
+    los traduce, y se los entrega al otro sistema en el formato que necesita.
+
+    El middleware no solo traduce formatos: también puede ordenar la comunicación cuando hay muchos
+    sistemas conectados entre sí. En vez de que cada sistema tenga que saber cómo hablarle a todos los
+    demás (lo que sería un enredo enorme), todos hablan con el middleware, y el middleware se encarga de
+    llevar cada mensaje a donde tiene que ir.
+
+    Esto también ayuda a que, si mañana cambia un sistema, no haya que modificar todos los demás: alcanza
+    con actualizar la "traducción" en el middleware, y el resto sigue funcionando igual.`,
     resource: { type: 'article', label: 'Artículo: ¿Qué es un middleware?', url: 'https://www.ibm.com/es-es/topics/middleware' }
   },
   {
@@ -56,7 +140,21 @@ const NOTES = [
     title: 'Servicios web y REST',
     body: `Un servicio web es una forma de ofrecer funciones de un sistema a través de internet, para
     que otros sistemas las usen. REST (Representational State Transfer) es un estilo muy popular para
-    construir estos servicios, basado en reglas simples sobre cómo pedir y enviar información.`,
+    construir estos servicios, basado en reglas simples sobre cómo pedir y enviar información.
+
+    La idea central de REST es tratar todo como un "recurso": un cliente, un producto, un pedido. Cada
+    recurso tiene su propia dirección (por ejemplo, algo así como /clientes/123), y para trabajar con él
+    se usan verbos simples y estandarizados: pedir información (consultar), crear uno nuevo, actualizarlo
+    o eliminarlo.
+
+    Una gran ventaja de REST es que es "sin estado": cada pedido que se hace incluye toda la información
+    necesaria para entenderlo, sin que el servidor tenga que "recordar" pedidos anteriores. Esto hace que
+    los servicios REST sean más simples de mantener y más fáciles de hacer crecer cuando muchos sistemas
+    los usan al mismo tiempo.
+
+    Hoy en día, la gran mayoría de las apps que usás a diario (redes sociales, bancos, servicios de
+    streaming) se comunican con sus servidores usando servicios web de estilo REST, aunque vos nunca lo
+    veas directamente.`,
     resource: { type: 'video', label: 'Video: REST API explicada', url: 'https://www.youtube.com/watch?v=lsMQRaeKNDk' }
   },
   {
@@ -64,7 +162,22 @@ const NOTES = [
     title: 'Seguridad básica al integrar sistemas',
     body: `Cuando dos sistemas se conectan, hay que cuidar que solo puedan acceder quienes tienen
     permiso. Para eso se usan claves de acceso, tokens (códigos temporales) y conexiones cifradas
-    (HTTPS), que protegen la información mientras viaja de un sistema a otro.`,
+    (HTTPS), que protegen la información mientras viaja de un sistema a otro.
+
+    Una clave de acceso funciona como una contraseña que un sistema le muestra a otro para demostrar
+    "soy quien digo ser, dejame entrar". Un token es parecido, pero con una diferencia importante: tiene
+    fecha de vencimiento. Así, si alguien lo roba, deja de servir después de un tiempo, en vez de quedar
+    válido para siempre.
+
+    HTTPS es la versión segura del protocolo que usan los navegadores para viajar por internet: cifra la
+    información en el camino, para que si alguien la intercepta, no pueda leerla. Por eso siempre hay
+    que fijarse que las direcciones web usadas para intercambiar datos empiecen con "https://" y no con
+    "http://" a secas.
+
+    La seguridad no es un detalle menor al integrar sistemas: cuantos más sistemas se conectan entre sí,
+    más "puertas" hay que cuidar. Una sola conexión mal protegida puede ser la puerta de entrada para que
+    alguien acceda a información que no debería ver, aunque el resto de los sistemas esté bien
+    protegido.`,
     resource: { type: 'article', label: 'Artículo: seguridad en APIs', url: 'https://owasp.org/www-project-api-security/' }
   }
 ];

@@ -187,7 +187,12 @@
       const item = document.getElementById('tpl-note-item').content.cloneNode(true);
       const article = item.querySelector('.accordion__item');
       item.querySelector('.note-item__title').textContent = note.title;
-      item.querySelector('.note-item__body').textContent = note.body;
+      const bodyEl = item.querySelector('.note-item__body');
+      String(note.body).split(/\n\s*\n/).forEach(function (para) {
+        const p = document.createElement('p');
+        p.textContent = para.replace(/\s+/g, ' ').trim();
+        bodyEl.appendChild(p);
+      });
       const readBadge = item.querySelector('.note-item__read-badge');
       const checkbox = item.querySelector('.note-item__checkbox');
       const isRead = readSet.has(note.id);
