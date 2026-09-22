@@ -369,11 +369,14 @@ mark { background: var(--amber); color: #000; border-radius: 3px; }
 .progress-summary__stat small { color: var(--text-dim); font-size: 11px; }
 
 .reset-progress-link {
-  display: inline-block;
-  color: var(--text-dim);
-  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--amber);
+  font-size: 13px;
+  font-weight: 600;
   text-decoration: underline;
-  margin: 8px 0 16px;
+  margin: 10px 0 16px;
 }
 
 .daily-card, .weekly-card {
