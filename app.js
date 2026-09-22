@@ -239,7 +239,7 @@
         storageSet(STORAGE_KEYS.bestScorePractice, '');
         storageSet(STORAGE_KEYS.bestScoreExam, '');
         storageSet(STORAGE_KEYS.failedQuestions, '[]');
-        updateProgressSummary();
+        renderNotes();
       }
     });
 
