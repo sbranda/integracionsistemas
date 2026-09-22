@@ -308,6 +308,15 @@ mark { background: var(--amber); color: #000; border-radius: 3px; }
   z-index: 30;
 }
 
+.app-footer {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-dim);
+  padding: 6px 0;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+}
+
 .tabbar {
   display: flex;
   border-top: 1px solid var(--line);
@@ -551,7 +560,7 @@ mark { background: var(--amber); color: #000; border-radius: 3px; }
 }
 
 @media print {
-  .topbar, .settings-panel, .search-panel, .install-banner, .tabbar, .scroll-top-btn,
+  .topbar, .settings-panel, .search-panel, .install-banner, .tabbar, .scroll-top-btn, .app-footer,
   #btn-reset-progress, #btn-export-notes-pdf, #btn-export-glossary-pdf, .mode-toggle { display: none !important; }
   .app-shell { height: auto; display: block; }
   .view { height: auto; overflow: visible; }
