@@ -220,6 +220,11 @@
       const item = document.getElementById('tpl-note-item').content.cloneNode(true);
       const article = item.querySelector('.accordion__item');
       item.querySelector('.note-item__title').textContent = note.title;
+      if (note.diagram) {
+        const diagramEl = item.querySelector('.note-item__diagram');
+        diagramEl.innerHTML = note.diagram;
+        diagramEl.hidden = false;
+      }
       const bodyEl = item.querySelector('.note-item__body');
       String(note.body).split(/\n\s*\n/).forEach(function (para) {
         const p = document.createElement('p');

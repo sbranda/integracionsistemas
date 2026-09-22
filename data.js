@@ -5,6 +5,20 @@ const NOTES = [
   {
     id: 'n1',
     title: '¿Qué es la Integración de Sistemas?',
+    diagram: `<svg viewBox="0 0 600 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dos sistemas intercambiando datos">
+      <defs>
+        <marker id="arr-n1a" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="var(--amber)"/></marker>
+        <marker id="arr-n1b" markerWidth="8" markerHeight="8" refX="2" refY="4" orient="auto"><path d="M8,0 L0,4 L8,8 Z" fill="var(--amber)"/></marker>
+      </defs>
+      <rect x="30" y="55" width="180" height="60" rx="10" fill="var(--surface)" stroke="var(--line)"/>
+      <text x="120" y="80" text-anchor="middle" font-size="13" fill="var(--text)">Sistema de</text>
+      <text x="120" y="98" text-anchor="middle" font-size="13" fill="var(--text)">Ventas</text>
+      <rect x="390" y="55" width="180" height="60" rx="10" fill="var(--surface)" stroke="var(--line)"/>
+      <text x="480" y="80" text-anchor="middle" font-size="13" fill="var(--text)">Sistema de</text>
+      <text x="480" y="98" text-anchor="middle" font-size="13" fill="var(--text)">Stock</text>
+      <line x1="215" y1="85" x2="385" y2="85" stroke="var(--amber)" stroke-width="2" marker-end="url(#arr-n1a)" marker-start="url(#arr-n1b)"/>
+      <text x="300" y="70" text-anchor="middle" font-size="11" fill="var(--text-dim)">datos sincronizados</text>
+    </svg>`,
     body: `Integrar sistemas significa hacer que distintos programas, que fueron pensados por separado,
     puedan trabajar juntos e intercambiar información. Por ejemplo: que el sistema de ventas de una
     tienda le avise automáticamente al sistema de stock cuando se vende un producto, sin que una
@@ -28,6 +42,24 @@ const NOTES = [
   {
     id: 'n2',
     title: 'API: la puerta de entrada entre sistemas',
+    diagram: `<svg viewBox="0 0 640 170" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="App pide datos a una API, que consulta al servidor y responde">
+      <defs><marker id="arr-n2" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="var(--amber)"/></marker></defs>
+      <rect x="20" y="55" width="140" height="60" rx="10" fill="var(--surface)" stroke="var(--line)"/>
+      <text x="90" y="90" text-anchor="middle" font-size="13" fill="var(--text)">App</text>
+      <rect x="250" y="55" width="140" height="60" rx="10" fill="var(--surface)" stroke="var(--amber)"/>
+      <text x="320" y="90" text-anchor="middle" font-size="13" fill="var(--amber)">API</text>
+      <rect x="480" y="55" width="140" height="60" rx="10" fill="var(--surface)" stroke="var(--line)"/>
+      <text x="550" y="82" text-anchor="middle" font-size="12" fill="var(--text)">Servidor /</text>
+      <text x="550" y="98" text-anchor="middle" font-size="12" fill="var(--text)">Datos</text>
+      <line x1="165" y1="68" x2="245" y2="68" stroke="var(--amber)" stroke-width="2" marker-end="url(#arr-n2)"/>
+      <text x="205" y="58" text-anchor="middle" font-size="10" fill="var(--text-dim)">pedido</text>
+      <line x1="245" y1="105" x2="165" y2="105" stroke="var(--text-dim)" stroke-width="2" marker-end="url(#arr-n2)"/>
+      <text x="205" y="122" text-anchor="middle" font-size="10" fill="var(--text-dim)">respuesta</text>
+      <line x1="395" y1="68" x2="475" y2="68" stroke="var(--amber)" stroke-width="2" marker-end="url(#arr-n2)"/>
+      <text x="435" y="58" text-anchor="middle" font-size="10" fill="var(--text-dim)">consulta</text>
+      <line x1="475" y1="105" x2="395" y2="105" stroke="var(--text-dim)" stroke-width="2" marker-end="url(#arr-n2)"/>
+      <text x="435" y="122" text-anchor="middle" font-size="10" fill="var(--text-dim)">datos</text>
+    </svg>`,
     body: `Una API (Application Programming Interface / Interfaz de Programación de Aplicaciones) es
     como un mostrador de atención: un sistema pide algo (por ejemplo, "dame los datos del cliente 123")
     y otro sistema responde con esa información, siguiendo reglas claras y acordadas de antemano.
@@ -51,6 +83,18 @@ const NOTES = [
   {
     id: 'n3',
     title: 'Front-end y back-end',
+    diagram: `<svg viewBox="0 0 600 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Front-end y back-end conectados mediante una API">
+      <defs><marker id="arr-n3" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="var(--amber)"/></marker></defs>
+      <rect x="20" y="50" width="200" height="60" rx="10" fill="var(--surface)" stroke="var(--line)"/>
+      <text x="120" y="75" text-anchor="middle" font-size="12" fill="var(--text)">Front-end</text>
+      <text x="120" y="92" text-anchor="middle" font-size="11" fill="var(--text-dim)">(pantalla, botones)</text>
+      <rect x="380" y="50" width="200" height="60" rx="10" fill="var(--surface)" stroke="var(--line)"/>
+      <text x="480" y="75" text-anchor="middle" font-size="12" fill="var(--text)">Back-end</text>
+      <text x="480" y="92" text-anchor="middle" font-size="11" fill="var(--text-dim)">(datos, lógica)</text>
+      <line x1="225" y1="80" x2="375" y2="80" stroke="var(--amber)" stroke-width="2" marker-end="url(#arr-n3)"/>
+      <line x1="375" y1="95" x2="225" y2="95" stroke="var(--amber)" stroke-width="2" marker-end="url(#arr-n3)"/>
+      <text x="300" y="65" text-anchor="middle" font-size="11" fill="var(--amber)">API</text>
+    </svg>`,
     body: `El front-end es lo que ve y toca el usuario: botones, pantallas, formularios. El back-end es
     la parte que no se ve, que procesa la información, guarda datos y aplica las reglas del negocio.
     Front-end y back-end se comunican casi siempre a través de una API.
@@ -74,6 +118,24 @@ const NOTES = [
   {
     id: 'n4',
     title: '¿Qué es una PWA?',
+    diagram: `<svg viewBox="0 0 600 190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Una PWA guarda una copia local para funcionar sin conexión">
+      <defs><marker id="arr-n4" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="var(--amber)"/></marker></defs>
+      <rect x="20" y="20" width="320" height="150" rx="12" fill="var(--surface)" stroke="var(--line)"/>
+      <text x="180" y="42" text-anchor="middle" font-size="11" fill="var(--text-dim)">Navegador / App instalada</text>
+      <rect x="45" y="60" width="120" height="50" rx="8" fill="var(--surface-2)" stroke="var(--line)"/>
+      <text x="105" y="90" text-anchor="middle" font-size="11" fill="var(--text)">Contenido</text>
+      <rect x="195" y="60" width="120" height="90" rx="8" fill="var(--surface-2)" stroke="var(--amber)"/>
+      <text x="255" y="82" text-anchor="middle" font-size="10" fill="var(--amber)">Service</text>
+      <text x="255" y="96" text-anchor="middle" font-size="10" fill="var(--amber)">Worker</text>
+      <text x="255" y="115" text-anchor="middle" font-size="10" fill="var(--text-dim)">+ Caché</text>
+      <line x1="165" y1="85" x2="190" y2="85" stroke="var(--text-dim)" stroke-width="2" marker-end="url(#arr-n4)"/>
+      <rect x="420" y="70" width="150" height="50" rx="25" fill="none" stroke="var(--line)"/>
+      <text x="495" y="99" text-anchor="middle" font-size="12" fill="var(--text)">Internet</text>
+      <line x1="320" y1="90" x2="415" y2="90" stroke="var(--amber)" stroke-width="2" marker-end="url(#arr-n4)"/>
+      <text x="365" y="80" text-anchor="middle" font-size="9" fill="var(--text-dim)">con señal</text>
+      <line x1="415" y1="105" x2="320" y2="105" stroke="var(--text-dim)" stroke-width="2" stroke-dasharray="4,3" marker-end="url(#arr-n4)"/>
+      <text x="365" y="122" text-anchor="middle" font-size="9" fill="var(--text-dim)">sin señal: usa caché</text>
+    </svg>`,
     body: `Una PWA (Progressive Web App / Aplicación Web Progresiva) es una página web que se puede
     "instalar" en el celular o la computadora como si fuera una app normal, y que puede funcionar
     parcialmente sin conexión a internet, gracias a que guarda una copia de sus archivos.
@@ -169,6 +231,20 @@ const NOTES = [
   {
     id: 'n6',
     title: 'Middleware: el traductor entre sistemas',
+    diagram: `<svg viewBox="0 0 640 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Middleware traduce entre un sistema viejo en XML y uno nuevo en JSON">
+      <defs><marker id="arr-n6" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="var(--amber)"/></marker></defs>
+      <rect x="10" y="50" width="160" height="60" rx="10" fill="var(--surface)" stroke="var(--line)"/>
+      <text x="90" y="76" text-anchor="middle" font-size="12" fill="var(--text)">Sistema viejo</text>
+      <text x="90" y="93" text-anchor="middle" font-size="11" fill="var(--text-dim)">(XML)</text>
+      <rect x="240" y="50" width="160" height="60" rx="10" fill="var(--surface-2)" stroke="var(--amber)"/>
+      <text x="320" y="76" text-anchor="middle" font-size="12" fill="var(--amber)">Middleware</text>
+      <text x="320" y="93" text-anchor="middle" font-size="10" fill="var(--text-dim)">(traduce)</text>
+      <rect x="470" y="50" width="160" height="60" rx="10" fill="var(--surface)" stroke="var(--line)"/>
+      <text x="550" y="76" text-anchor="middle" font-size="12" fill="var(--text)">Sistema nuevo</text>
+      <text x="550" y="93" text-anchor="middle" font-size="11" fill="var(--text-dim)">(JSON)</text>
+      <line x1="175" y1="80" x2="235" y2="80" stroke="var(--amber)" stroke-width="2" marker-end="url(#arr-n6)"/>
+      <line x1="405" y1="80" x2="465" y2="80" stroke="var(--amber)" stroke-width="2" marker-end="url(#arr-n6)"/>
+    </svg>`,
     body: `A veces dos sistemas no pueden hablar directamente porque usan formatos o reglas distintas.
     Ahí aparece el middleware: un programa intermedio que traduce y ordena la comunicación entre ellos,
     como un intérprete entre dos personas que hablan idiomas distintos.
@@ -190,6 +266,31 @@ const NOTES = [
   {
     id: 'n11',
     title: 'Arquitecturas de integración: SOA, ESB y microservicios',
+    diagram: `<svg viewBox="0 0 620 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Comparación entre conexión directa y conexión mediante un ESB, y microservicios independientes">
+      <text x="150" y="20" text-anchor="middle" font-size="11" fill="var(--text-dim)">Sin bus (enredado)</text>
+      <circle cx="70" cy="60" r="26" fill="var(--surface)" stroke="var(--line)"/><text x="70" y="64" text-anchor="middle" font-size="9" fill="var(--text)">Serv. A</text>
+      <circle cx="230" cy="60" r="26" fill="var(--surface)" stroke="var(--line)"/><text x="230" y="64" text-anchor="middle" font-size="9" fill="var(--text)">Serv. B</text>
+      <circle cx="70" cy="140" r="26" fill="var(--surface)" stroke="var(--line)"/><text x="70" y="144" text-anchor="middle" font-size="9" fill="var(--text)">Serv. C</text>
+      <circle cx="230" cy="140" r="26" fill="var(--surface)" stroke="var(--line)"/><text x="230" y="144" text-anchor="middle" font-size="9" fill="var(--text)">Serv. D</text>
+      <line x1="90" y1="60" x2="210" y2="60" stroke="var(--text-dim)" stroke-width="1.5"/>
+      <line x1="70" y1="86" x2="70" y2="114" stroke="var(--text-dim)" stroke-width="1.5"/>
+      <line x1="230" y1="86" x2="230" y2="114" stroke="var(--text-dim)" stroke-width="1.5"/>
+      <line x1="90" y1="140" x2="210" y2="140" stroke="var(--text-dim)" stroke-width="1.5"/>
+      <line x1="90" y1="75" x2="210" y2="125" stroke="var(--text-dim)" stroke-width="1.5"/>
+      <line x1="90" y1="125" x2="210" y2="75" stroke="var(--text-dim)" stroke-width="1.5"/>
+      <text x="450" y="20" text-anchor="middle" font-size="11" fill="var(--text-dim)">Con ESB (ordenado)</text>
+      <circle cx="390" cy="45" r="24" fill="var(--surface)" stroke="var(--line)"/><text x="390" y="49" text-anchor="middle" font-size="9" fill="var(--text)">Serv. A</text>
+      <circle cx="530" cy="45" r="24" fill="var(--surface)" stroke="var(--line)"/><text x="530" y="49" text-anchor="middle" font-size="9" fill="var(--text)">Serv. B</text>
+      <circle cx="390" cy="155" r="24" fill="var(--surface)" stroke="var(--line)"/><text x="390" y="159" text-anchor="middle" font-size="9" fill="var(--text)">Serv. C</text>
+      <circle cx="530" cy="155" r="24" fill="var(--surface)" stroke="var(--line)"/><text x="530" y="159" text-anchor="middle" font-size="9" fill="var(--text)">Serv. D</text>
+      <rect x="370" y="90" width="180" height="20" rx="6" fill="var(--surface-2)" stroke="var(--amber)"/>
+      <text x="460" y="104" text-anchor="middle" font-size="10" fill="var(--amber)">ESB</text>
+      <line x1="390" y1="69" x2="390" y2="90" stroke="var(--amber)" stroke-width="1.5"/>
+      <line x1="530" y1="69" x2="530" y2="90" stroke="var(--amber)" stroke-width="1.5"/>
+      <line x1="390" y1="110" x2="390" y2="131" stroke="var(--amber)" stroke-width="1.5"/>
+      <line x1="530" y1="110" x2="530" y2="131" stroke="var(--amber)" stroke-width="1.5"/>
+      <text x="310" y="200" text-anchor="middle" font-size="10" fill="var(--text-dim)">Microservicios: muchos servicios chicos e independientes, cada uno con una sola tarea.</text>
+    </svg>`,
     body: `Además de conectar sistemas de a dos con un middleware simple, existen formas más grandes de
     organizar toda la integración de una empresa. Tres de las más nombradas son SOA, ESB y
     microservicios: se parecen entre sí, pero no son lo mismo.
@@ -219,6 +320,27 @@ const NOTES = [
   {
     id: 'n12',
     title: 'Comunicación sincrónica y asincrónica',
+    diagram: `<svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Comparación entre comunicación sincrónica y asincrónica">
+      <defs><marker id="arr-n12" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="var(--amber)"/></marker></defs>
+      <text x="20" y="18" font-size="11" fill="var(--text-dim)">Sincrónico (espera la respuesta)</text>
+      <rect x="20" y="30" width="130" height="45" rx="8" fill="var(--surface)" stroke="var(--line)"/>
+      <text x="85" y="57" text-anchor="middle" font-size="11" fill="var(--text)">Sistema A</text>
+      <rect x="440" y="30" width="130" height="45" rx="8" fill="var(--surface)" stroke="var(--line)"/>
+      <text x="505" y="57" text-anchor="middle" font-size="11" fill="var(--text)">Sistema B</text>
+      <line x1="155" y1="42" x2="435" y2="42" stroke="var(--amber)" stroke-width="2" marker-end="url(#arr-n12)"/>
+      <text x="295" y="35" text-anchor="middle" font-size="9" fill="var(--text-dim)">pide</text>
+      <line x1="435" y1="63" x2="155" y2="63" stroke="var(--text-dim)" stroke-width="2" marker-end="url(#arr-n12)"/>
+      <text x="295" y="78" text-anchor="middle" font-size="9" fill="var(--text-dim)">responde (A espera todo este tiempo)</text>
+      <text x="20" y="118" font-size="11" fill="var(--text-dim)">Asincrónico (sigue trabajando)</text>
+      <rect x="20" y="130" width="130" height="45" rx="8" fill="var(--surface)" stroke="var(--line)"/>
+      <text x="85" y="157" text-anchor="middle" font-size="11" fill="var(--text)">Sistema A</text>
+      <rect x="440" y="130" width="130" height="45" rx="8" fill="var(--surface)" stroke="var(--line)"/>
+      <text x="505" y="157" text-anchor="middle" font-size="11" fill="var(--text)">Sistema B</text>
+      <line x1="155" y1="140" x2="435" y2="140" stroke="var(--amber)" stroke-width="2" marker-end="url(#arr-n12)"/>
+      <text x="295" y="133" text-anchor="middle" font-size="9" fill="var(--text-dim)">pide y sigue con otra tarea</text>
+      <line x1="435" y1="165" x2="155" y2="165" stroke="var(--text-dim)" stroke-width="2" stroke-dasharray="4,3" marker-end="url(#arr-n12)"/>
+      <text x="295" y="182" text-anchor="middle" font-size="9" fill="var(--text-dim)">avisa más tarde (webhook)</text>
+    </svg>`,
     body: `Cuando dos sistemas se comunican, pueden hacerlo de dos maneras muy distintas: esperando la
     respuesta antes de seguir (sincrónica), o siguiendo con otras cosas mientras la respuesta llega más
     tarde (asincrónica). Elegir bien entre una y otra es una decisión importante al integrar sistemas.
@@ -288,6 +410,33 @@ const NOTES = [
   {
     id: 'n13',
     title: 'OAuth y API Gateway: control de acceso avanzado',
+    diagram: `<svg viewBox="0 0 620 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Flujo de OAuth y de un API Gateway">
+      <defs><marker id="arr-n13" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="var(--amber)"/></marker></defs>
+      <text x="20" y="18" font-size="11" fill="var(--text-dim)">OAuth: iniciar sesión sin compartir la contraseña</text>
+      <rect x="20" y="30" width="110" height="45" rx="8" fill="var(--surface)" stroke="var(--line)"/>
+      <text x="75" y="57" text-anchor="middle" font-size="11" fill="var(--text)">Usuario</text>
+      <rect x="200" y="30" width="110" height="45" rx="8" fill="var(--surface)" stroke="var(--line)"/>
+      <text x="255" y="57" text-anchor="middle" font-size="11" fill="var(--text)">App</text>
+      <rect x="400" y="30" width="150" height="45" rx="8" fill="var(--surface)" stroke="var(--amber)"/>
+      <text x="475" y="57" text-anchor="middle" font-size="11" fill="var(--amber)">Google / Proveedor</text>
+      <line x1="130" y1="52" x2="195" y2="52" stroke="var(--amber)" stroke-width="2" marker-end="url(#arr-n13)"/>
+      <line x1="310" y1="45" x2="395" y2="45" stroke="var(--amber)" stroke-width="2" marker-end="url(#arr-n13)"/>
+      <text x="352" y="38" text-anchor="middle" font-size="9" fill="var(--text-dim)">redirige</text>
+      <line x1="395" y1="65" x2="310" y2="65" stroke="var(--text-dim)" stroke-width="2" marker-end="url(#arr-n13)"/>
+      <text x="352" y="80" text-anchor="middle" font-size="9" fill="var(--text-dim)">da un token</text>
+      <text x="20" y="118" font-size="11" fill="var(--text-dim)">API Gateway: un solo punto de entrada a las APIs</text>
+      <rect x="20" y="135" width="110" height="45" rx="8" fill="var(--surface)" stroke="var(--line)"/>
+      <text x="75" y="162" text-anchor="middle" font-size="11" fill="var(--text)">App</text>
+      <rect x="200" y="135" width="150" height="45" rx="8" fill="var(--surface-2)" stroke="var(--amber)"/>
+      <text x="275" y="162" text-anchor="middle" font-size="11" fill="var(--amber)">API Gateway</text>
+      <line x1="130" y1="157" x2="195" y2="157" stroke="var(--amber)" stroke-width="2" marker-end="url(#arr-n13)"/>
+      <rect x="420" y="115" width="90" height="30" rx="6" fill="var(--surface)" stroke="var(--line)"/><text x="465" y="135" text-anchor="middle" font-size="9" fill="var(--text)">API 1</text>
+      <rect x="420" y="152" width="90" height="30" rx="6" fill="var(--surface)" stroke="var(--line)"/><text x="465" y="172" text-anchor="middle" font-size="9" fill="var(--text)">API 2</text>
+      <rect x="420" y="189" width="90" height="18" rx="6" fill="var(--surface)" stroke="var(--line)"/><text x="465" y="202" text-anchor="middle" font-size="9" fill="var(--text)">API 3</text>
+      <line x1="350" y1="150" x2="415" y2="130" stroke="var(--text-dim)" stroke-width="1.5" marker-end="url(#arr-n13)"/>
+      <line x1="350" y1="157" x2="415" y2="165" stroke="var(--text-dim)" stroke-width="1.5" marker-end="url(#arr-n13)"/>
+      <line x1="350" y1="164" x2="415" y2="196" stroke="var(--text-dim)" stroke-width="1.5" marker-end="url(#arr-n13)"/>
+    </svg>`,
     body: `Además de las claves y los tokens básicos, hay herramientas más avanzadas para manejar quién
     puede acceder a qué, sobre todo cuando muchos sistemas y muchas APIs se conectan entre sí. Dos de las
     más usadas son OAuth y el API Gateway.

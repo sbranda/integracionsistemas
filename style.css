@@ -431,6 +431,16 @@ mark { background: var(--amber); color: #000; border-radius: 3px; }
 .accordion__body { padding: 0 14px 14px; color: var(--text-dim); line-height: 1.5; }
 .note-item__body p { margin: 0 0 12px; }
 .note-item__body p:last-child { margin-bottom: 0; }
+.note-item__diagram[hidden] { display: none; }
+.note-item__diagram {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 14px;
+}
+.note-item__diagram svg { width: 100%; height: auto; display: block; }
+.note-item__diagram text { font-family: var(--font-mono); }
 .note-item__read-badge[hidden] { display: none; }
 .note-item__read-badge { font-size: 11px; color: var(--success); white-space: nowrap; }
 .note-resource[hidden] { display: none; }
