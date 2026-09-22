@@ -594,6 +594,7 @@ const GLOSSARY = [
   { term: 'Comunicación asincrónica (Asynchronous communication)', def: 'Cuando un sistema envía un pedido y sigue trabajando sin esperar la respuesta inmediata; la respuesta llega más tarde.' },
   { term: 'OAuth (Open Authorization / Autorización Abierta)', def: 'Forma estándar de darle permiso a una app para acceder a datos de otra, sin tener que compartir la contraseña.' },
   { term: 'API Gateway (Puerta de enlace de API)', def: 'Punto único por donde pasan todos los pedidos a las APIs de una empresa, que controla la seguridad, los límites de uso y organiza el tráfico.' },
+  { term: 'ETL (Extract, Transform, Load / Extraer, Transformar, Cargar)', def: 'Proceso que saca datos de un sistema, los transforma o limpia, y los carga en otro sistema (por ejemplo, para juntar información de varios sistemas en un solo reporte).' },
   { term: 'Webhook (Aviso automático por web)', def: 'Aviso automático que un sistema le manda a otro apenas ocurre un evento, sin que nadie pregunte.' },
   { term: 'Aplicación nativa (Native app)', def: 'App hecha específicamente para un sistema operativo (Android o iOS), con su propio lenguaje y máximo aprovechamiento del hardware.' },
   { term: 'Aplicación híbrida (Hybrid app)', def: 'App hecha una sola vez con tecnologías web y empaquetada para instalarse en Android y iOS como si fuera nativa.' }
