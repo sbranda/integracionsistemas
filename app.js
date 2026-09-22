@@ -14,7 +14,8 @@
     dailyAnswered: 'is_daily_answered_',
     installDismissed: 'is_install_dismissed',
     teacherMode: 'is_teacher_mode',
-    glossaryMode: 'is_glossary_mode'
+    glossaryMode: 'is_glossary_mode',
+    failedQuestions: 'is_failed_questions'
   };
 
   function storageGet(key, fallback) {
@@ -128,6 +129,12 @@
     t.addEventListener('click', function () { navigate(t.dataset.tab); });
   });
 
+  // Aplica una animación suave de entrada a la pantalla recién renderizada.
+  function animateScreenIn() {
+    const el = viewEl.firstElementChild;
+    if (el) el.classList.add('screen-fade-in');
+  }
+
   // ===== Accordion toggle helper =====
   function wireAccordionItem(itemEl) {
     const head = itemEl.querySelector('.accordion__head');
@@ -173,19 +180,46 @@
     storageSet(STORAGE_KEYS.casesViewed, JSON.stringify(Array.from(set)));
     updateProgressSummary();
   }
+  function getFailedSet() {
+    try { return new Set(JSON.parse(storageGet(STORAGE_KEYS.failedQuestions, '[]')).map(Number)); }
+    catch (e) { return new Set(); }
+  }
+  function saveFailedSet(set) { storageSet(STORAGE_KEYS.failedQuestions, JSON.stringify(Array.from(set))); }
+  function markQuestionResult(qIdx, correct) {
+    const set = getFailedSet();
+    if (correct) set.delete(qIdx); else set.add(qIdx);
+    saveFailedSet(set);
+  }
+
+  function getBestScore() {
+    const p = storageGet(STORAGE_KEYS.bestScorePractice, null);
+    const e = storageGet(STORAGE_KEYS.bestScoreExam, null);
+    let best = null;
+    if (p !== null && p !== '') best = Number(p);
+    if (e !== null && e !== '') best = best === null ? Number(e) : Math.max(best, Number(e));
+    return best;
+  }
+
   function updateProgressSummary() {
     const statNotes = document.getElementById('stat-notes-read');
     const statScore = document.getElementById('stat-best-score');
     const statCases = document.getElementById('stat-cases-viewed');
-    if (statNotes) statNotes.textContent = getReadSet().size + '/' + NOTES.length;
-    if (statCases) statCases.textContent = getCasesViewedSet().size + '/' + CASES.length;
-    if (statScore) {
-      const p = storageGet(STORAGE_KEYS.bestScorePractice, null);
-      const e = storageGet(STORAGE_KEYS.bestScoreExam, null);
-      let best = null;
-      if (p !== null) best = Number(p);
-      if (e !== null) best = best === null ? Number(e) : Math.max(best, Number(e));
-      statScore.textContent = best === null ? '—' : best + '/' + QUESTIONS.length;
+    const readCount = getReadSet().size;
+    const casesCount = getCasesViewedSet().size;
+    const best = getBestScore();
+    if (statNotes) statNotes.textContent = readCount + '/' + NOTES.length;
+    if (statCases) statCases.textContent = casesCount + '/' + CASES.length;
+    if (statScore) statScore.textContent = best === null ? '—' : best + '/' + QUESTIONS.length;
+
+    const overallEl = document.getElementById('stat-overall-pct');
+    const fillEl = document.getElementById('progress-overall-fill');
+    if (overallEl && fillEl) {
+      const notesPct = NOTES.length ? readCount / NOTES.length : 0;
+      const casesPct = CASES.length ? casesCount / CASES.length : 0;
+      const quizPct = best !== null && QUESTIONS.length ? best / QUESTIONS.length : 0;
+      const overallPct = Math.round(((notesPct + casesPct + quizPct) / 3) * 100);
+      overallEl.textContent = overallPct + '%';
+      fillEl.style.width = overallPct + '%';
     }
   }
 
@@ -194,6 +228,7 @@
     viewEl.innerHTML = '';
     const tpl = document.getElementById('tpl-notes');
     viewEl.appendChild(tpl.content.cloneNode(true));
+    animateScreenIn();
     updateProgressSummary();
 
     document.getElementById('btn-reset-progress').addEventListener('click', function (ev) {
@@ -203,6 +238,7 @@
         storageSet(STORAGE_KEYS.casesViewed, '[]');
         storageSet(STORAGE_KEYS.bestScorePractice, '');
         storageSet(STORAGE_KEYS.bestScoreExam, '');
+        storageSet(STORAGE_KEYS.failedQuestions, '[]');
         updateProgressSummary();
       }
     });
@@ -332,6 +368,7 @@
     viewEl.innerHTML = '';
     const tpl = document.getElementById('tpl-cases');
     viewEl.appendChild(tpl.content.cloneNode(true));
+    animateScreenIn();
 
     let teacherMode = storageGet(STORAGE_KEYS.teacherMode, 'false') === 'true';
     const modeBtns = viewEl.querySelectorAll('.mode-toggle__btn');
@@ -400,6 +437,7 @@
     viewEl.innerHTML = '';
     const tpl = document.getElementById('tpl-glossary');
     viewEl.appendChild(tpl.content.cloneNode(true));
+    animateScreenIn();
 
     let mode = storageGet(STORAGE_KEYS.glossaryMode, 'list');
     const modeBtns = viewEl.querySelectorAll('.mode-toggle__btn');
@@ -502,15 +540,13 @@
     viewEl.innerHTML = '';
     const tpl = document.getElementById('tpl-quiz-intro');
     viewEl.appendChild(tpl.content.cloneNode(true));
-    const p = storageGet(STORAGE_KEYS.bestScorePractice, null);
-    const e = storageGet(STORAGE_KEYS.bestScoreExam, null);
-    let best = null;
-    if (p !== null && p !== '') best = Number(p);
-    if (e !== null && e !== '') best = best === null ? Number(e) : Math.max(best, Number(e));
+    animateScreenIn();
+    const best = getBestScore();
     document.getElementById('best-score').textContent = best === null ? '—' : best + '/' + QUESTIONS.length;
 
     document.getElementById('btn-start-practice').addEventListener('click', function () { startQuiz(false); });
     document.getElementById('btn-start-exam').addEventListener('click', function () { startQuiz(true); });
+    document.getElementById('btn-start-review').addEventListener('click', startQuickReview);
   }
 
   function startQuiz(isExam) {
@@ -560,6 +596,7 @@
     viewEl.innerHTML = '';
     const tpl = document.getElementById('tpl-question');
     viewEl.appendChild(tpl.content.cloneNode(true));
+    animateScreenIn();
 
     const qIdx = quizState.order[quizState.current];
     const question = QUESTIONS[qIdx];
@@ -589,6 +626,7 @@
       if (correctBtn) correctBtn.classList.add('is-correct');
     }
     quizState.answers[qIdx] = isCorrect;
+    markQuestionResult(qIdx, isCorrect);
     if (navigator.vibrate) navigator.vibrate(isCorrect ? 40 : [30, 40, 30]);
     setTimeout(function () {
       quizState.current++;
@@ -613,6 +651,7 @@
     viewEl.innerHTML = '';
     const tpl = document.getElementById('tpl-result');
     viewEl.appendChild(tpl.content.cloneNode(true));
+    animateScreenIn();
     document.getElementById('result-score').textContent = data.score + ' / ' + data.total;
     document.getElementById('result-detail').textContent = data.isExam ? 'Modo examen' : 'Modo práctica';
     document.getElementById('result-title').textContent = data.score === data.total ? '¡Puntaje perfecto! 🎉' : '¡Listo!';
@@ -856,6 +895,177 @@
   btnScrollTop.addEventListener('click', function () {
     viewEl.scrollTo({ top: 0, behavior: 'smooth' });
   });
+
+  // ===== Repaso rápido (5 min) =====
+  let reviewState = null;
+
+  function buildReviewSteps() {
+    const steps = [];
+    steps.push({ type: 'intro' });
+
+    shuffledIndexes(NOTES.length).slice(0, 3).forEach(function (i) {
+      steps.push({ type: 'note', note: NOTES[i] });
+    });
+
+    shuffledIndexes(GLOSSARY.length).slice(0, 4).forEach(function (i) {
+      steps.push({ type: 'flash', term: GLOSSARY[i] });
+    });
+
+    const failed = Array.from(getFailedSet()).filter(function (i) { return i < QUESTIONS.length; });
+    let qIndexes;
+    if (failed.length >= 5) {
+      qIndexes = shuffledIndexes(failed.length).slice(0, 5).map(function (i) { return failed[i]; });
+    } else {
+      const failedSet = new Set(failed);
+      const extra = shuffledIndexes(QUESTIONS.length).filter(function (i) { return !failedSet.has(i); });
+      qIndexes = failed.concat(extra).slice(0, 5);
+    }
+    qIndexes.forEach(function (i) { steps.push({ type: 'question', qIdx: i }); });
+
+    steps.push({ type: 'end' });
+    return steps;
+  }
+
+  function startQuickReview() {
+    reviewState = { steps: buildReviewSteps(), current: 0 };
+    renderReviewStep();
+  }
+
+  function nextReviewStep() {
+    reviewState.current++;
+    renderReviewStep();
+  }
+
+  function renderReviewStep() {
+    viewEl.innerHTML = '';
+    const step = reviewState.steps[reviewState.current];
+    const total = reviewState.steps.length;
+
+    const section = document.createElement('section');
+    section.className = (step.type === 'intro' || step.type === 'end') ? 'screen screen--center' : 'screen';
+
+    if (step.type !== 'intro' && step.type !== 'end') {
+      const progWrap = document.createElement('div');
+      progWrap.className = 'quiz-progress';
+      const progBar = document.createElement('div');
+      progBar.className = 'quiz-progress__bar';
+      progBar.style.width = (reviewState.current / (total - 1) * 100) + '%';
+      progWrap.appendChild(progBar);
+      section.appendChild(progWrap);
+    }
+
+    if (step.type === 'intro') {
+      const h1 = document.createElement('h1');
+      h1.className = 'screen__title';
+      h1.textContent = 'Repaso rápido (5 min)';
+      const p = document.createElement('p');
+      p.className = 'quiz-intro__desc';
+      p.textContent = 'Vamos a repasar rápido: algunos conceptos clave, tarjetas del glosario, y preguntas que se te complicaron antes (o al azar, si todavía no fallaste ninguna).';
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn btn--primary btn--block';
+      btn.textContent = 'Empezar';
+      btn.addEventListener('click', nextReviewStep);
+      section.append(h1, p, btn);
+
+    } else if (step.type === 'note') {
+      const h1 = document.createElement('h1');
+      h1.className = 'screen__title';
+      h1.textContent = step.note.title;
+      const firstPara = String(step.note.body).split(/\n\s*\n/)[0].replace(/\s+/g, ' ').trim();
+      const p = document.createElement('p');
+      p.className = 'quiz-intro__desc';
+      p.style.textAlign = 'left';
+      p.textContent = firstPara;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn btn--primary btn--block';
+      btn.textContent = 'Siguiente';
+      btn.addEventListener('click', nextReviewStep);
+      section.append(h1, p, btn);
+
+    } else if (step.type === 'flash') {
+      const h1 = document.createElement('h1');
+      h1.className = 'screen__title';
+      h1.textContent = 'Repaso de glosario';
+      const card = document.createElement('div');
+      card.className = 'flashcard';
+      card.style.margin = '10px auto 20px';
+      const cardText = document.createElement('div');
+      cardText.textContent = step.term.term;
+      card.appendChild(cardText);
+      let flipped = false;
+      card.addEventListener('click', function () {
+        flipped = !flipped;
+        cardText.textContent = flipped ? step.term.def : step.term.term;
+        cardText.style.color = flipped ? 'var(--text-dim)' : 'var(--text)';
+        cardText.style.fontWeight = flipped ? '400' : '600';
+      });
+      const hint = document.createElement('p');
+      hint.className = 'quiz-intro__desc';
+      hint.textContent = 'Tocá la tarjeta para ver la definición.';
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn btn--primary btn--block';
+      btn.textContent = 'Siguiente';
+      btn.addEventListener('click', nextReviewStep);
+      section.append(h1, card, hint, btn);
+
+    } else if (step.type === 'question') {
+      const q = QUESTIONS[step.qIdx];
+      const h1 = document.createElement('h1');
+      h1.className = 'screen__title';
+      h1.textContent = 'Pregunta de repaso';
+      const p = document.createElement('p');
+      p.className = 'quiz-question';
+      p.textContent = q.q;
+      const optsWrap = document.createElement('div');
+      optsWrap.className = 'quiz-options';
+      const order = shuffledIndexes(q.options.length);
+      order.forEach(function (optIdx) {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'quiz-option';
+        b.textContent = q.options[optIdx];
+        b.addEventListener('click', function () {
+          Array.from(optsWrap.children).forEach(function (c) { c.disabled = true; });
+          const correct = optIdx === q.correct;
+          b.classList.add(correct ? 'is-correct' : 'is-wrong');
+          if (!correct) {
+            const correctBtn = Array.from(optsWrap.children).find(function (c) { return c.textContent === q.options[q.correct]; });
+            if (correctBtn) correctBtn.classList.add('is-correct');
+          }
+          markQuestionResult(step.qIdx, correct);
+          if (navigator.vibrate) navigator.vibrate(correct ? 40 : [30, 40, 30]);
+          setTimeout(nextReviewStep, 900);
+        });
+        optsWrap.appendChild(b);
+      });
+      section.append(h1, p, optsWrap);
+
+    } else if (step.type === 'end') {
+      const h1 = document.createElement('h1');
+      h1.className = 'screen__title';
+      h1.textContent = '¡Repaso completo! 🎉';
+      const p = document.createElement('p');
+      p.className = 'quiz-intro__desc';
+      p.textContent = 'Repasaste conceptos clave, términos del glosario y preguntas que se te habían complicado antes.';
+      const btn1 = document.createElement('button');
+      btn1.type = 'button';
+      btn1.className = 'btn btn--primary btn--block';
+      btn1.textContent = 'Ir al cuestionario completo';
+      btn1.addEventListener('click', function () { navigate('quiz'); });
+      const btn2 = document.createElement('button');
+      btn2.type = 'button';
+      btn2.className = 'btn btn--ghost btn--block';
+      btn2.textContent = 'Volver a Apuntes';
+      btn2.addEventListener('click', function () { navigate('notes'); });
+      section.append(h1, p, btn1, btn2);
+    }
+
+    viewEl.appendChild(section);
+    animateScreenIn();
+  }
 
   // ===== Startup =====
   function init() {
