@@ -463,6 +463,46 @@ const NOTES = [
     una API nueva sea mucho más simple: solo hay que conectarla al Gateway, que ya sabe cómo manejar la
     seguridad para todas.`,
     resource: { type: 'article', label: 'Artículo: ¿Qué es OAuth?', url: 'https://www.ibm.com/es-es/topics/oauth' }
+  },
+  {
+    id: 'n14',
+    title: 'ETL: extraer, transformar y cargar datos',
+    diagram: `<svg viewBox="0 0 600 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Proceso ETL: extraer, transformar y cargar">
+      <defs><marker id="arr-n14" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="var(--amber)"/></marker></defs>
+      <rect x="20" y="50" width="120" height="50" rx="10" fill="var(--surface)" stroke="var(--line)"/>
+      <text x="80" y="72" text-anchor="middle" font-size="11" fill="var(--text)">Sistema</text>
+      <text x="80" y="88" text-anchor="middle" font-size="11" fill="var(--text)">de origen</text>
+      <line x1="140" y1="75" x2="195" y2="75" stroke="var(--amber)" stroke-width="2" marker-end="url(#arr-n14)"/>
+      <text x="167" y="65" text-anchor="middle" font-size="9" fill="var(--text-dim)">Extract</text>
+      <rect x="200" y="50" width="120" height="50" rx="10" fill="var(--surface-2)" stroke="var(--amber)"/>
+      <text x="260" y="72" text-anchor="middle" font-size="11" fill="var(--amber)">Transformar</text>
+      <text x="260" y="88" text-anchor="middle" font-size="9" fill="var(--text-dim)">limpiar / ordenar</text>
+      <line x1="320" y1="75" x2="375" y2="75" stroke="var(--amber)" stroke-width="2" marker-end="url(#arr-n14)"/>
+      <text x="347" y="65" text-anchor="middle" font-size="9" fill="var(--text-dim)">Load</text>
+      <rect x="380" y="50" width="120" height="50" rx="10" fill="var(--surface)" stroke="var(--line)"/>
+      <text x="440" y="72" text-anchor="middle" font-size="11" fill="var(--text)">Sistema</text>
+      <text x="440" y="88" text-anchor="middle" font-size="11" fill="var(--text)">de destino</text>
+      <text x="80" y="120" text-anchor="middle" font-size="9" fill="var(--text-dim)">(por ejemplo, ventas)</text>
+      <text x="440" y="120" text-anchor="middle" font-size="9" fill="var(--text-dim)">(por ejemplo, reportes)</text>
+    </svg>`,
+    body: `A veces integrar sistemas no significa conectarlos en tiempo real, sino mover datos de uno a otro
+    de forma organizada, sobre todo cuando hay que juntar información de varios sistemas para analizarla.
+    Para eso existe el proceso ETL.
+
+    ETL viene de Extract, Transform, Load (Extraer, Transformar, Cargar), y tiene tres pasos. Primero se
+    extraen los datos desde uno o varios sistemas de origen (por ejemplo, el sistema de ventas, el de
+    stock y el de clientes). Después se transforman: se limpian errores, se ordenan, se convierten a un
+    formato común y a veces se combinan entre sí. Por último se cargan en el sistema de destino, que
+    muchas veces es una base de datos pensada para generar reportes o análisis.
+
+    Un ejemplo típico es una empresa que todas las noches junta las ventas del día, las corrige (por
+    ejemplo, si hay un precio cargado mal) y las carga en un sistema donde los jefes pueden ver reportes
+    y gráficos al día siguiente. Ese proceso, hecho de forma automática y programada, es un ETL.
+
+    La diferencia con otras formas de integración (como una API o un webhook) es que el ETL no suele ser
+    instantáneo: normalmente se ejecuta por lotes, cada cierto tiempo (por ejemplo, una vez por día o por
+    hora), en vez de reaccionar al instante ante cada cambio.`,
+    resource: { type: 'article', label: 'Artículo: ¿Qué es ETL?', url: 'https://aws.amazon.com/es/what-is/etl/' }
   }
 ];
 
