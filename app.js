@@ -27,6 +27,9 @@
   function storageSet(key, value) {
     try { localStorage.setItem(key, value); } catch (e) { /* ignore */ }
   }
+  function storageRemove(key) {
+    try { localStorage.removeItem(key); } catch (e) { /* ignore */ }
+  }
 
   // ===== Splash screen =====
   const SPLASH_TAGLINES = [
@@ -239,6 +242,8 @@
         storageSet(STORAGE_KEYS.bestScorePractice, '');
         storageSet(STORAGE_KEYS.bestScoreExam, '');
         storageSet(STORAGE_KEYS.failedQuestions, '[]');
+        storageRemove(STORAGE_KEYS.dailyAnswered + getTodayKey());
+        updateNotesBadge();
         renderNotes();
       }
     });
