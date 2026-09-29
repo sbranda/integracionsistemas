@@ -119,6 +119,7 @@
     </div>
     <a href="#" class="reset-progress-link" id="btn-reset-progress">↺ Reiniciar progreso</a>
     <button type="button" class="btn btn--ghost btn--block" id="btn-export-notes-pdf">Exportar apuntes a PDF</button>
+    <button type="button" class="btn btn--ghost btn--block" id="btn-export-all-pdf">Exportar todo a PDF (apuntes, casos y glosario)</button>
     <div id="daily-slot"></div>
     <div class="accordion__toolbar">
       <button type="button" class="toggle-all-btn" id="btn-toggle-notes" aria-expanded="false">Expandir todo</button>
@@ -288,6 +289,9 @@
     </div>
   </section>
 </template>
+
+<!-- ===== CONTENEDOR PARA "EXPORTAR TODO A PDF" ===== -->
+<div id="print-all-container"></div>
 
 <script src="data.js"></script>
 <script src="app.js"></script>

@@ -610,11 +610,29 @@ mark { background: var(--amber); color: #000; border-radius: 3px; }
 
 @media print {
   .topbar, .settings-panel, .search-panel, .install-banner, .tabbar, .scroll-top-btn, .app-footer,
-  #btn-reset-progress, #btn-export-notes-pdf, #btn-export-glossary-pdf, .mode-toggle { display: none !important; }
+  #btn-reset-progress, #btn-export-notes-pdf, #btn-export-glossary-pdf, #btn-export-all-pdf, .mode-toggle { display: none !important; }
   .app-shell { height: auto; display: block; }
   .view { height: auto; overflow: visible; }
   .accordion__body[hidden] { display: block !important; }
   .accordion__head { pointer-events: none; }
   body { background: #fff; color: #000; }
   .accordion__item, .glossary-list__item { border-color: #ccc; break-inside: avoid; }
+}
+
+/* ===== Exportar todo a PDF ===== */
+#print-all-container { display: none; }
+body.print-all-mode .app-shell { display: none !important; }
+@media print {
+  body.print-all-mode #print-all-container {
+    display: block !important;
+    background: #fff;
+    color: #000;
+    padding: 0;
+  }
+  .print-all__title { font-family: var(--font-display); font-size: 24px; margin: 0 0 4px; }
+  .print-all__section-title { font-family: var(--font-display); font-size: 20px; margin: 28px 0 10px; border-bottom: 2px solid #000; padding-bottom: 4px; }
+  .print-all__item { margin-bottom: 16px; break-inside: avoid; }
+  .print-all__item h3 { font-size: 15px; margin: 0 0 4px; }
+  .print-all__item p { margin: 0 0 6px; line-height: 1.5; }
+  .print-all__item .print-all__label { font-weight: 700; }
 }

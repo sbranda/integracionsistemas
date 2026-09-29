@@ -117,6 +117,7 @@
   }
 
   function navigate(name, remember) {
+    cleanupPrintAll();
     if (remember !== false) storageSet(STORAGE_KEYS.lastTab, name);
     setActiveTab(name);
     btnScrollTop.hidden = true;
@@ -166,6 +167,100 @@
       btn.setAttribute('aria-expanded', String(anyCollapsed));
     });
   }
+
+  // ===== Exportar todo a PDF (apuntes + casos + glosario) =====
+  function cleanupPrintAll() {
+    document.body.classList.remove('print-all-mode');
+    const container = document.getElementById('print-all-container');
+    if (container) container.innerHTML = '';
+  }
+
+  function exportAllToPDF() {
+    const container = document.getElementById('print-all-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const h1 = document.createElement('h1');
+    h1.className = 'print-all__title';
+    h1.textContent = 'Integración de Sistemas';
+    container.appendChild(h1);
+    const sub = document.createElement('p');
+    sub.textContent = 'Material completo: apuntes, casos y glosario.';
+    container.appendChild(sub);
+
+    function addSectionTitle(text) {
+      const h2 = document.createElement('h2');
+      h2.className = 'print-all__section-title';
+      h2.textContent = text;
+      container.appendChild(h2);
+    }
+
+    // Apuntes
+    addSectionTitle('Apuntes');
+    NOTES.forEach(function (note) {
+      const item = document.createElement('div');
+      item.className = 'print-all__item';
+      const h3 = document.createElement('h3');
+      h3.textContent = note.title;
+      item.appendChild(h3);
+      String(note.body).split(/\n\s*\n/).forEach(function (para) {
+        const p = document.createElement('p');
+        p.textContent = para.replace(/\s+/g, ' ').trim();
+        item.appendChild(p);
+      });
+      container.appendChild(item);
+    });
+
+    // Errores comunes
+    addSectionTitle('Errores comunes');
+    MISCONCEPTIONS.forEach(function (m) {
+      const item = document.createElement('div');
+      item.className = 'print-all__item';
+      const h3 = document.createElement('h3');
+      h3.textContent = m.title;
+      item.appendChild(h3);
+      const p = document.createElement('p');
+      p.textContent = m.text;
+      item.appendChild(p);
+      container.appendChild(item);
+    });
+
+    // Casos
+    addSectionTitle('Casos de debate');
+    CASES.forEach(function (c) {
+      const item = document.createElement('div');
+      item.className = 'print-all__item';
+      const h3 = document.createElement('h3');
+      h3.textContent = c.title;
+      item.appendChild(h3);
+      const scenario = document.createElement('p');
+      scenario.innerHTML = '<span class="print-all__label">Situación: </span>' + c.scenario.replace(/\s+/g, ' ').trim();
+      item.appendChild(scenario);
+      const answer = document.createElement('p');
+      answer.innerHTML = '<span class="print-all__label">Respuesta sugerida: </span>' + c.answer.replace(/\s+/g, ' ').trim();
+      item.appendChild(answer);
+      container.appendChild(item);
+    });
+
+    // Glosario
+    addSectionTitle('Glosario');
+    GLOSSARY.forEach(function (g) {
+      const item = document.createElement('div');
+      item.className = 'print-all__item';
+      const h3 = document.createElement('h3');
+      h3.textContent = g.term;
+      item.appendChild(h3);
+      const p = document.createElement('p');
+      p.textContent = g.def;
+      item.appendChild(p);
+      container.appendChild(item);
+    });
+
+    document.body.classList.add('print-all-mode');
+    window.print();
+  }
+
+  window.addEventListener('afterprint', cleanupPrintAll);
 
   // ===== Progress tracking =====
   function getReadSet() {
@@ -251,6 +346,10 @@
     document.getElementById('btn-export-notes-pdf').addEventListener('click', function () {
       document.querySelectorAll('#notes-list .accordion__body, #misconceptions-list .accordion__body').forEach(function (b) { b.hidden = false; });
       window.print();
+    });
+
+    document.getElementById('btn-export-all-pdf').addEventListener('click', function () {
+      exportAllToPDF();
     });
 
     renderDailyQuestion();
