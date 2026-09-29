@@ -609,9 +609,10 @@ mark { background: var(--amber); color: #000; border-radius: 3px; }
 }
 
 @media print {
+  html, body { height: auto !important; overflow: visible !important; }
   .topbar, .settings-panel, .search-panel, .install-banner, .tabbar, .scroll-top-btn, .app-footer,
   #btn-reset-progress, #btn-export-notes-pdf, #btn-export-glossary-pdf, #btn-export-all-pdf, .mode-toggle { display: none !important; }
-  .app-shell { height: auto; display: block; }
+  .app-shell { height: auto; display: block; overflow: visible; }
   .view { height: auto; overflow: visible; }
   .accordion__body[hidden] { display: block !important; }
   .accordion__head { pointer-events: none; }
