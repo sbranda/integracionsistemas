@@ -43,6 +43,9 @@
 html, body {
   margin: 0;
   padding: 0;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
@@ -143,6 +146,7 @@ button {
   height: 100dvh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .topbar {
@@ -309,6 +313,7 @@ mark { background: var(--amber); color: #000; border-radius: 3px; }
 }
 
 .app-footer {
+  flex: none;
   text-align: center;
   font-size: 11px;
   color: var(--text-dim);
@@ -319,8 +324,13 @@ mark { background: var(--amber); color: #000; border-radius: 3px; }
 
 .tabbar {
   display: flex;
+  flex: none;
   border-top: 1px solid var(--line);
   background: var(--surface);
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 .tab {
   flex: 1;
