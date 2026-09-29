@@ -637,7 +637,11 @@ const GLOSSARY = [
   { term: 'ETL (Extract, Transform, Load / Extraer, Transformar, Cargar)', def: 'Proceso que saca datos de un sistema, los transforma o limpia, y los carga en otro sistema (por ejemplo, para juntar información de varios sistemas en un solo reporte).' },
   { term: 'Webhook (Aviso automático por web)', def: 'Aviso automático que un sistema le manda a otro apenas ocurre un evento, sin que nadie pregunte.' },
   { term: 'Aplicación nativa (Native app)', def: 'App hecha específicamente para un sistema operativo (Android o iOS), con su propio lenguaje y máximo aprovechamiento del hardware.' },
-  { term: 'Aplicación híbrida (Hybrid app)', def: 'App hecha una sola vez con tecnologías web y empaquetada para instalarse en Android y iOS como si fuera nativa.' }
+  { term: 'Aplicación híbrida (Hybrid app)', def: 'App hecha una sola vez con tecnologías web y empaquetada para instalarse en Android y iOS como si fuera nativa.' },
+  { term: 'Trainee', def: 'Persona que recién empieza en el mundo laboral de sistemas, generalmente estudiando todavía, y que está aprendiendo con acompañamiento constante del equipo.' },
+  { term: 'Junior', def: 'Desarrollador con poca experiencia (en general, menos de 2 años), que ya puede resolver tareas concretas pero necesita guía y supervisión frecuente.' },
+  { term: 'Semi-Senior', def: 'Desarrollador con experiencia intermedia, que resuelve tareas con bastante autonomía y necesita supervisión solo en problemas más complejos.' },
+  { term: 'Senior', def: 'Desarrollador con mucha experiencia, que trabaja con autonomía total, toma decisiones técnicas importantes y suele guiar a los perfiles junior y semi-senior del equipo.' }
 ];
 
 const QUESTIONS = [
