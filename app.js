@@ -380,6 +380,11 @@
     function applyMode() {
       modeBtns.forEach(function (b) { b.classList.toggle('is-active', b.dataset.mode === (teacherMode ? 'teacher' : 'student')); });
       viewEl.querySelectorAll('.case__tips').forEach(function (t) { t.hidden = !teacherMode; });
+      viewEl.querySelectorAll('.case__answer').forEach(function (a) { a.hidden = !teacherMode; });
+      viewEl.querySelectorAll('.case__answer-toggle').forEach(function (btn) {
+        btn.hidden = teacherMode;
+        btn.textContent = 'Ver respuesta sugerida';
+      });
     }
     modeBtns.forEach(function (b) {
       b.addEventListener('click', function () {
