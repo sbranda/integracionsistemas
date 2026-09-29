@@ -515,6 +515,10 @@ mark { background: var(--amber); color: #000; border-radius: 3px; }
 .case__tips { margin-top: 12px; padding: 10px; background: var(--surface-2); border-radius: 10px; border: 1px dashed var(--amber); }
 .case__tips h3 { margin: 0 0 6px; font-size: 13px; color: var(--amber); }
 .case__tips ul { margin: 0; padding-left: 18px; }
+.case__tips li { margin-bottom: 10px; }
+.case__tips li:last-child { margin-bottom: 0; }
+.tip-question { display: block; }
+.tip-answer { margin: 4px 0 0; font-size: 13px; font-style: italic; color: var(--text-dim); }
 
 .mode-toggle { display: flex; gap: 8px; margin-bottom: 14px; }
 .mode-toggle__btn {

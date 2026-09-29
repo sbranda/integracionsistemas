@@ -408,7 +408,16 @@
       const tipsUl = tipsBox.querySelector('ul');
       c.tips.forEach(function (tip) {
         const li = document.createElement('li');
-        li.textContent = tip;
+        const q = document.createElement('span');
+        q.className = 'tip-question';
+        q.textContent = tip.q;
+        li.appendChild(q);
+        if (tip.a) {
+          const a = document.createElement('p');
+          a.className = 'tip-answer';
+          a.textContent = 'Respuesta orientativa: ' + tip.a;
+          li.appendChild(a);
+        }
         tipsUl.appendChild(li);
       });
       answerToggle.addEventListener('click', function () {

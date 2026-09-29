@@ -525,9 +525,9 @@ const CASES = [
     answer: `Falta integrar la app de pedidos con el sistema de la cocina (o de la caja), para que los
     pedidos aparezcan automáticamente sin que alguien los transcriba a mano.`,
     tips: [
-      'Preguntá primero: ¿qué información tiene que viajar de un sistema al otro? (el pedido, la mesa, el horario)',
-      'Pedí que identifiquen quién sería el "front-end" y quién el "back-end" en este caso.',
-      'Guiá la charla hacia los riesgos de no integrar: errores humanos, demoras, pedidos perdidos.'
+      { q: 'Preguntá primero: ¿qué información tiene que viajar de un sistema al otro? (el pedido, la mesa, el horario)', a: 'El pedido en sí (productos y cantidades), el número de mesa o cliente, y el horario del pedido: esos datos tienen que pasar automáticamente de la app a la pantalla de la cocina.' },
+      { q: 'Pedí que identifiquen quién sería el "front-end" y quién el "back-end" en este caso.', a: 'La app donde el cliente hace el pedido es el front-end; el sistema que recibe y procesa ese pedido (caja o cocina) sería el back-end.' },
+      { q: 'Guiá la charla hacia los riesgos de no integrar: errores humanos, demoras, pedidos perdidos.', a: 'Sin integración, el mozo puede anotar mal un pedido, tardar en llevarlo a la cocina, o directamente olvidarse de algún pedido que llegó por la app.' }
     ]
   },
   {
@@ -539,9 +539,9 @@ const CASES = [
     answer: `El sistema de reservas debería consultar en tiempo real al sistema de pagos si el socio
     está al día, antes de confirmar la reserva. Eso se puede hacer con una API entre ambos sistemas.`,
     tips: [
-      'Pedí a los alumnos que digan qué pregunta le haría un sistema al otro (ejemplo: "¿este socio está al día?").',
-      'Charlen sobre qué pasa si el sistema de pagos está caído en ese momento.',
-      'Relacionen esto con el concepto de API como intercambio de preguntas y respuestas entre sistemas.'
+      { q: 'Pedí a los alumnos que digan qué pregunta le haría un sistema al otro (ejemplo: "¿este socio está al día?").', a: 'El sistema de reservas le preguntaría al sistema de pagos algo como "¿el socio con este ID tiene la cuota paga este mes?".' },
+      { q: 'Charlen sobre qué pasa si el sistema de pagos está caído en ese momento.', a: 'Si el sistema de pagos no responde, el de reservas no puede confirmar el estado del socio; hay que decidir si se bloquea la reserva o se permite con una advertencia hasta poder verificarlo después.' },
+      { q: 'Relacionen esto con el concepto de API como intercambio de preguntas y respuestas entre sistemas.', a: 'Es justamente lo que hace una API: el sistema de reservas "pregunta" y el de pagos "responde" con datos, sin que un humano tenga que consultarlo a mano.' }
     ]
   },
   {
@@ -553,9 +553,9 @@ const CASES = [
     answer: `Los dos sistemas de stock no están integrados: no comparten la información en tiempo real,
     por eso ninguno "sabe" lo que pasa en el otro canal.`,
     tips: [
-      'Preguntá qué pasaría si hubiera un solo sistema de stock compartido por ambos canales.',
-      'Hablen sobre la diferencia entre actualizar el stock "cada tanto" versus "al instante".',
-      'Conecten esto con la idea de tener una única fuente de verdad para un mismo dato.'
+      { q: 'Preguntá qué pasaría si hubiera un solo sistema de stock compartido por ambos canales.', a: 'Al vender el libro por cualquiera de los dos canales, el stock se actualizaría al instante para todos, evitando que se venda dos veces el mismo ejemplar.' },
+      { q: 'Hablen sobre la diferencia entre actualizar el stock "cada tanto" versus "al instante".', a: 'Actualizar "cada tanto" (por lotes) deja una ventana de tiempo donde la información puede estar desactualizada; actualizar "al instante" refleja siempre el estado real y evita errores como la doble venta.' },
+      { q: 'Conecten esto con la idea de tener una única fuente de verdad para un mismo dato.', a: 'Si el stock vive en un solo lugar (una única fuente de verdad) y todos los canales lo consultan ahí, no puede haber dos números distintos para el mismo producto al mismo tiempo.' }
     ]
   },
   {
@@ -567,9 +567,9 @@ const CASES = [
     answer: `El lector de la tarjeta (front-end del colectivo) se comunica con un sistema central que
     guarda el saldo de cada tarjeta, valida el cobro y actualiza el saldo, todo en segundos.`,
     tips: [
-      'Pedí que imaginen qué pasaría si esa comunicación tardara 10 segundos en vez de 1.',
-      'Hablen sobre la importancia de la velocidad de respuesta en sistemas integrados.',
-      'Relacionen con el concepto de "en tiempo real" versus procesos que se hacen más tarde.'
+      { q: 'Pedí que imaginen qué pasaría si esa comunicación tardara 10 segundos en vez de 1.', a: 'Se generarían filas y demoras al subir al colectivo, y la experiencia del usuario empeoraría mucho aunque el sistema funcione bien técnicamente.' },
+      { q: 'Hablen sobre la importancia de la velocidad de respuesta en sistemas integrados.', a: 'En sistemas que se usan en el momento (como el transporte), la respuesta tiene que ser casi inmediata, porque las personas están esperando en tiempo real.' },
+      { q: 'Relacionen con el concepto de "en tiempo real" versus procesos que se hacen más tarde.', a: 'Cobrar el pasaje es un proceso en tiempo real; en cambio, algo como generar un reporte mensual de viajes puede hacerse más tarde, sin que el usuario lo note.' }
     ]
   },
   {
@@ -582,9 +582,9 @@ const CASES = [
     integrados (por ejemplo, una API que no funciona bien, o formatos de datos distintos que no se
     entienden entre sí).`,
     tips: [
-      'Pedí ejemplos de qué información mínima necesitaría viajar en una receta digital.',
-      'Charlen sobre por qué es importante que los datos tengan siempre el mismo formato.',
-      'Mencioná que en estos casos la seguridad de los datos (información médica) es clave.'
+      { q: 'Pedí ejemplos de qué información mínima necesitaría viajar en una receta digital.', a: 'El nombre del paciente, el medicamento recetado, la dosis, la cantidad autorizada y los datos del médico que la emitió.' },
+      { q: 'Charlen sobre por qué es importante que los datos tengan siempre el mismo formato.', a: 'Si cada sistema usa un formato distinto para la misma información, el otro sistema puede no entenderla o interpretarla mal, y la receta termina sin reconocerse.' },
+      { q: 'Mencioná que en estos casos la seguridad de los datos (información médica) es clave.', a: 'Los datos médicos son sensibles, así que la integración necesita canales seguros (como HTTPS) y controles de acceso, para que solo farmacias autorizadas puedan verla.' }
     ]
   },
   {
@@ -596,9 +596,9 @@ const CASES = [
     answer: `Porque las PWA pueden guardar una copia (caché) de la información y de la app en el
     dispositivo, para poder abrir igual sin conexión, aunque los datos no se actualicen en ese momento.`,
     tips: [
-      'Pedí que piensen en otras apps donde vieron este mismo comportamiento (sin conexión).',
-      'Hablen sobre la diferencia entre "no tener datos" y "tener datos viejos".',
-      'Conecten con el concepto de service worker como el que guarda esa copia local.'
+      { q: 'Pedí que piensen en otras apps donde vieron este mismo comportamiento (sin conexión).', a: 'Apps de mensajería que muestran los últimos mensajes guardados, o apps de noticias que muestran las últimas noticias descargadas aunque no haya conexión en ese momento.' },
+      { q: 'Hablen sobre la diferencia entre "no tener datos" y "tener datos viejos".', a: '"No tener datos" es una pantalla vacía o un error; "tener datos viejos" es mostrar la última información guardada, que es menos grave porque igual le sirve al usuario.' },
+      { q: 'Conecten con el concepto de service worker como el que guarda esa copia local.', a: 'El service worker es el que intercepta los pedidos de la app y guarda (cachea) las respuestas, para poder mostrarlas después aunque no haya conexión a internet.' }
     ]
   }
 ];
