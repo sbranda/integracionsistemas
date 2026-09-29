@@ -1,4 +1,4 @@
-const CACHE_NAME = 'integracion-shell-v5';
+const CACHE_NAME = 'integracion-shell-v6';
 const APP_SHELL = [
   './',
   'index.html',
@@ -7,7 +7,8 @@ const APP_SHELL = [
   'data.js',
   'manifest.json',
   'icon-192.png',
-  'icon-512.png'
+  'icon-512.png',
+  'splash-icon.png'
 ];
 
 self.addEventListener('install', function (event) {
