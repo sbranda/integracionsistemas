@@ -640,7 +640,6 @@ const GLOSSARY = [
   { term: 'SOA (Service-Oriented Architecture / Arquitectura Orientada a Servicios)', def: 'Forma de organizar un sistema grande como un conjunto de servicios más chicos e independientes, que se comunican entre sí para realizar tareas completas.' },
   { term: 'SOAP (Simple Object Access Protocol / Protocolo Simple de Acceso a Objetos)', def: 'Estilo más antiguo y estricto que REST para construir servicios web, que siempre usa XML y reglas muy formales.' },
   { term: 'SQL (Structured Query Language / Lenguaje de Consulta Estructurado)', def: 'Lenguaje usado para pedir, guardar o modificar datos en una base de datos.' },
-  { term: 'Stakeholder (Parte interesada)', def: 'Persona o grupo (clientes, usuarios, jefes, equipo) a quienes les importa o les afecta el resultado de un proyecto.' },
   { term: 'Testing (Pruebas de software)', def: 'Proceso de probar un sistema para encontrar errores antes de que lo use la gente.' },
   { term: 'Token (Ficha / Credencial temporal)', def: 'Código temporal que identifica y autoriza a un sistema o usuario a acceder a otro sistema.' },
   { term: 'Trainee', def: 'Persona que recién empieza en el mundo laboral de sistemas, generalmente estudiando todavía, y que está aprendiendo con acompañamiento constante del equipo.' },
