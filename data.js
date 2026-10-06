@@ -630,6 +630,7 @@ const GLOSSARY = [
   { term: 'Middleware (Programa intermedio)', def: 'Software que conecta y traduce la comunicación entre dos sistemas distintos.' },
   { term: 'OAuth (Open Authorization / Autorización Abierta)', def: 'Forma estándar de darle permiso a una app para acceder a datos de otra, sin tener que compartir la contraseña.' },
   { term: 'PWA (Progressive Web App / Aplicación Web Progresiva)', def: 'Página web que se puede instalar como app y funcionar parcialmente sin conexión.' },
+  { term: 'Relevamiento (Requirements gathering / Recolección de información)', def: 'Etapa inicial de un proyecto en la que se consulta a las personas y se observa cómo trabajan, para entender qué necesita el sistema antes de armarlo.' },
   { term: 'Requerimiento (Requirement)', def: 'Algo que el sistema tiene que hacer o cumplir, según lo que necesitan los usuarios o el negocio.' },
   { term: 'REST (Representational State Transfer / Transferencia de Estado Representacional)', def: 'Estilo de diseño para construir servicios web simples, basado en reglas claras.' },
   { term: 'SaaS (Software as a Service / Software como Servicio)', def: 'Programa que se usa desde internet, sin instalarlo, pagando normalmente una suscripción.' },
