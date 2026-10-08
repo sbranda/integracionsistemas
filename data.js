@@ -621,6 +621,7 @@ const GLOSSARY = [
   { term: 'ESB (Enterprise Service Bus / Bus de Servicios Empresariales)', def: 'Tipo de middleware que funciona como un "canal central" por el que pasan todos los mensajes entre los sistemas de una empresa, en vez de que cada sistema se conecte directamente con todos los demás.' },
   { term: 'ETL (Extract, Transform, Load / Extraer, Transformar, Cargar)', def: 'Proceso que saca datos de un sistema, los transforma o limpia, y los carga en otro sistema (por ejemplo, para juntar información de varios sistemas en un solo reporte).' },
   { term: 'Feedback (Retroalimentación)', def: 'Devolución que recibe una persona o un sistema sobre lo que hizo, para saber si salió bien y qué se puede mejorar. Por ejemplo, un mensaje de error o un comentario del cliente.' },
+  { term: 'Fullstack (Desarrollador de pila completa)', def: 'Desarrollador que trabaja tanto en el front-end (lo que ve el usuario) como en el back-end (lo que procesa y guarda los datos) de un sistema.' },
   { term: 'HTTP (HyperText Transfer Protocol / Protocolo de Transferencia de Hipertexto)', def: 'Reglas que usan los sistemas para comunicarse a través de internet.' },
   { term: 'HTTPS (HyperText Transfer Protocol Secure / Protocolo de Transferencia de Hipertexto Seguro)', def: 'Versión segura y cifrada del HTTP, que protege los datos mientras viajan.' },
   { term: 'IoT (Internet of Things / Internet de las Cosas)', def: 'Dispositivos cotidianos (heladeras, luces, sensores) conectados a internet e integrados entre sí.' },
