@@ -1,4 +1,4 @@
-const CACHE_NAME = 'integracion-shell-v7';
+const CACHE_NAME = 'integracion-shell-v9';
 const APP_SHELL = [
   './',
   'index.html',
